@@ -1,0 +1,323 @@
+{
+  "name": "threejs-ecs-skills",
+  "version": "1.0.0",
+  "description": "Claude Code skills for Three.js, Entity Component Systems, and TypeScript game development",
+  "author": "Nice Wolf Studio",
+  "repository": "https://github.com/Nice-Wolf-Studio/claude-skills-threejs-ecs-ts",
+  "skills": [
+    {
+      "name": "threejs-scene-setup",
+      "path": "skills/threejs/scene-setup.md",
+      "category": "threejs",
+      "tags": ["setup", "renderer", "scene", "mobile"]
+    },
+    {
+      "name": "threejs-geometry-management",
+      "path": "skills/threejs/geometry-management.md",
+      "category": "threejs",
+      "tags": ["geometry", "instancing", "lod", "performance"]
+    },
+    {
+      "name": "threejs-material-systems",
+      "path": "skills/threejs/material-systems.md",
+      "category": "threejs",
+      "tags": ["materials", "shaders", "pbr", "optimization"]
+    },
+    {
+      "name": "threejs-texture-management",
+      "path": "skills/threejs/texture-management.md",
+      "category": "threejs",
+      "tags": ["textures", "compression", "atlasing", "mobile"]
+    },
+    {
+      "name": "threejs-raycasting",
+      "path": "skills/threejs/raycasting.md",
+      "category": "threejs",
+      "tags": ["raycasting", "interaction", "picking", "touch"]
+    },
+    {
+      "name": "threejs-animation-systems",
+      "path": "skills/threejs/animation-systems.md",
+      "category": "threejs",
+      "tags": ["animation", "mixer", "state-machine", "characters"]
+    },
+    {
+      "name": "threejs-model-loading",
+      "path": "skills/threejs/model-loading.md",
+      "category": "threejs",
+      "tags": ["gltf", "fbx", "loading", "draco", "compression"]
+    },
+    {
+      "name": "threejs-camera-controls",
+      "path": "skills/threejs/camera-controls.md",
+      "category": "threejs",
+      "tags": ["camera", "controls", "orbit", "first-person", "third-person"]
+    },
+    {
+      "name": "threejs-lighting",
+      "path": "skills/threejs/lighting.md",
+      "category": "threejs",
+      "tags": ["lighting", "ambient", "directional", "point", "spot", "hemisphere"]
+    },
+    {
+      "name": "threejs-shadows",
+      "path": "skills/threejs/shadows.md",
+      "category": "threejs",
+      "tags": ["shadows", "shadow-maps", "csm", "contact-shadows"]
+    },
+    {
+      "name": "threejs-post-processing",
+      "path": "skills/threejs/post-processing.md",
+      "category": "threejs",
+      "tags": ["post-processing", "bloom", "ssao", "dof", "effects"]
+    },
+    {
+      "name": "threejs-particles",
+      "path": "skills/threejs/particles.md",
+      "category": "threejs",
+      "tags": ["particles", "gpu-particles", "emitters", "effects"]
+    },
+    {
+      "name": "threejs-performance-profiling",
+      "path": "skills/threejs/performance-profiling.md",
+      "category": "threejs",
+      "tags": ["profiling", "performance", "fps", "optimization", "memory"]
+    },
+    {
+      "name": "threejs-pbr-materials",
+      "path": "skills/threejs/pbr-materials.md",
+      "category": "threejs",
+      "tags": ["pbr", "materials", "metalness", "roughness", "physical"]
+    },
+    {
+      "name": "threejs-math-utilities",
+      "path": "skills/threejs/math-utilities.md",
+      "category": "threejs",
+      "tags": ["math", "vector", "quaternion", "interpolation", "curves"]
+    },
+    {
+      "name": "threejs-fog",
+      "path": "skills/threejs/fog.md",
+      "category": "threejs",
+      "tags": ["fog", "atmosphere", "weather", "depth"]
+    },
+    {
+      "name": "threejs-environment-maps",
+      "path": "skills/threejs/environment-maps.md",
+      "category": "threejs",
+      "tags": ["environment", "hdri", "ibl", "reflections", "skybox"]
+    },
+    {
+      "name": "threejs-instancing-advanced",
+      "path": "skills/threejs/instancing-advanced.md",
+      "category": "threejs",
+      "tags": ["instancing", "lod", "performance", "culling", "pooling"]
+    },
+    {
+      "name": "threejs-sprites",
+      "path": "skills/threejs/sprites.md",
+      "category": "threejs",
+      "tags": ["sprites", "billboards", "atlas", "animation", "2d"]
+    },
+    {
+      "name": "threejs-best-practices",
+      "path": "skills/threejs/best-practices.md",
+      "category": "threejs",
+      "tags": ["best-practices", "optimization", "architecture", "production", "debugging"]
+    },
+    {
+      "name": "mobile-performance",
+      "path": "skills/mobile/performance.md",
+      "category": "mobile",
+      "tags": ["optimization", "adaptive", "battery", "performance"]
+    },
+    {
+      "name": "touch-input-handling",
+      "path": "skills/mobile/touch-input.md",
+      "category": "mobile",
+      "tags": ["touch", "gestures", "joystick", "input"]
+    },
+    {
+      "name": "battery-optimization",
+      "path": "skills/mobile/battery-optimization.md",
+      "category": "mobile",
+      "tags": ["battery", "power", "adaptive", "throttling", "thermal"]
+    },
+    {
+      "name": "memory-management",
+      "path": "skills/mobile/memory-management.md",
+      "category": "mobile",
+      "tags": ["memory", "pooling", "disposal", "vram", "optimization"]
+    },
+    {
+      "name": "react-three-fiber-setup",
+      "path": "skills/react/r3f-setup.md",
+      "category": "react",
+      "tags": ["r3f", "react", "setup", "mobile"]
+    },
+    {
+      "name": "r3f-ecs-integration",
+      "path": "skills/react/r3f-ecs-integration.md",
+      "category": "react",
+      "tags": ["r3f", "ecs", "integration", "architecture"]
+    },
+    {
+      "name": "r3f-component-patterns",
+      "path": "skills/react/r3f-component-patterns.md",
+      "category": "react",
+      "tags": ["r3f", "components", "patterns", "hooks", "composition"]
+    },
+    {
+      "name": "r3f-performance",
+      "path": "skills/react/r3f-performance.md",
+      "category": "react",
+      "tags": ["r3f", "performance", "memoization", "instancing", "lod"]
+    },
+    {
+      "name": "r3f-state-management",
+      "path": "skills/react/r3f-state-management.md",
+      "category": "react",
+      "tags": ["r3f", "zustand", "state", "store", "context"]
+    },
+    {
+      "name": "r3f-mobile-patterns",
+      "path": "skills/react/r3f-mobile-patterns.md",
+      "category": "react",
+      "tags": ["r3f", "mobile", "touch", "responsive", "battery"]
+    },
+    {
+      "name": "ecs-architecture",
+      "path": "skills/ecs/architecture.md",
+      "category": "ecs",
+      "tags": ["ecs", "architecture", "components", "systems"]
+    },
+    {
+      "name": "ecs-component-patterns",
+      "path": "skills/ecs/component-patterns.md",
+      "category": "ecs",
+      "tags": ["ecs", "components", "patterns", "pooling"]
+    },
+    {
+      "name": "ecs-system-patterns",
+      "path": "skills/ecs/system-patterns.md",
+      "category": "ecs",
+      "tags": ["ecs", "systems", "update", "reactive", "interval", "priorities"]
+    },
+    {
+      "name": "ecs-queries",
+      "path": "skills/ecs/queries.md",
+      "category": "ecs",
+      "tags": ["ecs", "queries", "archetype", "filtering", "spatial", "optimization"]
+    },
+    {
+      "name": "ecs-events",
+      "path": "skills/ecs/events.md",
+      "category": "ecs",
+      "tags": ["ecs", "events", "event-bus", "reactive", "messaging"]
+    },
+    {
+      "name": "ecs-serialization",
+      "path": "skills/ecs/serialization.md",
+      "category": "ecs",
+      "tags": ["ecs", "serialization", "save-load", "prefabs", "network"]
+    },
+    {
+      "name": "ecs-performance",
+      "path": "skills/ecs/performance.md",
+      "category": "ecs",
+      "tags": ["ecs", "performance", "optimization", "pooling", "profiling"]
+    },
+    {
+      "name": "typescript-game-types",
+      "path": "skills/typescript/game-types.md",
+      "category": "typescript",
+      "tags": ["typescript", "types", "safety", "patterns"]
+    },
+    {
+      "name": "typescript-performance",
+      "path": "skills/typescript/typescript-performance.md",
+      "category": "typescript",
+      "tags": ["typescript", "performance", "optimization", "compilation", "bundling"]
+    },
+    {
+      "name": "typescript-ecs-types",
+      "path": "skills/typescript/typescript-ecs-types.md",
+      "category": "typescript",
+      "tags": ["typescript", "ecs", "types", "generics", "type-safety"]
+    },
+    {
+      "name": "input-system",
+      "path": "skills/game-systems/input-system.md",
+      "category": "game-systems",
+      "tags": ["input", "controls", "actions", "combos"]
+    },
+    {
+      "name": "collision-system",
+      "path": "skills/game-systems/collision-system.md",
+      "category": "game-systems",
+      "tags": ["collision", "spatial", "broadphase", "physics"]
+    },
+    {
+      "name": "physics-system",
+      "path": "skills/game-systems/physics-system.md",
+      "category": "game-systems",
+      "tags": ["physics", "rigid-body", "cannon", "forces", "dynamics"]
+    },
+    {
+      "name": "ai-system",
+      "path": "skills/game-systems/ai-system.md",
+      "category": "game-systems",
+      "tags": ["ai", "fsm", "behavior-tree", "steering", "pathfinding"]
+    },
+    {
+      "name": "audio-system",
+      "path": "skills/game-systems/audio-system.md",
+      "category": "game-systems",
+      "tags": ["audio", "sound", "music", "spatial-audio", "web-audio"]
+    },
+    {
+      "name": "ui-system",
+      "path": "skills/game-systems/ui-system.md",
+      "category": "game-systems",
+      "tags": ["ui", "hud", "menus", "health-bars", "interface"]
+    },
+    {
+      "name": "camera-system",
+      "path": "skills/game-systems/camera-system.md",
+      "category": "game-systems",
+      "tags": ["camera", "follow", "orbit", "shake", "cinematic"]
+    },
+    {
+      "name": "spawn-system",
+      "path": "skills/game-systems/spawn-system.md",
+      "category": "game-systems",
+      "tags": ["spawning", "waves", "pooling", "respawn"]
+    },
+    {
+      "name": "health-combat-system",
+      "path": "skills/game-systems/health-combat-system.md",
+      "category": "game-systems",
+      "tags": ["health", "damage", "combat", "armor", "status-effects"]
+    },
+    {
+      "name": "inventory-system",
+      "path": "skills/game-systems/inventory-system.md",
+      "category": "game-systems",
+      "tags": ["inventory", "items", "equipment", "crafting", "stacking"]
+    },
+    {
+      "name": "level-system",
+      "path": "skills/game-systems/level-system.md",
+      "category": "game-systems",
+      "tags": ["leveling", "xp", "progression", "skills", "achievements"]
+    }
+  ],
+  "categories": {
+    "threejs": "Three.js development patterns and optimization",
+    "ecs": "Entity Component System architecture and implementation",
+    "typescript": "Type-safe game development with TypeScript",
+    "mobile": "Mobile optimization and touch controls",
+    "react": "React Three Fiber integration patterns",
+    "game-systems": "Game-specific systems and mechanics"
+  }
+}
