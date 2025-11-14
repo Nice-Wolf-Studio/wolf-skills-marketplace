@@ -784,6 +784,15 @@ Before claiming you've applied principles:
 2. **Compliance Dashboard**: Real-time compliance metrics
 3. **AI-Assisted Templates**: LLM-powered template completion
 4. **Skill Analytics**: Track which skills trigger most often
+5. **Context File Cleanup**: Automatic management of `.claude/context/` checkpoint files
+   - **Problem**: Checkpoint files accumulate over time (exploration-*.md, implementation-*.md, verification-*.md)
+   - **Solution Options**:
+     - Auto-delete checkpoints older than 30 days
+     - Archive old checkpoints to `.claude/context/archive/`
+     - Compress checkpoints after task completion
+     - Git-ignore pattern for temporary checkpoints
+   - **Trigger**: After PR merged, after task complete, periodic cleanup
+   - **Related**: wolf-context-management skill (context bloat prevention)
 
 ---
 

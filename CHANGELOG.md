@@ -5,6 +5,90 @@ All notable changes to the Wolf Skills Marketplace will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-11-14
+
+### Added - Context Management System
+
+This release adds automatic context management for coder agents to prevent token bloat through phase-aware checkpointing and compaction.
+
+#### New Skill: wolf-context-management (v1.0.0)
+
+**Problem Solved**:
+- Coder agents accumulate 10,000-40,000 tokens of irrelevant context during exploration
+- File searches, grep results, and documentation remain in context after finding relevant code
+- Token capacity wasted on bloated context instead of focused implementation
+
+**Solution**:
+- Phase-aware checkpoint/restore pattern
+- Checkpoint artifacts created at workflow transitions
+- 30-50% token reduction per session
+- Aligns with Wolf Principle #1 (Artifact-First Development)
+
+**New Files** (~800 lines total):
+- `wolf-context-management/SKILL.md` (400+ lines)
+  - When to use (4 automatic triggers, 3 manual triggers)
+  - 3-step workflow (identify phase, create checkpoint, verify & compact)
+  - 3 checkpoint types (exploration, implementation, verification)
+  - Red flags section (4 common mistakes)
+  - Integration with Wolf framework
+  - Usage examples with token savings data
+  - Troubleshooting guide
+
+- `wolf-context-management/INDEX.md` (100+ lines)
+  - Condensed quick reference for token efficiency
+  - Minimal checkpoint templates for fast creation
+
+- `wolf-context-management/templates/` (300+ lines)
+  - `exploration-checkpoint-template.md` - Capture file findings and architecture
+  - `implementation-checkpoint-template.md` - Capture changes and test results
+  - `verification-checkpoint-template.md` - Capture evidence and PR draft
+
+**Features**:
+- **Phase Detection**: Automatic recognition of workflow transitions
+  - Exploration → Implementation (after finding relevant files)
+  - Implementation → Verification (after tests pass)
+  - Verification → Handoff (after evidence collected)
+- **Checkpoint Artifacts**: Self-contained `.claude/context/*.md` files
+  - Can resume work from checkpoint in fresh session
+  - Commit to git for audit trail
+  - Share across agents for clean handoffs
+- **Token Efficiency**: Expected 30-50% reduction
+  - Exploration: -70% (30k → 9k tokens)
+  - Implementation: -60% (40k → 16k tokens)
+  - Verification: -50% (20k → 10k tokens)
+
+#### Enhanced Template: coder-agent-template.md (v2.0.0 → v2.1.0)
+
+**Integrated context management at 3 checkpoints**:
+
+1. **Before Implementation** (after exploration):
+   - Create exploration checkpoint
+   - Compact context before TDD workflow
+   - Reference: `wolf-context-management/templates/exploration-checkpoint-template.md`
+
+2. **After Implementation** (tests passing):
+   - Create implementation checkpoint
+   - Summarize test runs (keep final results, discard iterations)
+   - Reference: `wolf-context-management/templates/implementation-checkpoint-template.md`
+
+3. **Before Review** (evidence collected):
+   - Create verification checkpoint
+   - Compact context before code-reviewer-agent handoff
+   - Clean context improves review focus
+   - Reference: `wolf-context-management/templates/verification-checkpoint-template.md`
+
+**Template updated from 286 → 310 lines** (+24 lines for context management integration)
+
+#### Documentation Updates
+
+- **PLAN.md**: Added "Context File Cleanup" to Enhancement Ideas
+  - Problem: Checkpoint files accumulate over time
+  - Solution options: Auto-delete after 30 days, archive, compress, git-ignore patterns
+  - Triggers: After PR merged, periodic cleanup
+  - Related to wolf-context-management skill
+
+---
+
 ## [1.2.0] - 2025-11-14
 
 ### Added - Phase 2: Examples & Templates

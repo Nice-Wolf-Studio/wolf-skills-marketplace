@@ -77,6 +77,14 @@ Before starting implementation:
 - [ ] Understood acceptance criteria completely
 - [ ] Identified who will review (code-reviewer-agent)
 
+**Context Management** (wolf-context-management):
+
+- [ ] If exploration phase complete (found relevant files), create exploration checkpoint
+  - Use template: `wolf-context-management/templates/exploration-checkpoint-template.md`
+  - Checkpoint location: `.claude/context/exploration-{YYYY-MM-DD}-{feature-slug}.md`
+  - Include: Relevant files, key findings, architecture understanding
+  - Request compact after checkpoint created
+
 During implementation (TDD Workflow):
 
 **RECOMMENDED**: Use Test-Driven Development (superpowers:test-driven-development)
@@ -107,6 +115,15 @@ During implementation (TDD Workflow):
 - [ ] Create journal entry (problems, decisions, learnings)
 - [ ] Run tests locally (Fast-Lane minimum)
 - [ ] Commit changes with descriptive message
+
+**Context Management** (wolf-context-management):
+
+- [ ] If tests passing and implementation complete, create implementation checkpoint
+  - Use template: `wolf-context-management/templates/implementation-checkpoint-template.md`
+  - Checkpoint location: `.claude/context/implementation-{YYYY-MM-DD}-{feature-slug}.md`
+  - Include: Changes summary, final test results, key decisions
+  - Summarize test runs (keep final results, discard iterations)
+  - Request compact after checkpoint created
 
 When encountering bugs or test failures:
 
@@ -174,6 +191,15 @@ Before requesting review:
   - Evidence collected (test output, benchmarks)
   - No guessing or assumptions
   - "Evidence before assertions" principle
+
+**Context Management** (wolf-context-management):
+
+- [ ] Create verification checkpoint before handoff
+  - Use template: `wolf-context-management/templates/verification-checkpoint-template.md`
+  - Checkpoint location: `.claude/context/verification-{YYYY-MM-DD}-{feature-slug}.md`
+  - Include: Evidence summary, quality metrics, AC status, PR draft
+  - Compact context before code-reviewer-agent handoff
+  - Clean context improves review focus and efficiency
 
 ## Handoff to code-reviewer-agent
 
@@ -279,7 +305,7 @@ After completing implementation:
 
 ---
 
-*Template Version: 2.0.0 - Enhanced with Superpowers Workflows*
+*Template Version: 2.1.0 - Enhanced with Superpowers Workflows + Context Management*
 *Role: coder-agent*
-*Part of Wolf Skills Marketplace v2.0.0*
-*Integrations: 6 Superpowers development workflow skills*
+*Part of Wolf Skills Marketplace v2.1.0*
+*Integrations: 6 Superpowers development workflow skills + wolf-context-management*

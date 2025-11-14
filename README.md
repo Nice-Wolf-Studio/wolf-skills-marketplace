@@ -2,7 +2,7 @@
 
 Custom Wolf Agent skills and integration tools marketplace for Claude Code.
 
-**66 total skills** across 5 plugin collections, combining Wolf Agent framework knowledge with comprehensive development tooling.
+**67 total skills** across 5 plugin collections, combining Wolf Agent framework knowledge with comprehensive development tooling.
 
 ## Overview
 
@@ -10,7 +10,7 @@ This marketplace provides five plugin collections optimized for skill discovery 
 
 ### 1. Wolf Core (`wolf-core@wolf-skills-marketplace`)
 
-Core Wolf Agent behavioral framework (7 skills):
+Core Wolf Agent behavioral framework (8 skills):
 - **wolf-principles** (v1.1.0) - Wolf's 10 core principles for agent behavior and system design
 - **wolf-archetypes** - Behavioral archetypes for automatic agent adaptation based on work type
 - **wolf-governance** - Governance framework, compliance rules, quality gates, and process standards
@@ -18,6 +18,7 @@ Core Wolf Agent behavioral framework (7 skills):
 - **wolf-instructions** (v1.1.0) - Four-level instruction cascading system (Global → Domain → Project → Role)
 - **wolf-verification** - Three-layer verification architecture (CoVe, HSP, RAG) for self-verification
 - **wolf-adr** (v1.1.0) - Architecture Decision Records index with searchable topics and phase-based organization
+- **wolf-context-management** (v1.0.0) - Phase-aware context management to prevent token bloat through checkpoint/restore pattern (30-50% token reduction)
 
 ### 2. Wolf Automation (`wolf-automation@wolf-skills-marketplace`)
 
