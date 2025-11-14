@@ -77,6 +77,32 @@ Before starting implementation:
 - [ ] Understood acceptance criteria completely
 - [ ] Identified who will review (code-reviewer-agent)
 
+**Documentation & API Research** (MANDATORY):
+
+- [ ] Identified unfamiliar libraries/frameworks in requirements
+- [ ] Used WebSearch to find current documentation:
+  - Search: "{library} {version} official documentation"
+  - Search: "{library} {feature} current best practices"
+  - Verify: Documentation date is recent (within 12 months)
+- [ ] Reviewed API changes/breaking changes if upgrading versions
+- [ ] Bookmarked relevant docs for reference during implementation
+
+**Why this matters:** Model knowledge has a cutoff date (January 2025). Libraries evolve constantly. Using outdated APIs from model memory wastes time and creates bugs. A 5-minute documentation lookup prevents hours of debugging later.
+
+**Examples:**
+```bash
+# Good web searches for current documentation
+WebSearch "React 19 useEffect cleanup documentation"
+WebSearch "TypeScript 5.7 satisfies operator official docs"
+WebSearch "Node.js 23 ESM breaking changes"
+
+# What to look for
+- Official documentation sites (react.dev, nodejs.org, etc.)
+- Recent publication dates (within last 12 months)
+- Version-specific docs matching your project
+- "What's new" or "Migration guide" sections
+```
+
 **Git/GitHub Setup** (MANDATORY):
 
 - [ ] Check for project-specific conventions first
@@ -321,6 +347,14 @@ After completing implementation:
 - ❌ **Reviewer would need >1 hour to review** → Too large, split into smaller increments.
 - ❌ **"I'll break it up later"** → NO. Plan increments BEFORE coding (use `superpowers:brainstorming`).
 
+**Documentation Lookup & Model Knowledge:**
+- ❌ **"I remember the API from my training"** → DANGEROUS. Model knowledge may be outdated. Use WebSearch to verify current syntax.
+- ❌ **"This library hasn't changed"** → ASSUMPTION. Libraries evolve constantly. Check official docs for current version.
+- ❌ **"I'll figure it out by trial and error"** → WASTE OF TIME. 2 minutes of WebSearch beats 20 minutes of debugging wrong APIs.
+- ❌ **"Documentation lookup is for research-agent"** → NO. Research-agent does 2-8 hour architectural investigations. WebSearch for API docs is 2-5 minutes.
+- ❌ **"Model knowledge is good enough"** → NO. Model cutoff is January 2025. Use WebSearch for libraries released/updated after cutoff or with frequent changes.
+- ❌ **"I'll just use what worked last time"** → RISKY. API may have deprecated, changed, or improved. Verify against current docs.
+
 **Git Troubleshooting**: If auth/permission errors → Read github skills, try `gh auth switch`, verify with `gh auth status`.
 
 ## After Using This Template
@@ -386,7 +420,7 @@ After completing implementation:
 
 ---
 
-*Template Version: 2.3.0 - Enhanced with Superpowers + Context Management + Git/GitHub Workflow + Incremental PR Strategy*
+*Template Version: 2.4.0 - Enhanced with Superpowers + Context Management + Git/GitHub Workflow + Incremental PR Strategy + Documentation Lookup First*
 *Role: coder-agent*
-*Part of Wolf Skills Marketplace v2.3.0*
-*Integrations: 6 Superpowers development workflow skills + wolf-context-management + git/GitHub best practices + incremental PR framework*
+*Part of Wolf Skills Marketplace v2.4.0*
+*Integrations: 6 Superpowers development workflow skills + wolf-context-management + git/GitHub best practices + incremental PR framework + WebSearch-first documentation guidance*

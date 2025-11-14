@@ -1,7 +1,7 @@
 ---
 name: wolf-principles
 description: Wolf's 10 core principles for agent behavior and system design
-version: 1.1.0
+version: 1.2.0
 triggers:
   - "wolf principles"
   - "core principles"
@@ -60,19 +60,51 @@ QA Agent: Verifies functionality and tests
 
 ### 3. Research-Before-Code
 
-**Principle**: All implementation work must be preceded by structured research and evidence-based recommendations.
+**Principle**: All implementation work must be preceded by structured research and evidence-based recommendations. This applies at **TWO levels**:
+1. **Level 1 - Architectural Research** (research-agent, 2-8 hours): "Should we use this approach?"
+2. **Level 2 - Documentation Lookup** (coder-agent, 2-5 minutes): "How do I use this library's current API?"
 
 **Implementation**:
+
+**Level 1 - Architectural Research:**
 - Mandatory Research Agent analysis before any coding begins
 - Structured research comments with evidence, findings, and advised solutions
 - `research` label as a blocking gate for implementation
 - Implementation must align with or justify deviations from research
+- Time scale: 2-8 hours for feasibility, approach, and architecture decisions
+
+**Level 2 - Documentation Lookup:**
+- Use WebSearch/WebFetch for official API documentation before using libraries
+- Verify syntax/patterns against authoritative sources (not model memory)
+- Check for breaking changes, new features, and current best practices
+- Look up version-specific documentation matching your project
+- Time scale: 2-5 minutes per library (prevents "cold start" coding from memory)
+
+**Why Two Levels:**
+- **Level 1** addresses *unknown unknowns* (architectural risks, feasibility)
+- **Level 2** addresses *known unknowns* (current API syntax, recent changes)
+- Both prevent wasted implementation time from outdated assumptions
 
 **Example Application**:
 ```
 Task: Add authentication to API
-Research Phase: Analyze existing auth patterns, security requirements, compliance needs
-Implementation Phase: Follow research recommendations with explicit justification for any deviations
+
+Level 1 - Architectural Research (research-agent, 4 hours):
+- Analyze existing auth patterns, security requirements, compliance needs
+- Compare JWT vs OAuth2 vs Passport.js approaches
+- Evaluate security implications, scalability, maintenance burden
+- Deliver recommendation: "Use Passport.js with JWT strategy"
+→ Output: ADR documenting decision and rationale
+
+Level 2 - Documentation Lookup (coder-agent, 3 minutes):
+- WebSearch "passport.js jwt strategy official documentation 2025"
+- WebFetch https://www.passportjs.org/packages/passport-jwt/
+- Verify: Current version is 4.0.1, check for breaking changes from 3.x
+- Review: Example code for JWT verification and token extraction
+→ Output: Implementation using current, verified API patterns
+
+Result: Implementation informed by both architectural research (Level 1)
+and current documentation (Level 2), avoiding both strategic and tactical errors.
 ```
 
 ### 4. Advisory-First Enforcement

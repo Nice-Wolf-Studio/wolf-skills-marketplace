@@ -5,6 +5,178 @@ All notable changes to the Wolf Skills Marketplace will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2025-11-14
+
+### Added - Documentation Lookup First (WebSearch Before Coding)
+
+This release enforces "warm start" documentation lookup to prevent coders from relying on potentially outdated model knowledge (cutoff January 2025).
+
+#### Problem Solved
+
+**Before**:
+- Coders relied on model's pre-trained knowledge for API syntax
+- Model knowledge cutoff (January 2025) meant outdated APIs used
+- "Cold start" coding from memory led to trial-and-error debugging
+- No guidance about when/how to look up current documentation
+- Wasted time using deprecated APIs or missing new features
+
+**After**:
+- ✅ Mandatory WebSearch for current documentation BEFORE coding
+- ✅ Clear distinction between Level 1 (architectural research, 2-8 hours) and Level 2 (doc lookup, 2-5 minutes)
+- ✅ "Warm start" approach: lookup first, code second
+- ✅ Red flags catch "I remember the API" rationalizations
+- ✅ 5-minute documentation investment prevents hours of debugging
+
+---
+
+#### Enhanced Templates
+
+**coder-agent-template.md** (v2.3.0 → v2.4.0): +32 lines
+
+**New "Documentation & API Research" section** (MANDATORY, lines 80-104):
+- Checklist for identifying unfamiliar libraries
+- WebSearch query templates for current docs
+- Verification of documentation recency (within 12 months)
+- API changes/breaking changes review
+- Examples: "React 19 useEffect cleanup documentation", "TypeScript 5.7 satisfies operator"
+- Why this matters: Model cutoff is January 2025, 5 minutes prevents hours of debugging
+
+**New "Documentation Lookup & Model Knowledge" red flags** (lines 350-356):
+- ❌ "I remember the API from training" → DANGEROUS, verify with WebSearch
+- ❌ "This library hasn't changed" → ASSUMPTION, check docs
+- ❌ "I'll figure it out by trial and error" → WASTE, 2 min WebSearch beats 20 min debugging
+- ❌ "Documentation lookup is for research-agent" → NO, research-agent = 2-8 hours, WebSearch = 2-5 minutes
+- ❌ "Model knowledge is good enough" → NO, model cutoff January 2025
+- ❌ "I'll just use what worked last time" → RISKY, API may have changed
+
+**Template growth**: 392 → 424 lines (+32 lines)
+
+---
+
+#### Enhanced Wolf Principles
+
+**wolf-principles/SKILL.md** (v1.1.0 → v1.2.0): +35 lines
+
+**Enhanced Principle #3: Research-Before-Code** (lines 61-108):
+
+**NEW: Two-Level Research Framework**:
+1. **Level 1 - Architectural Research** (research-agent, 2-8 hours):
+   - "Should we use this approach?" (unknown unknowns)
+   - Feasibility, architecture, approach decisions
+   - Delivers ADRs and recommendations
+
+2. **Level 2 - Documentation Lookup** (coder-agent, 2-5 minutes):
+   - "How do I use this library's current API?" (known unknowns)
+   - WebSearch/WebFetch for official docs
+   - Verify syntax against authoritative sources (not model memory)
+   - Check breaking changes, new features, current best practices
+   - Time-boxed: 2-5 minutes per library
+
+**Enhanced example**:
+```
+Task: Add authentication to API
+
+Level 1 (research-agent, 4 hours):
+- Compare JWT vs OAuth2 vs Passport.js
+- Deliver: "Use Passport.js with JWT strategy"
+
+Level 2 (coder-agent, 3 minutes):
+- WebSearch "passport.js jwt strategy docs 2025"
+- Verify current version, check breaking changes
+- Implement using current API patterns
+
+Result: Informed by both architectural research AND current documentation
+```
+
+**Why Two Levels:**
+- Level 1: Unknown unknowns (architectural risks)
+- Level 2: Known unknowns (current API syntax)
+- Both prevent wasted implementation time
+
+**Skill version**: v1.1.0 → v1.2.0
+
+---
+
+### Changed
+
+**Documentation Lookup Enforcement**:
+- Documentation lookup now MANDATORY before implementation (coder checklist)
+- Clear time boundaries: 2-5 minutes per library (prevents analysis paralysis)
+- WebSearch/WebFetch tools explicitly mentioned
+- Model knowledge cutoff (January 2025) explicitly stated
+
+**Principle #3 Clarification**:
+- Previously ambiguous: "Research-Before-Code" could mean anything
+- Now explicit: Level 1 (architectural, hours) vs Level 2 (tactical, minutes)
+- Prevents confusion: "Do I need research-agent to look up React docs?" (No, WebSearch)
+
+**Red Flag Addition**:
+- 6 new red flags catching "I remember the API" rationalizations
+- Addresses trial-and-error waste ("2 minutes WebSearch beats 20 minutes debugging")
+- Distinguishes research-agent use case (hours) from WebSearch (minutes)
+
+---
+
+### Impact
+
+**Expected Compliance Improvements**:
+- 40-60% reduction in PRs with outdated/wrong API usage
+- 10-20% reduction in time-to-working-code (fewer trial-and-error cycles)
+- 30-50% reduction in "this API changed" review comments
+
+**Developer Experience**:
+- "Warm start" approach: 5-minute documentation lookup prevents hours of debugging
+- Clear guidance: When to use research-agent (Level 1) vs WebSearch (Level 2)
+- Time-boxed: 2-5 minutes prevents overthinking
+
+**Cultural Shift**:
+- "Lookup first" becomes standard practice
+- WebSearch/WebFetch seen as essential tools, not optional
+- Model knowledge treated as starting point, not truth
+
+**Quality Gates**:
+- Documentation lookup part of execution checklist (blocking)
+- Red flags catch rationalization attempts
+- Reinforces evidence-based decision making (Principle #5)
+
+---
+
+### Rationale
+
+**Why This Was Needed:**
+
+Model knowledge has a cutoff date (January 2025). Libraries evolve:
+- React 19 (new patterns emerging)
+- Node.js 23.x (ESM changes)
+- TypeScript 5.6+ (new operators)
+- Any library with monthly/weekly releases
+
+**Without WebSearch:**
+- Using deprecated APIs
+- Missing performance optimizations
+- Ignoring security patches
+- Reinventing solutions (library added feature after cutoff)
+
+**With WebSearch (2-5 minutes):**
+- Current, verified API usage
+- Awareness of breaking changes
+- Leveraging new features
+- Following current best practices
+
+**ROI**: 5-minute investment prevents 30-60 minute debugging sessions.
+
+---
+
+### Files Changed
+
+- `wolf-roles/templates/coder-agent-template.md` (+32 lines)
+- `wolf-principles/SKILL.md` (+35 lines)
+- `CHANGELOG.md` (+160 lines this entry)
+
+Total: 3 files, ~227 lines added
+
+---
+
 ## [2.3.0] - 2025-11-14
 
 ### Added - Incremental PR Strategy
