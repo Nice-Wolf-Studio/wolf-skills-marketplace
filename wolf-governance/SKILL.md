@@ -106,6 +106,14 @@ Implementers:
   - No direct commits to default branches
   - Project conventions respected (templates, naming)
   - Prefer `gh` CLI over `git` commands where available
+- ✅ PR is appropriately sized (incremental PR strategy)
+  - <500 lines of actual code (excluding tests/docs)
+  - <30 files changed
+  - Provides stand-alone value (can merge without breaking main)
+  - Can be explained in 2 sentences (clear, focused scope)
+  - Can be reviewed in <1 hour
+  - If multi-PR feature: Sequence documented in first PR
+  - Reference: `wolf-workflows/incremental-pr-strategy.md`
 
 **SHOULD have** (strong recommendation):
 - 📊 Performance benchmarks met

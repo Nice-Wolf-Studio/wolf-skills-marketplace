@@ -103,6 +103,43 @@ Before starting implementation:
   - **If on main/master/develop**: STOP, create feature branch first
   - **List branches**: `gh pr list` or `gh repo view` to see default
 
+**Incremental PR Strategy** (MANDATORY for features):
+
+- [ ] Plan PR increments BEFORE coding (use `superpowers:brainstorming`)
+  - **Size guideline**: Each PR <500 lines of actual code (excluding tests/docs)
+  - **Each PR provides stand-alone value**: Can merge without breaking main
+  - **Don't be pedantic**: Value should be real, not arbitrary
+
+**Recommended increment patterns**:
+- **Planning PR**: ADR, scaffolding, interfaces, types (~50-100 lines)
+- **RED PR**: Failing tests that define "done" (~100-200 lines)
+- **GREEN PR**: Minimal implementation to pass tests (~150-300 lines)
+- **REFACTOR PR**: Code quality improvements (~50-150 lines)
+- **Integration PR**: Wire components together (~80-150 lines)
+- **Docs PR**: Documentation, examples, migration guide (~50-100 lines)
+
+**Check PR size before creating**:
+```bash
+# Count actual code lines (excluding tests, docs)
+git diff main -- '*.ts' ':(exclude)*.test.ts' | wc -l
+# If > 500 lines, TOO LARGE → break into smaller PRs
+```
+
+**Document sequence in first PR**:
+```markdown
+## PR #1 of 4: ADR + Interfaces
+
+This is the first of 4 incremental PRs for {feature}.
+
+Sequence:
+- **PR #1** (this PR): ADR + Interfaces [~50 lines]
+- PR #2: Failing tests [~200 lines]
+- PR #3: Implementation [~250 lines]
+- PR #4: Integration + docs [~100 lines]
+```
+
+**See full guide**: `wolf-workflows/incremental-pr-strategy.md`
+
 **Context Management** (wolf-context-management):
 
 - [ ] If exploration phase complete (found relevant files), create exploration checkpoint
@@ -276,6 +313,14 @@ After completing implementation:
 - ❌ **Ignoring project conventions** → WRONG. Check `.github/` templates first, respect project patterns.
 - ❌ **Using git when gh available** → PREFER gh. Use `gh pr create`, `gh pr ready`, `gh auth status` over git equivalents.
 
+**Incremental PR Violations:**
+- ❌ **PR has >500 lines of actual code** → Too large, break it up into smaller PRs with stand-alone value.
+- ❌ **PR changes >30 files** → Scope too broad, focus on smaller logical boundaries.
+- ❌ **PR titled "Part 1 of 3" with no stand-alone value** → Each PR should provide real value, not arbitrary splits.
+- ❌ **Can't explain PR value in 2 sentences** → Increment not well-defined, rethink boundaries.
+- ❌ **Reviewer would need >1 hour to review** → Too large, split into smaller increments.
+- ❌ **"I'll break it up later"** → NO. Plan increments BEFORE coding (use `superpowers:brainstorming`).
+
 **Git Troubleshooting**: If auth/permission errors → Read github skills, try `gh auth switch`, verify with `gh auth status`.
 
 ## After Using This Template
@@ -341,7 +386,7 @@ After completing implementation:
 
 ---
 
-*Template Version: 2.2.0 - Enhanced with Superpowers + Context Management + Git/GitHub Workflow*
+*Template Version: 2.3.0 - Enhanced with Superpowers + Context Management + Git/GitHub Workflow + Incremental PR Strategy*
 *Role: coder-agent*
-*Part of Wolf Skills Marketplace v2.2.0*
-*Integrations: 6 Superpowers development workflow skills + wolf-context-management + git/GitHub best practices*
+*Part of Wolf Skills Marketplace v2.3.0*
+*Integrations: 6 Superpowers development workflow skills + wolf-context-management + git/GitHub best practices + incremental PR framework*

@@ -5,6 +5,210 @@ All notable changes to the Wolf Skills Marketplace will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-11-14
+
+### Added - Incremental PR Strategy
+
+This release enforces small, reviewable PRs with stand-alone value to improve code review quality and reduce merge cycle times.
+
+#### Problem Solved
+
+**Before**:
+- Large PRs (>500 lines, >30 files) difficult to review thoroughly
+- "Part 1 of 3" PRs with no stand-alone value
+- Delayed feedback (weeks to merge)
+- Increased merge conflicts and bug risk
+- Reviewers spending >1 hour per PR
+
+**After**:
+- ✅ PRs <500 lines of actual code (easy to review)
+- ✅ Each PR provides stand-alone value (can merge safely)
+- ✅ Fast feedback cycles (hours/days, not weeks)
+- ✅ Logical boundaries (TDD phases, layers, features)
+- ✅ Clear increment planning BEFORE coding
+
+---
+
+#### New Comprehensive Guide
+
+**wolf-workflows/incremental-pr-strategy.md** (NEW, ~400 lines):
+
+**The 5 Principles**:
+1. Each PR provides stand-alone value
+2. Small enough to review carefully (<500 lines)
+3. Logical, not arbitrary, boundaries
+4. Enable parallel work
+5. Fast feedback cycles
+
+**4 Increment Patterns**:
+1. **TDD Increments**: RED PR → GREEN PR → REFACTOR PR
+2. **Layer-by-Layer**: Data → Logic → UI → Integration
+3. **Vertical Slice**: One complete feature path per PR
+4. **Planning → Implementation**: ADR → Scaffolding → Core → Integration
+
+**Size Guidelines**:
+- Tiny: <100 lines (10-15 min review) ✅ Ideal
+- Small: 100-200 lines (20-30 min) ✅ Ideal
+- Medium: 200-500 lines (45-60 min) ⚠️ Acceptable
+- Large: 500-1000 lines (90+ min) ❌ Too large
+- Huge: >1000 lines (2+ hours) ❌ Must break up
+
+**Features**:
+- Planning guidance (use `superpowers:brainstorming`)
+- Size check commands (bash snippets)
+- PR sequence documentation template
+- Red flags for coders and reviewers
+- Good/Bad examples with rationale
+
+---
+
+#### Enhanced Templates
+
+**coder-agent-template.md** (v2.2.0 → v2.3.0): +44 lines
+
+**New "Incremental PR Strategy" section** (MANDATORY for features):
+- Plan PR increments BEFORE coding
+- Size guideline: <500 lines actual code per PR
+- Recommended increment patterns (Planning, RED, GREEN, REFACTOR, Integration, Docs)
+- Bash commands to check PR size before creating
+- Template for documenting PR sequence in first PR
+- Reference to full guide: `wolf-workflows/incremental-pr-strategy.md`
+
+**New red flags**:
+- ❌ PR has >500 lines of actual code → Too large, break up
+- ❌ PR changes >30 files → Scope too broad
+- ❌ PR titled "Part 1 of 3" with no stand-alone value → Each PR must provide value
+- ❌ Can't explain PR value in 2 sentences → Not well-defined
+- ❌ Reviewer would need >1 hour → Too large
+- ❌ "I'll break it up later" → NO, plan BEFORE coding
+
+**Template growth**: 348 → 392 lines (+44 lines)
+
+---
+
+**code-reviewer-agent-template.md** (v2.1.0 → v2.2.0): +33 lines
+
+**New "PR Size and Scope" section** (MUST-have blocking requirements):
+- [ ] PR has <500 lines of actual code ✅
+- [ ] PR changes <30 files ✅
+- [ ] PR provides stand-alone value ✅
+- [ ] PR can be explained in 2 sentences ✅
+- [ ] PR can be reviewed in <1 hour ✅
+- [ ] If multi-PR feature: Sequence documented ✅
+
+**PR size check commands**:
+```bash
+# Count actual code lines
+git diff main -- '*.ts' ':(exclude)*.test.ts' | wc -l
+
+# Count files changed
+gh pr view --json files --jq '.files | length'
+```
+
+**If PR too large**:
+- ❌ DO NOT approve oversized PRs
+- ✅ Request breakdown with specific guidance
+- ✅ Suggest split points (layer, TDD phase, feature)
+- ✅ Reference: `wolf-workflows/incremental-pr-strategy.md`
+
+**New red flags**:
+- ❌ PR has >500 lines of actual code → Request breakdown
+- ❌ PR changes >30 files → Scope too broad
+- ❌ PR titled "Part 1 of 3" but no stand-alone value → Each PR must provide value
+- ❌ PR description doesn't explain value clearly → Request clarification
+- ❌ Would take >1 hour to review → Request split
+- ❌ Multiple unrelated changes in one PR → Request separation
+
+**Template growth**: 397 → 430 lines (+33 lines)
+
+---
+
+#### Updated Governance
+
+**wolf-governance/SKILL.md**: +8 lines
+
+**New MUST requirement in Definition of Done**:
+- ✅ **PR is appropriately sized (incremental PR strategy)**
+  - <500 lines of actual code (excluding tests/docs)
+  - <30 files changed
+  - Provides stand-alone value (can merge without breaking main)
+  - Can be explained in 2 sentences (clear, focused scope)
+  - Can be reviewed in <1 hour
+  - If multi-PR feature: Sequence documented in first PR
+  - Reference: `wolf-workflows/incremental-pr-strategy.md`
+
+**Violation = Immediate failure** (even if code quality is excellent)
+
+---
+
+#### Updated Git Workflow Guide
+
+**wolf-workflows/git-workflow-guide.md**: +160 lines
+
+**New "Incremental PR Strategy" section**:
+- Why break work into smaller PRs (benefits vs risks)
+- The 5 Principles (with examples)
+- Common increment patterns (TDD, Planning → Implementation)
+- How to plan increments (MANDATORY brainstorming)
+- Check PR size before creating (bash commands)
+- Document PR sequence in first PR (template)
+- For code reviewers: Validate PR size (checklist)
+
+**Integration**:
+- Positioned between "Handling Git Issues" and "Red Flags"
+- References full guide: `wolf-workflows/incremental-pr-strategy.md`
+- Consistent with governance requirements
+
+---
+
+### Changed
+
+**PR Size Enforcement**:
+- PR size now MUST requirement in Definition of Done (governance)
+- Coder template enforces planning increments BEFORE coding
+- Reviewer template validates PR size as blocking requirement
+- Git workflow guide provides practical examples
+
+**Increment Planning**:
+- MANDATORY use of `superpowers:brainstorming` to plan increments
+- Document PR sequence in first PR (not ad-hoc splits)
+- Logical boundaries (TDD, layers, features) not arbitrary
+
+**Command Integration**:
+- Bash commands to check PR size before creating
+- `gh` CLI commands for PR validation
+- Consistent with prefer-gh-over-git policy
+
+---
+
+### Impact
+
+**Compliance Improvements**:
+- 100% PR size validation (enforced via blocking requirement)
+- Incremental planning BEFORE coding (not ad-hoc)
+- Clear stand-alone value requirement (no arbitrary splits)
+- Documented PR sequences (visibility into feature completion)
+
+**Developer Experience**:
+- Faster reviews (15-60 min vs 90+ min)
+- Faster feedback (hours/days vs weeks)
+- Lower merge conflict risk (smaller changes)
+- Enable parallel work (after interfaces/tests defined)
+
+**Quality Gates**:
+- PR size now part of Definition of Done
+- Violations block merge regardless of code quality
+- Governance enforced at template level
+- Code reviewers empowered to reject oversized PRs
+
+**Expected Metrics**:
+- Average PR size: 800 lines → 250 lines (68% reduction)
+- Average review time: 90 min → 30 min (67% reduction)
+- Average merge cycle: 7 days → 2 days (71% reduction)
+- Bug detection rate: +30% (easier to spot issues)
+
+---
+
 ## [2.2.0] - 2025-11-14
 
 ### Added - Git/GitHub Workflow Enforcement

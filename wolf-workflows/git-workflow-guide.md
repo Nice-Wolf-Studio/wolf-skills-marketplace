@@ -565,6 +565,169 @@ fi
 
 ---
 
+## Incremental PR Strategy
+
+**Why Break Work into Smaller PRs?**
+
+Large PRs (>500 lines) are:
+- ❌ Hard to review carefully (>1 hour review time)
+- ❌ More likely to have bugs missed
+- ❌ Block other work while in review
+- ❌ Increase merge conflicts
+- ❌ Delay feedback by days/weeks
+
+Small PRs (<500 lines) are:
+- ✅ Fast to review (15-60 minutes)
+- ✅ Easier to find bugs
+- ✅ Faster merge cycles
+- ✅ Enable parallel work
+- ✅ Feedback in hours/days, not weeks
+
+### The 5 Principles
+
+1. **Each PR Provides Stand-Alone Value**
+   - Test: "Can this PR merge to main without breaking anything?"
+   - Good: "Add user authentication API endpoints (no UI yet)"
+   - Bad: "Part 1 of 3: Half of authentication"
+
+2. **Small Enough to Review Carefully**
+   - Ideal: <200 lines code (15-30 min review)
+   - Acceptable: 200-500 lines (45-60 min)
+   - Too Large: >500 lines (reject, request breakdown)
+
+3. **Logical, Not Arbitrary, Boundaries**
+   - Good: After interfaces defined, after tests pass, after refactor
+   - Bad: "500 lines reached, time for PR!", "End of day Friday"
+
+4. **Enable Parallel Work**
+   - After interfaces defined, multiple devs can implement in parallel
+   - After tests written, implementation can be split
+
+5. **Fast Feedback Cycles**
+   - Monolithic: 14 days to merge, high risk
+   - Incremental: 5 days to merge (5 PRs × 1 day each), low risk
+
+### Common Increment Patterns
+
+**Pattern 1: TDD Increments**
+```
+PR #1: RED - Failing Tests [~200 lines]
+  What: All tests FAIL (expected)
+  Value: Defines "done" for feature
+
+PR #2: GREEN - Minimal Implementation [~150 lines]
+  What: All tests now PASS
+  Value: Feature works (not optimized)
+
+PR #3: REFACTOR - Code Quality [~80 lines]
+  What: Extract utilities, improve naming
+  Value: Quality improved, tests still pass
+```
+
+**Pattern 2: Planning → Implementation**
+```
+PR #1: ADR + Interfaces [~50 lines]
+  What: Decision doc + TypeScript interfaces
+  Value: Direction clear, contracts defined
+
+PR #2: Scaffolding [~100 lines]
+  What: File structure, empty implementations
+  Value: Architecture visible, imports work
+
+PR #3: Core Logic [~200 lines]
+  What: Main implementation
+  Value: Feature functional
+
+PR #4: Integration + Docs [~80 lines]
+  What: Wire to existing code, add docs
+  Value: Complete feature, documented
+```
+
+### How to Plan Increments (Before Coding)
+
+**MANDATORY**: Use `superpowers:brainstorming` to plan increments before coding.
+
+**Planning Steps**:
+1. List all changes needed for feature
+2. Group into logical boundaries (layers, TDD phases, vertical slices)
+3. Order by dependencies (interfaces first, impl second, integration last)
+4. Validate each provides stand-alone value
+5. Document sequence in first PR
+
+**Example Planning Session**:
+```markdown
+Feature: User Authentication
+
+**Increment Plan** (planned BEFORE coding):
+1. PR #1: ADR + Interfaces (~50 lines) - Decisions + contracts
+2. PR #2: Tests (RED) (~200 lines) - Define "done"
+3. PR #3: Implementation (GREEN) (~250 lines) - Make tests pass
+4. PR #4: Integration (~100 lines) - Wire to existing auth system
+5. PR #5: Docs + Examples (~80 lines) - Usage guide
+
+Total: ~680 lines across 5 PRs (avg 136 lines/PR)
+Each PR: Stand-alone value, <1 hour review
+```
+
+### Check PR Size Before Creating
+
+**Always check size before creating PR**:
+```bash
+# Count actual code lines (excluding tests, docs)
+git diff main -- '*.ts' ':(exclude)*.test.ts' ':(exclude)*.md' | wc -l
+
+# Count files changed
+git diff --name-only main | wc -l
+
+# If >500 lines or >30 files: TOO LARGE → Break it up
+```
+
+**If PR is too large, STOP**:
+- ❌ Don't create the PR yet
+- ✅ Use `superpowers:brainstorming` to plan breakdown
+- ✅ Create multiple smaller PRs instead
+- ✅ Document the sequence in first PR
+
+### Document PR Sequence (In First PR)
+
+**Always document the sequence in the first PR description**:
+
+```markdown
+## PR #1 of 4: ADR + Interfaces
+
+This is the first of 4 incremental PRs for User Authentication.
+
+**Sequence**:
+- **PR #1** (this PR): ADR + Interfaces [~50 lines]
+- PR #2: Failing tests [~200 lines]
+- PR #3: Implementation [~250 lines]
+- PR #4: Integration + docs [~100 lines]
+
+**Why breaking it up**:
+- Each PR <500 lines (easier to review)
+- Each PR provides value (not arbitrary splits)
+- Enables parallel work after PR #2 merges
+```
+
+### For Code Reviewers: Validate PR Size
+
+**During review, check**:
+- [ ] PR <500 lines of actual code ✅
+- [ ] PR <30 files changed ✅
+- [ ] PR provides stand-alone value ✅
+- [ ] PR explainable in 2 sentences ✅
+- [ ] Review will take <1 hour ✅
+
+**If PR too large**:
+- ❌ DO NOT approve
+- ✅ Request breakdown with specific guidance
+- ✅ Suggest split points (layer, TDD phase, feature)
+- ✅ Reference: `wolf-workflows/incremental-pr-strategy.md`
+
+**For detailed guide, see**: `wolf-workflows/incremental-pr-strategy.md`
+
+---
+
 ## Red Flags - STOP 🛑
 
 ### For Coder Agents

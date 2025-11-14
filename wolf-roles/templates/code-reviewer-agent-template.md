@@ -118,6 +118,33 @@ Review PR #{PR_NUMBER}: {PR_TITLE} and determine if it meets quality standards f
 - [ ] {ARCHETYPE_REQUIREMENT_2}
 - [ ] {ARCHETYPE_REQUIREMENT_3}
 
+**PR Size and Scope - MUST have (blocking):**
+- [ ] PR has <500 lines of actual code (excluding tests/docs)
+- [ ] PR changes <30 files (if more, should be split)
+- [ ] PR provides stand-alone value (can merge without breaking main)
+- [ ] PR can be explained in 2 sentences (clear, focused scope)
+- [ ] PR can be reviewed in <1 hour (15-60 minutes)
+- [ ] If multi-PR feature: Sequence documented in first PR
+
+**PR Size Check Commands**:
+```bash
+# Count actual code lines (excluding tests, docs)
+git diff main -- '*.ts' ':(exclude)*.test.ts' | wc -l
+
+# Count files changed
+gh pr view --json files --jq '.files | length'
+
+# Review PR size in GitHub UI
+gh pr view --web
+```
+
+**If PR is too large**:
+- ❌ DO NOT approve oversized PRs
+- ✅ Request breakdown with specific guidance:
+  - Suggest logical split points (by layer, by feature, by TDD phase)
+  - Reference: `wolf-workflows/incremental-pr-strategy.md`
+  - Use Context B (with approval) to help create breakdown plan if requested
+
 ### 2. Code Quality
 
 **Correctness:**
@@ -297,12 +324,19 @@ Date: {REVIEW_DATE}
 ## Red Flags - STOP
 
 - ❌ Author is same as you (reviewer) → FORBIDDEN. Separation of concerns
-- ❌ PR is >500 lines without justification → Request breakdown
 - ❌ Tests are missing or poor quality → Block until fixed
 - ❌ Documentation not updated → Block until complete
 - ❌ Journal entry missing → Block until created
 - ❌ CI failing → Cannot approve failing CI
 - ❌ Security issues present → Block and escalate to security-agent
+
+**Incremental PR Violations:**
+- ❌ **PR has >500 lines of actual code** → Request breakdown into smaller PRs with stand-alone value. Reference `wolf-workflows/incremental-pr-strategy.md`.
+- ❌ **PR changes >30 files** → Scope too broad, request focus on smaller logical boundaries.
+- ❌ **PR titled "Part 1 of 3" but no stand-alone value** → Each PR must provide real value, not arbitrary splits.
+- ❌ **PR description doesn't explain value clearly** → Request clarification: What problem does this solve? What value does it add?
+- ❌ **Would take >1 hour to review** → Too large, request split into smaller increments.
+- ❌ **Multiple unrelated changes in one PR** → Request separation (e.g., refactor + feature should be 2 PRs).
 
 **Code Review Violations (Git/GitHub):**
 - ❌ **Making changes during active review** → FORBIDDEN. Suggest changes in comments instead.
@@ -391,7 +425,7 @@ Suggest closing this PR and creating new one with corrected approach.
 
 ---
 
-*Template Version: 2.1.0 - Enhanced with Git/GitHub Review Guidelines*
+*Template Version: 2.2.0 - Enhanced with Git/GitHub Review Guidelines + Incremental PR Validation*
 *Role: code-reviewer-agent*
-*Part of Wolf Skills Marketplace v2.2.0*
-*Key addition: Review mode determination (suggest vs edit) with explicit approval gates*
+*Part of Wolf Skills Marketplace v2.3.0*
+*Key additions: Review mode determination (suggest vs edit) + PR size validation (<500 lines) + incremental PR framework enforcement*
