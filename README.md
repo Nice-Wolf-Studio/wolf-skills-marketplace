@@ -2,7 +2,7 @@
 
 Custom Wolf Agent skills and integration tools marketplace for Claude Code.
 
-**64 total skills** across 5 plugin collections, combining Wolf Agent framework knowledge with comprehensive development tooling.
+**66 total skills** across 5 plugin collections, combining Wolf Agent framework knowledge with comprehensive development tooling.
 
 ## Overview
 
@@ -11,19 +11,20 @@ This marketplace provides five plugin collections optimized for skill discovery 
 ### 1. Wolf Core (`wolf-core@wolf-skills-marketplace`)
 
 Core Wolf Agent behavioral framework (7 skills):
-- **wolf-principles** - Wolf's 10 core principles for agent behavior and system design
+- **wolf-principles** (v1.1.0) - Wolf's 10 core principles for agent behavior and system design
 - **wolf-archetypes** - Behavioral archetypes for automatic agent adaptation based on work type
 - **wolf-governance** - Governance framework, compliance rules, quality gates, and process standards
-- **wolf-roles** - Guidance for 50+ specialized Wolf agent roles with responsibilities and collaboration patterns
-- **wolf-instructions** - Four-level instruction cascading system (Global → Domain → Project → Role)
+- **wolf-roles** (v1.2.0) - Guidance for 50+ specialized Wolf agent roles with 8 role templates and collaboration patterns
+- **wolf-instructions** (v1.1.0) - Four-level instruction cascading system (Global → Domain → Project → Role)
 - **wolf-verification** - Three-layer verification architecture (CoVe, HSP, RAG) for self-verification
-- **wolf-adr** - Architecture Decision Records index with searchable topics and phase-based organization
+- **wolf-adr** (v1.1.0) - Architecture Decision Records index with searchable topics and phase-based organization
 
 ### 2. Wolf Automation (`wolf-automation@wolf-skills-marketplace`)
 
-Agent coordination and automation scripts (2 skills):
-- **wolf-scripts-core** - Core automation scripts for archetype selection, evidence validation, quality scoring
-- **wolf-scripts-agents** - Agent coordination, orchestration, and multi-agent workflow management scripts
+Agent coordination and automation scripts (3 skills):
+- **wolf-scripts-core** (v1.1.0) - Core automation scripts for archetype selection, evidence validation, quality scoring
+- **wolf-scripts-agents** (v1.1.0) - Agent coordination, orchestration, and multi-agent workflow management scripts
+- **wolf-workflows** (v1.0.0) - Multi-agent workflow templates for feature development, security review, and bugfix processes
 
 ### 3. Integrations (`integrations@wolf-skills-marketplace`)
 
@@ -203,18 +204,26 @@ wolf-skills-marketplace/
 │   └── SKILL.md                      # Agent coordination
 ├── wolf-scripts-core/
 │   └── SKILL.md                      # Core automation
-└── wolf-verification/
-    └── SKILL.md                      # Verification architecture
+├── wolf-verification/
+│   └── SKILL.md                      # Verification architecture
+└── wolf-workflows/
+    ├── SKILL.md                      # Workflow orchestration
+    └── templates/                    # Workflow templates
+        ├── feature-workflow-template.md
+        ├── security-workflow-template.md
+        └── bugfix-workflow-template.md
 ```
 
 ## Skill Statistics
 
-- **Total Skills**: 64
+- **Total Skills**: 66
 - **Plugin Collections**: 5
-- **Wolf Framework Skills**: 11 (core + automation)
+- **Wolf Framework Skills**: 12 (7 core + 3 automation + wolf + wolf-master)
 - **Integration Skills**: 2 (databento, discord)
 - **3D Development Skills**: 51 (three.js, ECS, React)
 - **Productivity Skills**: 1 (daily-summary)
+- **Workflow Templates**: 3 (feature, security, bugfix)
+- **Role Templates**: 8 (pm, coder, code-reviewer, security, qa, architect, research, devops)
 
 All skills include:
 - ✅ Semantic versioning
@@ -242,6 +251,23 @@ MIT
 Jeremy Miranda - Nice Wolf Studio
 
 ## Changelog
+
+**v3.0.0** (2025-11-14) - Phase 3: Skill-Chaining Patterns
+- Added wolf-workflows skill with 3 multi-agent workflow templates
+- Enhanced 5 Wolf skills with skill-chaining patterns (v1.0.0 → v1.1.0):
+  - wolf-scripts-core: Added "Red Flags - STOP", skill chains, verification checklist
+  - wolf-scripts-agents: Added "Red Flags - STOP", skill chains, verification checklist
+  - wolf (master skill): Complete skill chain diagram, decision tree, updated skill listings
+  - wolf-instructions: Added cascade resolution patterns, "Red Flags - STOP"
+  - wolf-adr: Added "When ADRs Are REQUIRED vs OPTIONAL", comprehensive Good/Bad examples
+- Created 4 new role templates (qa-agent, architect-agent, research-agent, devops-agent)
+- Created 3 workflow templates (feature-workflow, security-workflow, bugfix-workflow)
+- All enhanced skills include:
+  - Explicit "REQUIRED NEXT SKILL" callouts for mandatory skill chains
+  - "After Using This Skill" section with skill-chaining guidance
+  - Good/Bad examples showing compliance vs violations
+  - Verification checklists with pass/fail criteria
+- Total: 66 skills (12 Wolf framework + 54 others) across 5 plugin collections
 
 **v2.0.0** (2025-11-14)
 - Added threejs-ecs plugin (51 skills for 3D game development)

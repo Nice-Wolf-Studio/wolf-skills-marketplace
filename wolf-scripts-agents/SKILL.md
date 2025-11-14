@@ -1,15 +1,14 @@
 ---
 name: wolf-scripts-agents
-description: Use when coordinating multiple agents or managing workflows - provides agent orchestration patterns including unified executor interface, multi-phase workflow management with lens integration, file scope enforcement, async mailbox communication, and structured signal parsing for agent handoffs
-version: 1.0.1
+description: Agent coordination, orchestration, and multi-agent workflow management scripts
+version: 1.1.0
 category: agent-coordination
 triggers:
-  - "agent orchestration"
-  - "multi-agent workflows"
-  - "workflow coordination"
-  - "agent handoffs"
-  - "scope enforcement"
-  - "mailbox communication"
+  - agent orchestration
+  - workflow coordination
+  - multi-agent
+  - agent execution
+  - agent validation
 dependencies:
   - wolf-roles
   - wolf-archetypes
@@ -665,12 +664,279 @@ All agent coordination scripts in `/agents/shared/scripts/`:
 
 ---
 
-**Last Updated**: October 2025 (Phase 50+)
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+- ❌ **"I can coordinate agents manually without scripts"** - STOP. Manual coordination doesn't scale and loses state. Use workflow orchestrator for multi-agent work.
+- ❌ **"Scripts are overkill for simple workflows"** - NO. Even "simple" multi-agent workflows have handoffs, state, and failures. Scripts provide resilience.
+- ❌ **"Automation can wait until later"** - FORBIDDEN. "Later" means never. Set up orchestration from the start or face coordination chaos.
+- ❌ **"Agent scope validation is too restrictive"** - Wrong. Scope boundaries prevent interference and maintain separation of concerns. Violating scope = breaking governance.
+- ❌ **"Mailbox system is unnecessary overhead"** - False. Async communication enables decoupled agents and audit trails. Direct coordination breaks under load.
+- ❌ **"One agent can do multiple roles to save time"** - FORBIDDEN. Role mixing violates governance. Use orchestrator to coordinate multiple agents properly.
+
+**STOP. Use the appropriate coordination script BEFORE proceeding.**
+
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+```
+Integration with Wolf role-based system
+```
+
+1. **REQUIRED SKILL**: Use **wolf-roles** to understand agent boundaries
+   - **Why**: Coordination scripts enforce role boundaries. Must understand role definitions to use orchestration properly.
+   - **When**: Before using `orchestrate-workflow.mjs` or `validate-agent-changes.mjs`
+   - **MCP Tool**: `mcp__wolf-knowledge__get_role_guidance({ role_name: "agent-role" })`
+   - **Example**: Before orchestrating pm-agent → coder-agent → reviewer-agent workflow, load each role's responsibilities
+
+2. **RECOMMENDED SKILL**: Use **wolf-governance** for workflow quality gates
+   - **Why**: Workflows must enforce governance at each phase. Understanding gates ensures compliance.
+   - **When**: When designing custom workflows or modifying existing workflow definitions
+   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "quality gates" })`
+
+3. **DURING WORK**: Coordination scripts enable multi-agent collaboration
+   - Scripts orchestrate agent interactions throughout complex workflows
+   - Use scripts at handoff points and phase transitions
+   - Continuous state management for long-running workflows
+
+### Verification Checklist
+
+Before claiming multi-agent coordination complete:
+
+- [ ] Used workflow orchestrator for multi-agent coordination (not manual coordination)
+- [ ] Validated agent file scope boundaries before allowing changes (`validate-agent-changes.mjs`)
+- [ ] Set up mailbox communication for async handoffs (if workflow requires it)
+- [ ] Documented workflow state and phases (saved state after each phase)
+- [ ] All agents stayed within their defined file scopes (no role boundary violations)
+- [ ] Workflow resumable from any phase (state persistence working)
+
+**Can't check all boxes? Coordination incomplete. Return to this skill.**
+
+### Good/Bad Examples: Multi-Agent Coordination
+
+#### Example 1: Proper Workflow Orchestration
+
+<Good>
+**Task**: Implement feature #123 through complete pipeline (intake → PM curation → implementation → review → QA → release)
+
+**Script Execution**:
+```bash
+$ node orchestrate-workflow.mjs --workflow=issue-to-release --issue=123
+
+Starting workflow: issue-to-release
+Issue: #123 - Add user authentication
+Lenses detected: security, observability
+
+Phase 1: intake-agent (triage)
+  ✅ Issue triaged successfully
+  ✅ Labels applied: feature, security
+  ✅ Archetype recommended: product-implementer
+  ✅ State saved
+
+Phase 2: pm-agent (curate)
+  ✅ Acceptance criteria defined
+  ✅ Incremental shards created (#123-1, #123-2)
+  ✅ Technical context documented
+  ✅ State saved
+
+Phase 3: coder-agent (implement)
+  ✅ Implementation complete
+  ✅ PR created: #456
+  ✅ Security lens requirements met (threat model, security tests)
+  ✅ File scope validated: all changes in src/**/* (allowed for coder-agent)
+  ✅ State saved
+
+Phase 4: reviewer-agent (review)
+  ✅ Code review complete
+  ✅ Governance checks passed (DoD complete)
+  ✅ Security lens validated
+  ✅ Approved
+  ✅ State saved
+
+Phase 5: qa-agent (test)
+  ✅ E2E tests passing
+  ✅ Security scans clean
+  ✅ Observability lens validated (metrics, monitoring)
+  ✅ State saved
+
+Phase 6: release-agent (deploy)
+  ✅ Deployed to staging
+  ✅ Smoke tests passing
+  ✅ Production deployment complete
+  ✅ Workflow complete ✅
+
+Total time: 2.5 hours
+All phases completed successfully
+```
+
+**Why this is correct**:
+- Used workflow orchestrator instead of manual coordination
+- Each agent stayed within scope (validated at each phase)
+- Lenses (security, observability) automatically integrated
+- State saved after each phase (workflow resumable)
+- Complete audit trail of all agent actions
+- Handoffs automatic and documented
+
+**Benefits**:
+- No dropped work between agents
+- No scope violations
+- Governance enforced at each phase
+- Resumable if any phase fails
+- Complete traceability
+</Good>
+
+<Bad>
+**Task**: Same feature implementation #123
+
+**Manual Approach**: "I'll just coordinate manually"
+
+**Actions**:
+```
+Developer: "Let me implement this feature myself across all phases"
+
+1. Manual triage: Skipped (assumed feature type)
+2. Manual PM work: Wrote quick acceptance criteria in memory
+3. Implementation:
+   ❌ Modified files in agents/roles/pm-agent/templates/ (scope violation - coder touching PM files)
+   ❌ Modified .github/workflows/review.yml (scope violation - coder touching reviewer config)
+   ❌ Modified test/ and src/ together (mixed coder + qa concerns)
+4. Self-review: "Looks good to me" (governance violation - no separation)
+5. Manual deploy: Pushed directly to main
+
+Result:
+❌ No archetype selection (wrong behavioral profile)
+❌ No lens integration (security requirements missed)
+❌ Scope violations broke PM templates (PM agent now fails)
+❌ Scope violations broke review workflows (all PRs now fail review)
+❌ No governance enforcement (DoD skipped)
+❌ No state tracking (no resume capability)
+❌ No audit trail (can't determine what broke)
+❌ Self-approval violates governance
+❌ Direct to main bypasses all gates
+
+Outcome: 3 other agents broke, 2 days debugging, emergency rollback, team demoralized
+```
+
+**What Should Have Been Done**:
+Used `orchestrate-workflow.mjs` which would have:
+- ✅ Enforced agent scope boundaries
+- ✅ Prevented PM template modifications by coder
+- ✅ Prevented review workflow modifications by coder
+- ✅ Required separate qa-agent for testing
+- ✅ Required separate reviewer-agent for approval
+- ✅ Integrated security lens automatically
+- ✅ Saved state for resume
+- ✅ Created audit trail
+- ✅ Enforced governance at each phase
+</Bad>
+
+#### Example 2: Agent Scope Validation
+
+<Good>
+**PR #456** from coder-agent
+**Files changed**:
+```
+src/auth/login.ts
+src/auth/logout.ts
+src/auth/session.ts
+test/auth/login.test.ts
+test/auth/session.test.ts
+package.json
+```
+
+**Validation**:
+```bash
+$ node validate-agent-changes.mjs --agent=coder-agent --pr=456
+
+Validating changes for coder-agent...
+Allowed patterns: src/**/* lib/**/* components/**/* test/**/* *.test.* *.spec.* package.json tsconfig.json *.config.js
+
+Checking files:
+  ✅ src/auth/login.ts (matches: src/***)
+  ✅ src/auth/logout.ts (matches: src/***)
+  ✅ src/auth/session.ts (matches: src/***)
+  ✅ test/auth/login.test.ts (matches: test/**/* AND *.test.*)
+  ✅ test/auth/session.test.ts (matches: test/**/* AND *.test.*)
+  ✅ package.json (matches: package.json)
+
+Validation passed ✅
+6/6 files within coder-agent scope
+```
+
+**Result**: PR allowed to proceed. No scope violations.
+</Good>
+
+<Bad>
+**PR #457** from coder-agent
+**Files changed**:
+```
+src/auth/login.ts
+agents/roles/pm-agent/templates/feature-template.md
+.github/workflows/review.yml
+docs/GOVERNANCE.md
+README.md
+```
+
+**Validation**:
+```bash
+$ node validate-agent-changes.mjs --agent=coder-agent --pr=457
+
+Validating changes for coder-agent...
+Allowed patterns: src/**/* lib/**/* components/**/* test/**/* *.test.* *.spec.* package.json tsconfig.json *.config.js
+
+Checking files:
+  ✅ src/auth/login.ts (matches: src/***)
+  ❌ agents/roles/pm-agent/templates/feature-template.md
+     Violation: File outside coder-agent scope
+     This file belongs to: pm-agent
+     Reason: PM templates are PM agent's responsibility
+  ❌ .github/workflows/review.yml
+     Violation: File outside coder-agent scope
+     This file belongs to: reviewer-agent
+     Reason: Review workflows are reviewer agent's responsibility
+  ❌ docs/GOVERNANCE.md
+     Violation: File outside coder-agent scope
+     This file belongs to: pm-agent
+     Reason: Governance docs are PM agent's responsibility
+  ❌ README.md
+     Violation: File outside coder-agent scope
+     This file belongs to: pm-agent (or documentation-agent)
+     Reason: Top-level docs are PM/docs agent's responsibility
+
+Validation failed ❌
+1/5 files within scope
+4/5 files violate scope boundaries
+
+BLOCKING: This PR cannot be merged until scope violations are resolved.
+
+Recommended actions:
+1. Remove changes to PM templates, review workflows, and docs
+2. OR: Create separate PRs from appropriate agents:
+   - pm-agent PR for template and governance doc changes
+   - reviewer-agent PR for review workflow changes
+   - documentation-agent PR for README changes
+```
+
+**Result**: PR blocked. Developer must split changes across appropriate agent roles.
+
+**Why this is correct**:
+- Scope validation caught cross-cutting changes
+- Prevented coder from modifying PM agent's files
+- Prevented coder from modifying reviewer agent's files
+- Enforced separation of concerns
+- Provided clear remediation guidance
+
+**If validation had been skipped**:
+- PM templates would have been modified by non-PM agent
+- Review workflow would have been broken by non-reviewer agent
+- Governance docs would have been modified without proper review
+- Future agent work would have failed due to broken templates/workflows
+</Bad>
+
+---
+
+**Last Updated**: 2025-11-14
+**Phase**: Superpowers Skill-Chaining Enhancement v2.0.0
 **Maintainer**: Wolf Orchestration Team
-
-## Changelog
-
-### 1.0.1 (2025-11-14)
-- Enhanced frontmatter with orchestration pattern emphasis
-- Improved description to highlight lens integration and signal parsing
-- Added scope enforcement and mailbox communication to triggers

@@ -1,15 +1,14 @@
 ---
 name: wolf-adr
-description: Use when making architectural decisions or researching system evolution - searchable index of 120+ Architecture Decision Records organized by topics and phases; includes critical decisions (MCP knowledge-first pivot, verification architecture, workflow standards) with context, consequences, and living architecture snapshot
-version: 1.0.1
+description: Architecture Decision Records index with searchable topics and phase-based organization (120+ ADRs from 50+ phases)
+version: 1.1.0
 category: architecture
 triggers:
-  - "architecture decision"
-  - "ADR lookup"
-  - "design rationale"
-  - "technical decisions"
-  - "system evolution"
-  - "architectural patterns"
+  - architecture decision
+  - ADR
+  - design decision
+  - technical decision
+  - system design
 dependencies:
   - wolf-principles
 size: large
@@ -469,17 +468,306 @@ const principles = await mcp__wolf-knowledge__query_principles({
 
 ---
 
+## When ADRs Are REQUIRED vs OPTIONAL
+
+### REQUIRED (MUST create ADR)
+
+✅ **Architectural Changes:**
+- Changing system architecture or major component structure
+- Adding/removing services or significant dependencies
+- Modifying data flow or integration patterns
+- Infrastructure architecture decisions
+
+✅ **Process Changes:**
+- Modifying Wolf's core workflows or methodology
+- Changing governance policies or quality gates
+- Updating agent role definitions or responsibilities
+- Altering approval hierarchies or authority matrix
+
+✅ **Tool Selections:**
+- Choosing between competing technologies or frameworks
+- Adopting new core dependencies (databases, frameworks, etc.)
+- Changing build systems or CI/CD platforms
+- MCP server architecture decisions
+
+✅ **Security Decisions:**
+- Authentication/authorization approaches
+- Security architecture or threat mitigation strategies
+- Compliance framework changes
+
+### OPTIONAL (Consider creating ADR)
+
+⚠️ **Significant Patterns:**
+- New code patterns that will be reused across codebase
+- Design patterns that affect multiple components
+- Performance optimization strategies
+
+⚠️ **Experimental Approaches:**
+- Research spikes with significant findings
+- Proof-of-concept results that inform future direction
+
+### NOT REQUIRED (Skip ADR)
+
+❌ **Trivial Decisions:**
+- Bug fixes (use journal entry instead)
+- Refactoring without behavior change (use journal entry)
+- Minor code cleanup or formatting
+- Documentation updates (unless process change)
+
+❌ **Implementation Details:**
+- Variable naming conventions
+- File organization within existing structure
+- Code comment standards
+
+**Rule of Thumb**: If the decision affects future work or needs to be understood months later by different agents, create an ADR.
+
+---
+
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+- ❌ **"ADRs are optional documentation"** - NO. ADRs are REQUIRED for architectural, process, and tool decisions. They prevent repeated debates.
+- ❌ **"I'll write the ADR later"** - FORBIDDEN. ADRs must be created BEFORE or DURING decision-making, not after. Later = never.
+- ❌ **"This decision is too small for an ADR"** - Wrong metric. If it affects future work or needs historical context, ADR is required.
+- ❌ **"I can modify an accepted ADR"** - NO. Accepted ADRs are immutable. Create a new superseding ADR instead.
+- ❌ **"ADR format doesn't matter"** - False. Wolf has a standard ADR format. Follow it for consistency and discoverability.
+
+**STOP. Create ADR using standard format BEFORE making architectural/process decisions.**
+
+## After Using This Skill
+
+**RECOMMENDED NEXT STEPS:**
+
+```
+ADRs document decisions - used for context and reference
+```
+
+1. **Creating an ADR**: Use wolf-governance for quality gates
+   - **When**: Before making architectural/process/tool decisions
+   - **Why**: ADRs are part of Definition of Done for architectural changes
+   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "ADR requirements" })`
+
+2. **Understanding Decisions**: Use wolf-principles for decision framework
+   - **When**: Evaluating alternatives for ADR
+   - **Why**: Principles guide decision-making (e.g., Research-First, Evidence-Based)
+   - **MCP Tool**: `mcp__wolf-knowledge__query_principles({ principle_id: 5 })` (Evidence-Based Decisions)
+
+3. **No specific next skill**: ADRs are referenced throughout work
+   - This skill provides ADR index and navigation
+   - wolf-governance specifies when ADRs are required
+   - wolf-principles guide ADR content (alternatives, consequences)
+
+### ADR Creation Checklist
+
+Before claiming ADR complete:
+
+- [ ] Status clearly marked (Proposed, Accepted, Superseded, Deprecated)
+- [ ] Context section explains WHY decision is needed (not just WHAT)
+- [ ] Decision section documents WHAT was chosen AND WHY
+- [ ] Consequences section lists tradeoffs and impacts (positive AND negative)
+- [ ] Alternatives Considered section documents rejected options with rationale
+- [ ] Related ADRs linked (if decision builds on or supersedes previous ADRs)
+- [ ] ADR follows standard format (Context → Problem → Decision → Consequences → Alternatives)
+
+**Can't check all boxes? ADR incomplete. Return to this skill.**
+
+### Good/Bad Examples: ADR Quality
+
+#### Example 1: Well-Structured ADR
+
+<Good>
+**ADR-072: GitHub Actions Workflow Standards**
+
+**Status**: Accepted
+**Date**: 2025-10-15
+**Deciders**: DevOps Team, Code Reviewers
+**Related ADRs**: ADR-071 (CI Workflow Optimization), ADR-056 (Composite Actions)
+
+---
+
+## Context
+
+GitHub Actions workflows across WolfAgents had a 37% failure rate due to:
+1. Missing checkout steps (37% of failures)
+2. Incorrect API field usage (100% failure when wrong fields used)
+3. Undeclared permissions causing authorization failures
+
+Investigation of 43 workflows revealed systemic anti-patterns. Need standardized patterns to prevent infrastructure failures.
+
+## Problem Statement
+
+How do we prevent recurring workflow failures caused by missing checkout steps, incorrect GitHub API usage, and permission errors?
+
+## Decision
+
+**Mandate the following standards for all GitHub Actions workflows:**
+
+1. **Mandatory Checkout Step:**
+   ```yaml
+   - uses: actions/checkout@v4  # MUST be first step
+   ```
+   Rationale: Without checkout, workflows cannot access repository files.
+
+2. **Correct API Field Names:**
+   - Use `closingIssuesReferences` not `closes` for gh pr view
+   - Use `labels` not `label` for gh issue view
+   Rationale: GitHub CLI expects specific field names; typos cause 100% failure.
+
+3. **Explicit Permissions:**
+   ```yaml
+   permissions:
+     contents: read
+     pull-requests: write
+     issues: write
+   ```
+   Rationale: Prevent authorization failures with least-privilege declarations.
+
+## Consequences
+
+**Positive:**
+- ✅ Eliminates 37% of workflow failures (missing checkout)
+- ✅ Prevents 100% failure rate from API field typos
+- ✅ Clear permission boundaries prevent security issues
+- ✅ Reusable pattern across all 43+ workflows
+
+**Negative:**
+- ⚠️ Requires updating all existing workflows (one-time cost)
+- ⚠️ Adds 3-5 lines to each workflow (minimal verbosity)
+
+## Alternatives Considered
+
+**Alternative 1:** Documentation only (no enforcement)
+- Rejected: Documentation alone didn't prevent recurring failures
+- Teams repeatedly forgot checkout step despite documentation
+
+**Alternative 2:** Pre-commit hooks to validate workflows
+- Rejected: Hooks can be bypassed; workflow validation happens too late
+- Better to mandate in CI template
+
+**Alternative 3:** Composite action wrapper
+- Rejected: Hides checkout step, makes debugging harder
+- Mandatory explicit step is more transparent
+
+---
+
+## References
+- Issue #789: 37% workflow failure analysis
+- PR #845: Workflow standards implementation
+- docs/governance/workflow-validation.md
+
+---
+
+**Why this is excellent**:
+- ✅ Context explains WHY (failure rates, specific problems)
+- ✅ Decision documents WHAT + WHY + HOW (with code examples)
+- ✅ Consequences lists both positive AND negative impacts
+- ✅ Alternatives explained with rejection rationale
+- ✅ Quantified impact (37% failure rate, 100% API field failures)
+- ✅ Related ADRs linked for context
+- ✅ References provide evidence trail
+</Good>
+
+<Bad>
+**ADR-999: Use Docker**
+
+**Status**: Proposed
+**Date**: 2025-10-20
+
+---
+
+## Context
+
+We should use Docker.
+
+## Decision
+
+Use Docker for containerization.
+
+## Consequences
+
+It will be good.
+
+---
+
+**Why this is terrible**:
+- ❌ No context about WHY Docker is needed
+- ❌ No problem statement (what problem does Docker solve?)
+- ❌ Decision lacks rationale (WHY Docker vs alternatives?)
+- ❌ "It will be good" is not a consequence (no tradeoffs, no specifics)
+- ❌ No alternatives considered (why not Podman, VMs, native execution?)
+- ❌ No related ADRs (surely there are related infra decisions?)
+- ❌ No references (no evidence, no analysis)
+- ❌ Not enough detail to understand decision months later
+
+**What this should include**:
+```markdown
+## Context
+Current code execution happens on host machine, causing:
+1. Security concerns (untrusted code access to host)
+2. Resource contention (no isolation between jobs)
+3. Dependency conflicts (version mismatches)
+
+Analyzed 200+ execution failures: 45% due to dependency conflicts, 30% resource contention.
+
+## Problem Statement
+How do we provide isolated, reproducible code execution environments with resource limits and security boundaries?
+
+## Decision
+Use Docker containers for code execution with:
+- Resource limits (CPU, memory, disk quotas)
+- Network isolation
+- Filesystem restrictions
+- Capability dropping
+
+Rationale:
+- Industry standard (widespread knowledge, tooling)
+- Strong isolation model (namespaces, cgroups)
+- Reproducible environments (Dockerfile = config as code)
+- Resource control (native cgroup support)
+
+## Consequences
+Positive:
+- ✅ Eliminates 45% of dependency conflict failures
+- ✅ Prevents resource contention (isolated CPU/memory)
+- ✅ Stronger security boundaries (container escape harder than process escape)
+- ✅ Reproducible across dev/CI/prod
+
+Negative:
+- ⚠️ Adds Docker dependency (ops overhead)
+- ⚠️ Container startup latency (200-500ms vs instant process)
+- ⚠️ Increased disk usage (images ~100-500MB)
+- ⚠️ Requires Docker daemon (privilege escalation risk)
+
+## Alternatives Considered
+1. **Podman**: rootless containers
+   - Rejected: Less mature tooling, team unfamiliar
+   - May revisit if Docker security concerns grow
+
+2. **VMs (Firecracker)**: microVMs
+   - Rejected: Higher overhead (2-3 second startup)
+   - Overkill for current security requirements
+
+3. **Native Execution with chroot**: OS-level isolation
+   - Rejected: Weaker isolation, no resource limits
+   - Insufficient for untrusted code
+
+## References
+- Spike results: docs/research/containerization-spike-2025-10.md
+- Security analysis: docs/security/execution-isolation-threats.md
+- Performance benchmarks: docs/benchmarks/container-overhead.md
+```
+
+Now THAT would be an acceptable ADR.
+</Bad>
+
+---
+
 **Total ADRs**: 120+
 **Active ADRs**: ~70
 **Archived ADRs**: ~50
 **Living Documents**: 1 (current-architecture)
 
-**Last Updated**: October 2025 (Phase 50+)
+**Last Updated**: 2025-11-14
+**Phase**: Superpowers Skill-Chaining Enhancement v2.0.0
 **Maintainer**: Architecture Team
-
-## Changelog
-
-### 1.0.1 (2025-11-14)
-- Enhanced frontmatter with searchable index emphasis
-- Improved description to highlight critical decisions and living snapshot
-- Added design rationale and system evolution to triggers

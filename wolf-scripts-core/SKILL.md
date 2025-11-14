@@ -1,15 +1,14 @@
 ---
 name: wolf-scripts-core
-description: Use when automating issue triage or validating work - provides battle-tested automation patterns for archetype selection (keyword/pattern scoring), evidence validation (priority-based conflict resolution), curator rubric (reproducible 1-10 scoring), and safe bash execution (shellcheck + pattern validation)
-version: 1.0.1
+description: Core automation scripts for archetype selection, evidence validation, quality scoring, and safe bash execution
+version: 1.1.0
 category: automation
 triggers:
-  - "archetype selection automation"
-  - "evidence validation"
-  - "quality scoring rubric"
-  - "issue triage"
-  - "bash script validation"
-  - "requirement conflicts"
+  - archetype selection
+  - evidence validation
+  - quality scoring
+  - curator rubric
+  - bash validation
 dependencies:
   - wolf-archetypes
   - wolf-governance
@@ -457,12 +456,195 @@ All core scripts are in `/agents/shared/scripts/`:
 
 ---
 
-**Last Updated**: October 2025 (Phase 50+)
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+- ❌ **"Skipping automated checks to save time"** - STOP. Automation exists because manual checks fail. Scripts catch what humans miss. Use the automation.
+- ❌ **"Manual validation is good enough"** - NO. Manual validation is inconsistent and error-prone. Scripts provide reproducible validation every time.
+- ❌ **"Scripts are just helpers, not requirements"** - Wrong. These scripts encode battle-tested logic from 50+ phases. They ARE requirements.
+- ❌ **"I can select archetypes manually faster"** - False. Manual selection misses patterns and lacks confidence scoring. Use `select-archetype.mjs`.
+- ❌ **"Evidence validation can wait until PR review"** - FORBIDDEN. Waiting until PR review wastes reviewer time. Validate BEFORE creating PR.
+- ❌ **"Curator rubric scoring is optional"** - NO. Quality gates depend on rubric scores. All issues must be scored before pm-ready.
+
+**STOP. Use the appropriate automation script BEFORE proceeding.**
+
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+```
+Integration with Wolf skill chain
+```
+
+1. **RECOMMENDED SKILL**: Use **wolf-archetypes** to understand archetype definitions
+   - **Why**: Scripts automate archetype selection. Understanding archetypes ensures correct interpretation of results.
+   - **When**: After using `select-archetype.mjs` to understand selected archetype's requirements
+   - **MCP Tool**: `mcp__wolf-knowledge__find_archetype({ labels: [...], description: "..." })`
+
+2. **RECOMMENDED SKILL**: Use **wolf-governance** to understand quality gates
+   - **Why**: Scripts enforce governance. Understanding gates ensures compliance.
+   - **When**: After using `curator-rubric.mjs` or `evidence-validator.mjs`
+   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "quality gates" })`
+
+3. **DURING WORK**: Scripts provide continuous automation
+   - Scripts are called throughout workflow (intake, validation, execution)
+   - No single "next skill" - scripts integrate into existing chains
+   - Use scripts at appropriate workflow stages
+
+### Verification Checklist
+
+Before claiming script-based automation complete:
+
+- [ ] Used appropriate automation script for task (archetype selection, evidence validation, rubric scoring, or bash validation)
+- [ ] Validated confidence scores before proceeding (for archetype selection, require >70% confidence)
+- [ ] Documented script execution and results in journal or PR description
+- [ ] Evidence requirements tracked and validated (for evidence-validator usage)
+- [ ] No validation warnings ignored (all errors and warnings addressed)
+
+**Can't check all boxes? Automation incomplete. Return to this skill.**
+
+### Good/Bad Examples: Script Usage
+
+#### Example 1: Archetype Selection
+
+<Good>
+**Issue #456: Add rate limiting to API endpoints**
+**Labels**: `feature`, `performance`
+
+**Script Execution**:
+```bash
+$ node select-archetype.mjs --issue 456
+
+Results:
+  product-implementer: 45% (keywords: add, feature)
+  perf-optimizer: 72% (keywords: performance, rate limiting; patterns: throughput)
+
+Selected: perf-optimizer (confidence: 72%)
+✅ Confidence above threshold (70%)
+```
+
+**Agent Action**:
+✅ Accepted perf-optimizer archetype
+✅ Loaded perf-optimizer evidence requirements (benchmarks, profiling, performance tests)
+✅ Documented selection rationale in journal
+✅ Proceeded with performance-focused implementation
+
+**Why this is correct**:
+- Used automation script instead of manual guess
+- Validated confidence score before accepting
+- Selected archetype matches work characteristics (performance focus)
+- Evidence requirements automatically loaded
+</Good>
+
+<Bad>
+**Issue #457: Fix login button**
+**Labels**: `bug`
+
+**Manual Selection**: "It's obviously a bug fix, so reliability-fixer"
+
+**Problems**:
+❌ Skipped automation script
+❌ No confidence scoring
+❌ Missed that issue title/description mention "button doesn't display" (could be CSS issue = maintainability-refactorer)
+❌ No evidence requirements loaded
+❌ No documentation of selection rationale
+
+**What Should Have Been Done**:
+```bash
+$ node select-archetype.mjs --issue 457
+
+Results:
+  reliability-fixer: 38% (keywords: fix, bug)
+  maintainability-refactorer: 54% (patterns: display issue, CSS)
+
+Selected: maintainability-refactorer (confidence: 54%)
+⚠️ Low confidence - recommend human review
+```
+
+**Outcome**: Agent would have identified this as UI/styling issue, not logic bug.
+</Bad>
+
+#### Example 2: Evidence Validation Workflow
+
+<Good>
+**PR #789: Optimize database query performance**
+**Archetype**: perf-optimizer
+**Lenses**: observability
+
+**Script Execution**:
+```bash
+$ node evidence-validator.mjs --archetype perf-optimizer --lenses observability
+
+Loading requirements...
+  ✅ Archetype requirements (priority: 2): benchmarks, profiling, performance tests
+  ✅ Observability lens (priority: 1): metrics, monitoring, alerting
+
+Validating evidence...
+  ✅ Benchmarks provided: before/after query times
+  ✅ Profiling data: flame graph showing bottleneck
+  ✅ Performance tests: 47 tests passing, 15% latency improvement
+  ✅ Metrics: added query_duration_ms metric
+  ✅ Monitoring: added query performance dashboard
+  ✅ Alerting: added slow query alert (>500ms)
+
+All requirements met ✅
+```
+
+**Agent Action**:
+✅ Evidence validator ran before PR creation
+✅ All requirements from archetype + lens validated
+✅ PR included complete evidence package
+✅ Reviewer approved without requesting additional evidence
+
+**Why this is correct**:
+- Automated validation caught all requirements
+- Combined archetype + lens requirements properly
+- Evidence complete before PR review
+- No wasted reviewer time
+</Good>
+
+<Bad>
+**PR #790: Add caching layer**
+**Archetype**: perf-optimizer
+**Lenses**: security
+
+**Manual Check**: "I added benchmarks, should be good"
+
+**Problems**:
+❌ Skipped evidence-validator script
+❌ Didn't realize security lens adds requirements (threat model, security scan)
+❌ Missing security evidence for caching layer
+❌ Missing several perf-optimizer requirements (profiling, comprehensive tests)
+
+**PR Review**:
+❌ Reviewer requested: threat model for cache poisoning
+❌ Reviewer requested: security scan for cache key vulnerabilities
+❌ Reviewer requested: comprehensive performance tests
+❌ Reviewer requested: cache eviction profiling
+
+**Outcome**: 3 review cycles, 2 weeks delay, demoralized team
+
+**What Should Have Been Done**:
+```bash
+$ node evidence-validator.mjs --archetype perf-optimizer --lenses security
+
+❌ Validation failed:
+  Missing: Threat model (security lens requirement)
+  Missing: Security scan (security lens requirement)
+  Missing: Profiling data (archetype requirement)
+  Missing: Cache eviction tests (archetype requirement)
+
+Provided: Basic benchmarks only
+
+Evidence incomplete. Address missing requirements before PR creation.
+```
+
+**If script had been used**: All requirements identified upfront, evidence collected before PR, single review cycle.
+</Bad>
+
+---
+
+**Last Updated**: 2025-11-14
+**Phase**: Superpowers Skill-Chaining Enhancement v2.0.0
 **Maintainer**: Wolf Automation Team
-
-## Changelog
-
-### 1.0.1 (2025-11-14)
-- Enhanced frontmatter with automation pattern emphasis
-- Improved description to highlight battle-tested patterns and conflict resolution
-- Added issue triage and requirement conflicts to triggers

@@ -1,15 +1,14 @@
 ---
 name: wolf-instructions
-description: Use when resolving instruction conflicts or onboarding - implements four-level cascading system (Global → Domain → Project → Role) with priority-based conflict resolution; ensures consistent agent behavior across 43 roles while allowing environment-specific customization through 21 global + 3 domain + 3 project instruction files
-version: 1.0.1
+description: Four-level instruction cascading system (Global → Domain → Project → Role) with priority-based conflict resolution
+version: 1.1.0
 category: agent-coordination
 triggers:
-  - "instruction cascade"
-  - "instruction conflicts"
-  - "priority resolution"
-  - "role boundaries"
-  - "authority matrix"
-  - "agent coordination"
+  - instruction cascade
+  - agent instructions
+  - role boundaries
+  - authority matrix
+  - agent coordination
 dependencies:
   - wolf-roles
   - wolf-governance
@@ -646,6 +645,126 @@ Continue reading this role card for role-specific guidance.
 
 ---
 
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+- ❌ **"Global instructions override project instructions"** - BACKWARDS. Project instructions have HIGHEST priority. Project > Role > Domain > Global.
+- ❌ **"I can skip instruction loading to save time"** - FORBIDDEN. Instructions contain critical policies. Skipping them violates governance and security.
+- ❌ **"Instructions haven't changed since last session"** - Wrong assumption. Always re-read instructions at session start and after compaction.
+- ❌ **"Global policy can be overridden for convenience"** - NO. Security, governance, and identity verification are GLOBAL POLICY and cannot be overridden. Ever.
+- ❌ **"I'll just follow the instructions I remember"** - STOP. Memory is unreliable. Read current instruction files.
+
+**STOP. Load instructions in correct cascade order BEFORE proceeding.**
+
+## After Using This Skill
+
+**RECOMMENDED NEXT STEPS:**
+
+```
+Instructions provide context - used during workflow execution
+```
+
+1. **Integration with wolf-session-init**: Instructions are loaded as part of session initialization
+   - **When**: wolf-session-init Step 4 loads role-specific guidance, which includes instruction cascade
+   - **Why**: Ensures all agents have consistent context before starting work
+   - **This skill**: Provides detailed instruction hierarchy and conflict resolution rules
+
+2. **During Work**: Reference instructions for specific situations
+   - Identity verification: `identity-heartbeat.md` (every 5 minutes)
+   - Workflow transitions: `github-coordination.md`
+   - Security decisions: `security-and-compliance.md`
+   - Inter-agent communication: `communication.md`
+
+3. **No specific next skill**: Instructions are referenced throughout work, not a sequential step
+   - Use this skill to understand instruction hierarchy
+   - Use wolf-roles to see how instructions integrate with role cards
+   - Use wolf-governance for governance policies referenced in instructions
+
+### Cascade Resolution Checklist
+
+Before claiming instructions loaded correctly:
+
+- [ ] Read ALL 21 global instruction files (identity-heartbeat, github-coordination, authority-matrix, etc.)
+- [ ] Read relevant domain instruction (web.md, data.md, or ops.md based on role)
+- [ ] Read ALL 3 project instruction files (repository-operations, multi-instance-coordination, production-patterns)
+- [ ] Understand priority order for conflicts (Project > Role > Domain > Global)
+- [ ] Verified GLOBAL POLICY items cannot be overridden (security, governance, identity)
+
+**Can't check all boxes? Instruction loading incomplete. Return to this skill.**
+
+### Good/Bad Example: Instruction Priority Resolution
+
+<Good>
+**Scenario**: Indentation standard conflict
+
+**Instructions Found**:
+- Global (`global/code-standards.md`): "Use 2-space indentation for all code"
+- Domain (`domain/web.md`): "React projects use 2-space indentation"
+- Project (`project/production-patterns.md`): "This codebase uses 4-space indentation to match existing code"
+- Role (coder-agent role-card): No specific guidance
+
+**Agent Decision**:
+✅ Uses 4-space indentation (Project instruction wins)
+
+**Rationale Documented**:
+```markdown
+Conflict Resolution:
+- Global: 2-space
+- Domain: 2-space
+- Project: 4-space ← HIGHEST PRIORITY
+- Role: (none)
+
+Decision: Use 4-space indentation per Project instruction.
+Reason: Project-level instruction has highest priority in cascade.
+         Consistency with existing codebase takes precedence.
+```
+
+**Why this is correct**:
+- Correctly identified conflict across instruction levels
+- Applied priority order (Project > Domain > Global)
+- Documented decision with clear rationale
+- Maintains consistency with existing codebase
+</Good>
+
+<Bad>
+**Scenario**: Security override attempt
+
+**Instructions Found**:
+- Global (`global/security-and-compliance.md`): "GLOBAL POLICY: No plaintext secrets in code. Use environment variables."
+- Project (`project/production-patterns.md`): "For this specific microservice, hardcode API key for convenience"
+
+**Agent Decision**:
+❌ Hardcoded API key because "Project instruction has highest priority"
+
+**Why this is WRONG**:
+- GLOBAL POLICY items CANNOT be overridden
+- Security standards are non-overridable
+- Project instruction violates GLOBAL POLICY and should be rejected
+- Agent should escalate the conflicting instruction
+
+**What Should Have Been Done**:
+```markdown
+Conflict Detected:
+- Global: No plaintext secrets (GLOBAL POLICY - cannot override)
+- Project: Hardcode API key (VIOLATES GLOBAL POLICY)
+
+Decision: REJECT Project instruction. Follow Global policy.
+Reason: Security standards are GLOBAL POLICY and non-overridable.
+Action: Escalate to governance team - Project instruction needs correction.
+```
+
+**Correct Approach**:
+1. Identify GLOBAL POLICY violation
+2. Reject conflicting Project instruction
+3. Follow Global security policy
+4. Escalate to governance team
+5. Document why Project instruction was rejected
+6. Propose alternative (use environment variables)
+</Bad>
+
+---
+
 **Total Instruction Files**:
 - Global: 21 files
 - Domain: 3 files
@@ -654,13 +773,8 @@ Continue reading this role card for role-specific guidance.
 - Variants: Various stack-specific
 
 **Priority Levels**: 4 (Project > Role/Variant > Domain > Global)
+**EXCEPTION**: GLOBAL POLICY items (security, governance, identity) CANNOT be overridden
 
-**Last Updated**: October 2025 (Phase 50+)
+**Last Updated**: 2025-11-14
+**Phase**: Superpowers Skill-Chaining Enhancement v2.0.0
 **Maintainer**: Governance Team
-
-## Changelog
-
-### 1.0.1 (2025-11-14)
-- Enhanced frontmatter with cascading system emphasis
-- Improved description to highlight conflict resolution and file counts
-- Added instruction conflicts and priority resolution to triggers
