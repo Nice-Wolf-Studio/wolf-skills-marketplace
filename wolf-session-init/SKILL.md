@@ -282,6 +282,116 @@ Context Lost Event:
 
 **Why**: Initialization GUIDES work. Loading after starting = rework.
 
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+Session initialization is COMPLETE. You are now ready to begin work with full behavioral context.
+
+### RECOMMENDED NEXT SKILLS (depending on task):
+
+1. **If implementing code**: Use **wolf-workflows** to select appropriate workflow (feature, security, bugfix)
+   - **Why**: Workflows orchestrate multi-agent processes with decision gates
+   - **MCP Tool**: Load wolf-workflows skill to select template
+
+2. **If needs research**: Use **wolf-workflows bugfix or research patterns**
+   - **Why**: Research-before-code prevents wrong implementation
+   - **Pattern**: Time-boxed spikes with proof-of-concept
+
+3. **During implementation**: Use **wolf-verification** for checkpoint validation
+   - **Why**: Catch issues early rather than at review time
+   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "verification gates" })`
+
+4. **For architecture decisions**: Use **wolf-adr** to document decisions
+   - **Why**: Future teams need context for why decisions were made
+   - **Tool**: Load wolf-adr skill when making architectural choices
+
+### Optional Skills (context-dependent):
+
+- **wolf-instructions**: Load domain/project-specific guidance
+- **wolf-scripts-core**: Automated archetype/governance validation
+- **wolf-scripts-agents**: Multi-agent coordination scripts
+
+**Session initialization ALWAYS comes first. Other skills follow as needed.**
+
+---
+
+## Good/Bad Examples
+
+### Example 1: Proper Session Initialization
+
+<Good>
+**Scenario**: Agent starts new feature task
+
+**Agent Actions**:
+1. ✅ Loads wolf-session-init skill
+2. ✅ Runs `mcp__wolf-knowledge__query_principles({})` → Receives principles #1, #9
+3. ✅ Runs `mcp__wolf-knowledge__find_archetype({ labels: ["feature"], description: "Add user profile page" })` → Receives archetype: product-implementer
+4. ✅ Runs `mcp__wolf-knowledge__search_governance({ query: "definition of done" })` → Receives DoD: tests, docs, journal, review
+5. ✅ Runs `mcp__wolf-knowledge__get_role_guidance({ role_name: "coder-agent" })` → Receives role card with responsibilities
+6. ✅ Completes checklist: All 4 steps checked ✅
+7. ✅ Begins implementation with full context
+
+**Why GOOD**:
+- Followed 4-step protocol in order
+- Used MCP tools to load each component
+- Verified all gates before starting work
+- Has complete behavioral context (principles, archetype, governance, role)
+- Can articulate DoD, evidence requirements, and role boundaries
+</Good>
+
+---
+
+### Example 2: Skipped Initialization (Common Failure)
+
+<Bad>
+**Scenario**: Agent starts new feature task
+
+**Agent Actions**:
+1. ❌ Reads task description
+2. ❌ Immediately starts writing code without initialization
+3. ❌ Halfway through, realizes requirements unclear
+4. ❌ Guesses at architecture instead of following principles
+5. ❌ Completes implementation
+6. ❌ Code reviewer rejects: Missing tests, wrong archetype, violated governance
+7. ❌ 3 days of rework required
+
+**Why BAD**:
+- Skipped entire initialization protocol
+- Operated without principles (made arbitrary decisions)
+- No archetype selected (used wrong priorities and evidence requirements)
+- No governance loaded (didn't know DoD)
+- No role loaded (violated boundaries)
+- Result: Expensive rework that initialization would have prevented
+- **Time wasted**: 3 days vs 5 minutes of initialization
+</Bad>
+
+---
+
+### Example 3: Partial Initialization (Also Wrong)
+
+<Bad>
+**Scenario**: Agent starts bug fix task
+
+**Agent Actions**:
+1. ⚠️ Loads wolf-session-init skill
+2. ✅ Runs `mcp__wolf-knowledge__query_principles({})` → Receives principles
+3. ❌ Skips archetype selection ("I know it's a bug fix")
+4. ❌ Skips governance loading ("I'll check later")
+5. ✅ Runs `mcp__wolf-knowledge__get_role_guidance({ role_name: "coder-agent" })` → Receives role
+6. ❌ Starts implementation with partial context
+7. ❌ Code reviewer rejects: Missing regression test (governance requirement), wrong evidence type (archetype requirement)
+
+**Why BAD**:
+- Partial initialization is NOT sufficient
+- Assumed archetype without evidence-based selection (should be reliability-fixer, not generic)
+- Skipped governance (didn't know regression test required)
+- Each step builds on previous - missing steps = missing critical context
+- **Time wasted**: 1 day of rework vs 2 extra minutes to complete initialization
+</Bad>
+
+---
+
 ## Integration with Other Skills
 
 After completing session initialization, you may invoke other specialized skills:
@@ -344,6 +454,23 @@ No exceptions. No shortcuts. No assumptions.
 
 ---
 
+## Verification Checklist
+
+Before claiming session initialization is complete:
+
+- [ ] Ran `mcp__wolf-knowledge__query_principles({})` and received principles
+- [ ] Ran `mcp__wolf-knowledge__find_archetype({...})` and received archetype
+- [ ] Ran `mcp__wolf-knowledge__search_governance({...})` and received governance requirements
+- [ ] Ran `mcp__wolf-knowledge__get_role_guidance({...})` and received role card
+- [ ] Can articulate principles guiding this work
+- [ ] Can explain archetype and why it was selected
+- [ ] Can list Definition of Done requirements
+- [ ] Can describe role responsibilities and boundaries
+
+**Can't check all boxes? Initialization incomplete. Return to Step 1.**
+
+---
+
 *Last Updated: 2025-11-14*
-*Phase: Superpowers Skill-Chaining Enhancement v2.0.0*
-*Version: 1.0.0*
+*Phase: Skill-Chaining Enhancement v3.0.0*
+*Version: 1.1.0*
