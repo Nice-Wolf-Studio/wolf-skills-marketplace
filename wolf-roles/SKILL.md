@@ -339,11 +339,11 @@ If you catch yourself thinking:
 - ❌ **"This is outside my role, but I'll do it anyway"** - NO. Respect role boundaries. Escalate or hand off.
 - ❌ **"I can approve my own work since I'm the only one"** - FORBIDDEN. Separation of concerns is non-negotiable.
 - ❌ **"Roles are just documentation"** - NO. Roles define authority, boundaries, and collaboration patterns. Violating them breaks governance.
-- ❌ **"I'll skip the MCP tool and just remember my role"** - Wrong. Use `mcp__wolf-knowledge__get_role_guidance` to load current role card.
+- ❌ **"I'll skip loading the skill and just remember my role"** - Wrong. Use Skill tool to load wolf-roles to get current role card.
 - ❌ **"Handoff protocols are too formal"** - Handoffs prevent dropped work and context loss. Always follow the protocol.
 - ❌ **"I'm doing multiple roles to save time"** - STOP. Role mixing violates separation of concerns. Use orchestrator for coordination.
 
-**STOP. Use `mcp__wolf-knowledge__get_role_guidance({ role_name: "your-role" })` BEFORE proceeding.**
+**STOP. Use Skill tool to load wolf-roles BEFORE proceeding.**
 
 ## After Using This Skill
 
@@ -476,7 +476,7 @@ If role boundaries are unclear or conflicting:
 ```
 1. STOP work immediately
 2. Document the conflict in journal
-3. Use mcp__wolf-knowledge__get_role_guidance for both roles
+3. Use Skill tool to load wolf-roles and review guidance for both roles
 4. Check authority hierarchy (see Escalation Patterns section)
 5. Escalate to orchestrator-agent if unresolved
 6. Update role cards if pattern emerges

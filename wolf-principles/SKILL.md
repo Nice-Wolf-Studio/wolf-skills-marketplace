@@ -263,7 +263,7 @@ If you catch yourself thinking:
 - ❌ **"This conflicts with deadline pressure"** - Principles ENABLE speed by preventing rework. Skipping principles slows you down.
 - ❌ **"I'm just prototyping"** - Prototypes become production (always). Use Principle 9 (incremental value) even for experiments.
 
-**STOP. Use `mcp__wolf-knowledge__query_principles` BEFORE proceeding.**
+**STOP. Use Skill tool to load wolf-principles BEFORE proceeding.**
 
 ## After Using This Skill
 
@@ -276,17 +276,17 @@ Sequential skill chain - DO NOT skip steps
 1. **REQUIRED NEXT SKILL**: Use **wolf-archetypes** to determine behavioral archetype
    - **Why**: Principles are strategic guidance. Archetypes translate them into tactical requirements for your specific work type.
    - **Gate**: Cannot proceed to implementation without archetype selection
-   - **MCP Tool**: `mcp__wolf-knowledge__find_archetype({ labels: [...], description: "..." })`
+   - **Tool**: Use Skill tool to load wolf-archetypes
 
 2. **REQUIRED NEXT SKILL**: Use **wolf-governance** to identify quality gates
    - **Why**: Archetypes define priorities. Governance defines acceptance criteria and Definition of Done.
    - **Gate**: Cannot claim work complete without meeting governance requirements
-   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "quality gates" })`
+   - **Tool**: Use Skill tool to load wolf-governance
 
 3. **REQUIRED NEXT SKILL**: Use **wolf-roles** to understand collaboration patterns
    - **Why**: Work rarely happens in isolation. Roles define who does what and how handoffs occur.
    - **Gate**: Cannot proceed without understanding role boundaries
-   - **MCP Tool**: `mcp__wolf-knowledge__get_role_guidance({ role_name: "your-role" })`
+   - **Tool**: Use Skill tool to load wolf-roles
 
 **DO NOT PROCEED to implementation without completing steps 1-3.**
 

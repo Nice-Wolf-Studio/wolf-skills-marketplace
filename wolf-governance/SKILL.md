@@ -538,7 +538,7 @@ If you catch yourself thinking:
 - ❌ **"Documentation can wait until after merge"** - NO. Documentation is part of DoD. Must be complete BEFORE merge.
 - ❌ **"Merging my own PR is faster"** - FORBIDDEN. You cannot approve your own work (Authority Structure).
 
-**STOP. Use `mcp__wolf-knowledge__search_governance` to check compliance requirements BEFORE proceeding.**
+**STOP. Use Skill tool to load wolf-governance to check compliance requirements BEFORE proceeding.**
 
 ## After Using This Skill
 
@@ -551,7 +551,7 @@ Sequential skill chain - DO NOT skip steps
 1. **REQUIRED NEXT SKILL**: Use **wolf-roles** to understand role-specific compliance requirements
    - **Why**: Governance defines WHAT must be done. Roles define WHO does it and HOW.
    - **Gate**: Cannot execute governance without understanding role boundaries
-   - **MCP Tool**: `mcp__wolf-knowledge__get_role_guidance({ role_name: "your-role" })`
+   - **Tool**: Use Skill tool to load wolf-roles
    - **Example**: `pm-agent` validates acceptance criteria, `coder-agent` implements, `code-reviewer` approves
 
 2. **REQUIRED NEXT SKILL**: Use **wolf-verification** to set up verification checkpoints

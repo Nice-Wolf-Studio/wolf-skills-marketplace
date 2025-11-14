@@ -412,21 +412,17 @@ Wolf ADRs follow this structure:
 
 ---
 
-## Integration with Wolf MCP
+## Integration with Wolf Skills
 
-**wolf-knowledge-mcp** provides ADR querying:
-```typescript
-// Search governance rules (may include ADR references)
-const result = await mcp__wolf-knowledge__search_governance({
-  query: "workflow standards",
-  strict: false
-});
+**Wolf ADR skill** integrates with other Wolf skills:
 
-// Query principles (foundational to many ADRs)
-const principles = await mcp__wolf-knowledge__query_principles({
-  include_examples: true
-});
-```
+- **wolf-governance**: Search governance rules (may include ADR references)
+  - Use: `Skill tool → wolf-governance`
+  - Purpose: Understand governance requirements that drive ADR creation
+
+- **wolf-principles**: Query principles (foundational to many ADRs)
+  - Use: `Skill tool → wolf-principles`
+  - Purpose: Ensure ADRs align with Wolf's 10 core principles
 
 ---
 
@@ -546,12 +542,12 @@ ADRs document decisions - used for context and reference
 1. **Creating an ADR**: Use wolf-governance for quality gates
    - **When**: Before making architectural/process/tool decisions
    - **Why**: ADRs are part of Definition of Done for architectural changes
-   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "ADR requirements" })`
+   - **Tool**: Use Skill tool to load wolf-governance
 
 2. **Understanding Decisions**: Use wolf-principles for decision framework
    - **When**: Evaluating alternatives for ADR
    - **Why**: Principles guide decision-making (e.g., Research-First, Evidence-Based)
-   - **MCP Tool**: `mcp__wolf-knowledge__query_principles({ principle_id: 5 })` (Evidence-Based Decisions)
+   - **Tool**: Use Skill tool to load wolf-principles (focus on Principle #5: Evidence-Based Decisions)
 
 3. **No specific next skill**: ADRs are referenced throughout work
    - This skill provides ADR index and navigation

@@ -480,12 +480,12 @@ Integration with Wolf skill chain
 1. **RECOMMENDED SKILL**: Use **wolf-archetypes** to understand archetype definitions
    - **Why**: Scripts automate archetype selection. Understanding archetypes ensures correct interpretation of results.
    - **When**: After using `select-archetype.mjs` to understand selected archetype's requirements
-   - **MCP Tool**: `mcp__wolf-knowledge__find_archetype({ labels: [...], description: "..." })`
+   - **Tool**: Use Skill tool to load wolf-archetypes
 
 2. **RECOMMENDED SKILL**: Use **wolf-governance** to understand quality gates
    - **Why**: Scripts enforce governance. Understanding gates ensures compliance.
    - **When**: After using `curator-rubric.mjs` or `evidence-validator.mjs`
-   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "quality gates" })`
+   - **Tool**: Use Skill tool to load wolf-governance
 
 3. **DURING WORK**: Scripts provide continuous automation
    - Scripts are called throughout workflow (intake, validation, execution)

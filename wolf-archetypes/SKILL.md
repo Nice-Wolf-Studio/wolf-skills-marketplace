@@ -209,13 +209,10 @@ When multiple labels are present:
 
 **Labels**: `feature`, `enhancement`, `user-story`
 
-**MCP Tool Call**:
-```javascript
-mcp__wolf-knowledge__find_archetype({
-  labels: ["feature", "enhancement", "user-story"],
-  description: "Create dashboard showing user profile, activity history, and settings"
-})
-```
+**How to Select**:
+- Use Skill tool to load wolf-archetypes
+- Based on labels: `feature`, `enhancement`, `user-story`
+- Work description: "Create dashboard showing user profile, activity history, and settings"
 
 **Selected Archetype**: `product-implementer`
 
@@ -267,13 +264,10 @@ Each PR has clear archetype, focused scope, and distinct evidence requirements.
 
 **Labels**: `bug`, `regression`, `high-priority`
 
-**MCP Tool Call**:
-```javascript
-mcp__wolf-knowledge__find_archetype({
-  labels: ["bug", "regression", "high-priority"],
-  description: "Users cannot login after 3 failed attempts, need to investigate retry logic"
-})
-```
+**How to Select**:
+- Use Skill tool to load wolf-archetypes
+- Based on labels: `bug`, `regression`, `high-priority`
+- Work description: "Users cannot login after 3 failed attempts, need to investigate retry logic"
 
 **Selected Archetype**: `reliability-fixer`
 
@@ -331,13 +325,10 @@ mcp__wolf-knowledge__find_archetype({
 
 **Labels**: `security`, `vulnerability`, `critical`
 
-**MCP Tool Call**:
-```javascript
-mcp__wolf-knowledge__find_archetype({
-  labels: ["security", "vulnerability", "critical"],
-  description: "User input in search not properly sanitized, allows SQL injection"
-})
-```
+**How to Select**:
+- Use Skill tool to load wolf-archetypes
+- Based on labels: `security`, `vulnerability`, `critical`
+- Work description: "User input in search not properly sanitized, allows SQL injection"
 
 **Selected Archetype**: `security-hardener`
 
@@ -400,13 +391,10 @@ mcp__wolf-knowledge__find_archetype({
 
 **Labels**: `spike`, `research`, `architecture`
 
-**MCP Tool Call**:
-```javascript
-mcp__wolf-knowledge__find_archetype({
-  labels: ["spike", "research", "architecture"],
-  description: "Evaluate GraphQL vs REST for upcoming API redesign, need recommendation"
-})
-```
+**How to Select**:
+- Use Skill tool to load wolf-archetypes
+- Based on labels: `spike`, `research`, `architecture`
+- Work description: "Evaluate GraphQL vs REST for upcoming API redesign, need recommendation"
 
 **Selected Archetype**: `research-prototyper`
 
@@ -466,13 +454,10 @@ mcp__wolf-knowledge__find_archetype({
 
 **Labels**: `feature`, `security`, `performance`, `critical`
 
-**MCP Tool Call**:
-```javascript
-mcp__wolf-knowledge__find_archetype({
-  labels: ["feature", "security", "performance", "critical"],
-  description: "Integrate Stripe payment processing with encryption and sub-100ms latency"
-})
-```
+**How to Select**:
+- Use Skill tool to load wolf-archetypes
+- Based on labels: `feature`, `security`, `performance`, `critical`
+- Work description: "Integrate Stripe payment processing with encryption and sub-100ms latency"
 
 **Selected Archetype**: `product-implementer` + **security lens** + **performance lens**
 
@@ -566,7 +551,7 @@ If you catch yourself thinking:
 - ❌ **"This is a hotfix, no time for archetypes"** - Hotfixes use `reliability-fixer`. Still requires archetype.
 - ❌ **"Archetypes are just documentation"** - NO. Archetypes enforce quality gates and evidence requirements.
 
-**STOP. Use `mcp__wolf-knowledge__find_archetype` BEFORE proceeding.**
+**STOP. Use Skill tool to load wolf-archetypes BEFORE proceeding.**
 
 ## After Using This Skill
 
@@ -579,13 +564,13 @@ Sequential skill chain - DO NOT skip steps
 1. **REQUIRED NEXT SKILL**: Use **wolf-governance** to identify Definition of Done and quality gates
    - **Why**: Archetype defines priorities and evidence. Governance defines concrete acceptance criteria and gates.
    - **Gate**: Cannot start implementation without knowing Definition of Done
-   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "quality gates archetype:" + selectedArchetype })`
+   - **Tool**: Use Skill tool to load wolf-governance
    - **Example**: `security-hardener` requires threat model + security scan gates
 
 2. **REQUIRED NEXT SKILL**: Use **wolf-roles** to understand role-specific behavior
    - **Why**: Archetypes define WHAT evidence is needed. Roles define HOW to produce it.
    - **Gate**: Cannot proceed without understanding collaboration patterns
-   - **MCP Tool**: `mcp__wolf-knowledge__get_role_guidance({ role_name: "your-role" })`
+   - **Tool**: Use Skill tool to load wolf-roles
    - **Example**: `pm-agent` translates archetype into acceptance criteria, `coder-agent` implements
 
 3. **REQUIRED IF LENSES APPLIED**: Use **wolf-verification** to understand verification requirements

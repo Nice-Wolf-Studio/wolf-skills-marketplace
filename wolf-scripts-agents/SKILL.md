@@ -688,13 +688,13 @@ Integration with Wolf role-based system
 1. **REQUIRED SKILL**: Use **wolf-roles** to understand agent boundaries
    - **Why**: Coordination scripts enforce role boundaries. Must understand role definitions to use orchestration properly.
    - **When**: Before using `orchestrate-workflow.mjs` or `validate-agent-changes.mjs`
-   - **MCP Tool**: `mcp__wolf-knowledge__get_role_guidance({ role_name: "agent-role" })`
+   - **Tool**: Use Skill tool to load wolf-roles
    - **Example**: Before orchestrating pm-agent → coder-agent → reviewer-agent workflow, load each role's responsibilities
 
 2. **RECOMMENDED SKILL**: Use **wolf-governance** for workflow quality gates
    - **Why**: Workflows must enforce governance at each phase. Understanding gates ensures compliance.
    - **When**: When designing custom workflows or modifying existing workflow definitions
-   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "quality gates" })`
+   - **Tool**: Use Skill tool to load wolf-governance
 
 3. **DURING WORK**: Coordination scripts enable multi-agent collaboration
    - Scripts orchestrate agent interactions throughout complex workflows

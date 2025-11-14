@@ -39,10 +39,7 @@ Before responding to ANY user request or starting ANY work, you **MUST** complet
 
 **Purpose**: Load strategic decision-making guidance
 
-**Action**:
-```javascript
-mcp__wolf-knowledge__query_principles({})
-```
+**Action**: Use the Skill tool to load **wolf-principles**
 
 **Gate**: Cannot proceed without principles loaded
 
@@ -56,13 +53,7 @@ mcp__wolf-knowledge__query_principles({})
 
 **Purpose**: Determine work type and behavioral profile
 
-**Action**:
-```javascript
-mcp__wolf-knowledge__find_archetype({
-  labels: ["feature", "security", ...], // from GitHub issue
-  description: "Clear description of work"
-})
-```
+**Action**: Use the Skill tool to load **wolf-archetypes**
 
 **Gate**: Cannot proceed without archetype selection
 
@@ -76,12 +67,7 @@ mcp__wolf-knowledge__find_archetype({
 
 **Purpose**: Understand Definition of Done and quality gates
 
-**Action**:
-```javascript
-mcp__wolf-knowledge__search_governance({
-  query: "quality gates definition of done"
-})
-```
+**Action**: Use the Skill tool to load **wolf-governance**
 
 **Gate**: Cannot start work without knowing acceptance criteria
 
@@ -95,12 +81,7 @@ mcp__wolf-knowledge__search_governance({
 
 **Purpose**: Understand role responsibilities and boundaries
 
-**Action**:
-```javascript
-mcp__wolf-knowledge__get_role_guidance({
-  role_name: "your-role" // e.g., "coder-agent", "pm-agent"
-})
-```
+**Action**: Use the Skill tool to load **wolf-roles**
 
 **Gate**: Cannot execute work without understanding role boundaries
 
@@ -119,19 +100,19 @@ Wolf Session Initialization - MANDATORY
 ========================================
 
 [ ] Step 1: Principles Loaded
-    Tool: mcp__wolf-knowledge__query_principles({})
+    Tool: Skill tool → wolf-principles
     Result: _______________________________________
 
 [ ] Step 2: Archetype Selected
-    Tool: mcp__wolf-knowledge__find_archetype({...})
+    Tool: Skill tool → wolf-archetypes
     Result: _______________________________________
 
 [ ] Step 3: Governance Loaded
-    Tool: mcp__wolf-knowledge__search_governance({...})
+    Tool: Skill tool → wolf-governance
     DoD Requirements: ______________________________
 
 [ ] Step 4: Role Guidance Loaded
-    Tool: mcp__wolf-knowledge__get_role_guidance({...})
+    Tool: Skill tool → wolf-roles
     Role: __________________________________________
 
 [ ] All Gates Passed - Ready to Begin Work ✅
@@ -300,7 +281,7 @@ Session initialization is COMPLETE. You are now ready to begin work with full be
 
 3. **During implementation**: Use **wolf-verification** for checkpoint validation
    - **Why**: Catch issues early rather than at review time
-   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "verification gates" })`
+   - **Tool**: Use Skill tool to load wolf-verification skill
 
 4. **For architecture decisions**: Use **wolf-adr** to document decisions
    - **Why**: Future teams need context for why decisions were made
@@ -325,16 +306,16 @@ Session initialization is COMPLETE. You are now ready to begin work with full be
 
 **Agent Actions**:
 1. ✅ Loads wolf-session-init skill
-2. ✅ Runs `mcp__wolf-knowledge__query_principles({})` → Receives principles #1, #9
-3. ✅ Runs `mcp__wolf-knowledge__find_archetype({ labels: ["feature"], description: "Add user profile page" })` → Receives archetype: product-implementer
-4. ✅ Runs `mcp__wolf-knowledge__search_governance({ query: "definition of done" })` → Receives DoD: tests, docs, journal, review
-5. ✅ Runs `mcp__wolf-knowledge__get_role_guidance({ role_name: "coder-agent" })` → Receives role card with responsibilities
+2. ✅ Uses Skill tool to load wolf-principles → Receives principles #1, #9
+3. ✅ Uses Skill tool to load wolf-archetypes → Receives archetype: product-implementer
+4. ✅ Uses Skill tool to load wolf-governance → Receives DoD: tests, docs, journal, review
+5. ✅ Uses Skill tool to load wolf-roles → Receives role card with responsibilities
 6. ✅ Completes checklist: All 4 steps checked ✅
 7. ✅ Begins implementation with full context
 
 **Why GOOD**:
 - Followed 4-step protocol in order
-- Used MCP tools to load each component
+- Used Skill tool to load each component
 - Verified all gates before starting work
 - Has complete behavioral context (principles, archetype, governance, role)
 - Can articulate DoD, evidence requirements, and role boundaries
@@ -375,10 +356,10 @@ Session initialization is COMPLETE. You are now ready to begin work with full be
 
 **Agent Actions**:
 1. ⚠️ Loads wolf-session-init skill
-2. ✅ Runs `mcp__wolf-knowledge__query_principles({})` → Receives principles
+2. ✅ Uses Skill tool to load wolf-principles → Receives principles
 3. ❌ Skips archetype selection ("I know it's a bug fix")
 4. ❌ Skips governance loading ("I'll check later")
-5. ✅ Runs `mcp__wolf-knowledge__get_role_guidance({ role_name: "coder-agent" })` → Receives role
+5. ✅ Uses Skill tool to load wolf-roles → Receives role
 6. ❌ Starts implementation with partial context
 7. ❌ Code reviewer rejects: Missing regression test (governance requirement), wrong evidence type (archetype requirement)
 
@@ -458,10 +439,10 @@ No exceptions. No shortcuts. No assumptions.
 
 Before claiming session initialization is complete:
 
-- [ ] Ran `mcp__wolf-knowledge__query_principles({})` and received principles
-- [ ] Ran `mcp__wolf-knowledge__find_archetype({...})` and received archetype
-- [ ] Ran `mcp__wolf-knowledge__search_governance({...})` and received governance requirements
-- [ ] Ran `mcp__wolf-knowledge__get_role_guidance({...})` and received role card
+- [ ] Used Skill tool to load wolf-principles and received principles
+- [ ] Used Skill tool to load wolf-archetypes and received archetype
+- [ ] Used Skill tool to load wolf-governance and received governance requirements
+- [ ] Used Skill tool to load wolf-roles and received role card
 - [ ] Can articulate principles guiding this work
 - [ ] Can explain archetype and why it was selected
 - [ ] Can list Definition of Done requirements
