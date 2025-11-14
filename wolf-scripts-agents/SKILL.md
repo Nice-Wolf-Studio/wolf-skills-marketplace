@@ -1,14 +1,15 @@
 ---
 name: wolf-scripts-agents
-description: Agent coordination, orchestration, and multi-agent workflow management scripts
-version: 1.0.0
+description: Use when coordinating multiple agents or managing workflows - provides agent orchestration patterns including unified executor interface, multi-phase workflow management with lens integration, file scope enforcement, async mailbox communication, and structured signal parsing for agent handoffs
+version: 1.0.1
 category: agent-coordination
 triggers:
-  - agent orchestration
-  - workflow coordination
-  - multi-agent
-  - agent execution
-  - agent validation
+  - "agent orchestration"
+  - "multi-agent workflows"
+  - "workflow coordination"
+  - "agent handoffs"
+  - "scope enforcement"
+  - "mailbox communication"
 dependencies:
   - wolf-roles
   - wolf-archetypes
@@ -666,3 +667,10 @@ All agent coordination scripts in `/agents/shared/scripts/`:
 
 **Last Updated**: October 2025 (Phase 50+)
 **Maintainer**: Wolf Orchestration Team
+
+## Changelog
+
+### 1.0.1 (2025-11-14)
+- Enhanced frontmatter with orchestration pattern emphasis
+- Improved description to highlight lens integration and signal parsing
+- Added scope enforcement and mailbox communication to triggers

@@ -1,6 +1,13 @@
 ---
 name: daily-summary
-description: Automated generation of comprehensive daily PR summaries for team standups, status reports, and progress tracking with metrics, categorization, contributor activity, and velocity analysis
+version: 1.0.1
+description: Use when preparing daily standups or status reports - automates PR summary generation with categorization, metrics, and velocity analysis; eliminates manual report compilation and ensures consistent format
+triggers:
+  - daily standup
+  - PR summary
+  - status report
+  - progress tracking
+  - gh pr list
 ---
 
 # Daily Summary Skill
@@ -17,6 +24,17 @@ Use this skill when you need:
 - PR activity analysis and trends
 - Weekly or monthly sprint retrospectives
 - Contributor focus and productivity analysis
+
+## When NOT to Use This Skill
+
+Skip this skill when:
+
+- **Real-time PR monitoring** - Use GitHub notifications or `gh pr status` instead
+- **Individual PR details** - Use `gh pr view <number>` for single PR inspection
+- **Non-GitHub repositories** - This skill requires GitHub-hosted projects
+- **Missing `gh` CLI** - Installation of GitHub CLI is mandatory (see Dependencies)
+- **Ad-hoc queries** - Use direct `gh` commands for one-off questions
+- **Live collaboration** - Use GitHub web interface for interactive review sessions
 
 ## What This Skill Provides
 
@@ -52,9 +70,9 @@ This skill includes:
 - `references/agent-instructions.md` - Agent framework methodology context
 - `references/agent-definitions.md` - Terminology and behavioral principles
 
-## Implementation Guide
+## The Seven Steps (MANDATORY)
 
-### Step 1: Data Collection
+### Step 1: Data Collection (REQUIRED)
 
 Fetch PR data using GitHub CLI:
 
@@ -69,7 +87,9 @@ gh pr list \
 
 The JSON output provides all necessary data for analysis and categorization.
 
-### Step 2: Date Filtering
+**GATE: Verify JSON response contains expected fields before proceeding.**
+
+### Step 2: Date Filtering (REQUIRED)
 
 Filter PRs for the target date or date range:
 
@@ -91,7 +111,9 @@ jq '[.[] | select(
 )]'
 ```
 
-### Step 3: Categorization
+**GATE: Confirm filtered PR count > 0 and matches expected activity level. If zero PRs, verify date format and repository activity.**
+
+### Step 3: Categorization (MANDATORY)
 
 Apply keyword-based categorization to PR titles and labels:
 
@@ -118,7 +140,9 @@ elif [[ "$title" =~ (feat|feature|add|implement) ]]; then
 fi
 ```
 
-### Step 4: Priority Assignment
+**GATE: Every PR must be categorized. "Uncategorized" should be < 10% of total PRs. If > 10%, review keyword rules.**
+
+### Step 4: Priority Assignment (MANDATORY)
 
 Assign priority based on keywords in title or labels:
 
@@ -126,7 +150,9 @@ Assign priority based on keywords in title or labels:
 - 🟡 **MEDIUM PRIORITY** - Keywords: `feature`, `enhancement`, `bug` (non-critical)
 - 🟢 **LOW PRIORITY** - Keywords: `docs`, `chore`, `style`, `minor`
 
-### Step 5: Contributor Analysis
+**GATE: All PRs must have priority assigned. Default to MEDIUM if no keywords match.**
+
+### Step 5: Contributor Analysis (REQUIRED)
 
 Group PRs by author and track focus areas:
 
@@ -145,7 +171,9 @@ jq 'group_by(.author.login) |
 - Focus areas (primary categories)
 - Human vs. bot contributors
 
-### Step 6: Velocity Calculation
+**GATE: Contributor count must match unique authors in filtered data. Verify no duplicate attribution.**
+
+### Step 6: Velocity Calculation (REQUIRED)
 
 Calculate time-based metrics:
 
@@ -160,7 +188,9 @@ jq '[.[] | .createdAt | fromdate | strftime("%H")] |
     group_by(.) | map({hour: .[0], count: length}) | sort_by(.count) | reverse'
 ```
 
-### Step 7: Report Generation
+**GATE: Velocity metrics must be calculated for all merged PRs. If no merged PRs, state "N/A - no merges in period" in report.**
+
+### Step 7: Report Generation (MANDATORY)
 
 Fill in the template (`assets/daily-pr-summary-template.md`):
 
@@ -171,17 +201,34 @@ Fill in the template (`assets/daily-pr-summary-template.md`):
 5. Insert velocity metrics
 6. List action items (open PRs needing review)
 
-## Validation Criteria
+**GATE: All template sections must be filled. No `[placeholder]` text should remain in final output.**
 
-Success is achieved when:
+## Red Flags - STOP
 
-- ✅ Report generated without errors
-- ✅ All PRs from target date included (verify count matches API response)
-- ✅ Categorization accuracy ≥ 90% (manual spot-check recommended)
-- ✅ Metrics calculations correct (sanity checks on outliers)
-- ✅ Output follows template format exactly
-- ✅ Executable commands included for verification
-- ✅ Data collection timestamp included in report
+Immediately halt and fix if you observe:
+
+- 🚨 **Fetching PR data without date filtering** - You'll pull thousands of irrelevant PRs. Filter immediately after fetch.
+- 🚨 **Skipping categorization** - Everything marked "Uncategorized" means keyword rules weren't applied. Go back to Step 3.
+- 🚨 **Not validating contributor counts** - Duplicate authors or missing bot detection corrupts analysis. Verify unique authors.
+- 🚨 **Missing velocity calculations** - Average merge time and turnaround are core metrics. Don't skip Step 6.
+- 🚨 **Template sections left unfilled** - `[count]`, `[author]`, `[category]` placeholders in output = incomplete execution.
+- 🚨 **Running multiple times for same date** - Cache results! Re-running wastes API quota and produces identical output.
+- 🚨 **Zero PRs in filtered results** - Verify date format (YYYY-MM-DD), repository name, and that activity occurred on target date.
+
+## Verification Checklist
+
+Before delivering the report, confirm:
+
+- [ ] Report generated without errors
+- [ ] All PRs from target date included (verify count matches API response)
+- [ ] Categorization accuracy ≥ 90% (manual spot-check recommended)
+- [ ] Metrics calculations correct (sanity checks on outliers)
+- [ ] Output follows template format exactly
+- [ ] Executable commands included for verification
+- [ ] Data collection timestamp included in report
+- [ ] No `[placeholder]` text remains in final output
+- [ ] Contributor count matches unique authors in data
+- [ ] Velocity metrics calculated (or explicitly marked N/A)
 
 ## Usage Examples
 
@@ -277,6 +324,18 @@ For context on the framework, see the bundled `references/` files.
 - jq Manual: https://stedolan.github.io/jq/manual/
 
 ## Changelog
+
+**v1.0.1** (2025-11-14)
+- Added `version` and `triggers` to frontmatter for skill discovery
+- Enhanced description to follow superpowers style (when/what/why format)
+- Added "When NOT to Use This Skill" section with anti-patterns
+- Renamed "Implementation Guide" → "The Seven Steps (MANDATORY)"
+- Added REQUIRED/MANDATORY language to step headers
+- Added gate functions between steps for validation checkpoints
+- Added "Red Flags - STOP" section with common failure modes
+- Renamed "Validation Criteria" → "Verification Checklist" with checkbox format
+- Strengthened process-oriented language throughout
+- Added cache warning to prevent redundant executions
 
 **v1.0** (2025-11-13)
 - Converted to standard Claude Code SKILL.md format

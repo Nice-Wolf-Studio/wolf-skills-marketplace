@@ -1,13 +1,14 @@
 ---
 name: wolf-roles
-description: Guidance for 50+ specialized Wolf agent roles with responsibilities and collaboration patterns
-version: 1.0.0
+description: Use when working as specific agent role or delegating work - provides comprehensive guidance for 50+ specialized roles (pm-agent, coder-agent, qa-agent, etc.) with clear responsibilities, non-goals, collaboration patterns, and escalation paths; ensures role boundaries and proper handoffs
+version: 1.0.1
 triggers:
-  - "agent role"
-  - "role guidance"
-  - "responsibilities"
-  - "collaboration"
-  - "escalation"
+  - "agent role guidance"
+  - "role responsibilities"
+  - "role boundaries"
+  - "collaboration patterns"
+  - "escalation paths"
+  - "agent handoffs"
 ---
 
 # Wolf Roles Skill
@@ -251,3 +252,10 @@ When roles disagree:
 *Source: agents/roles/*/role-card.md files*
 *Last Updated: 2025-10-19*
 *Phase: Hybrid Skills Migration*
+
+## Changelog
+
+### 1.0.1 (2025-11-14)
+- Enhanced frontmatter with role-specific trigger keywords
+- Improved description to emphasize 50+ roles and handoff patterns
+- Added boundaries and escalation to triggers list

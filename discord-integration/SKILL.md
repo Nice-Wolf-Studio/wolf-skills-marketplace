@@ -1,6 +1,14 @@
 ---
 name: discord-integration
-description: Send messages, read channels, and troubleshoot Discord bot access using MCP, discord.js Gateway, or REST API. Use when user wants Discord interaction or when encountering Discord permission errors.
+version: 1.0.1
+description: Use when sending Discord messages or encountering bot permission errors - provides three-tier integration methods with automatic fallback (MCP → REST API → Gateway); prevents wasted time on OAuth scope issues
+triggers:
+  - discord
+  - send message
+  - permission error
+  - bot access
+  - discord.js
+  - mcp discord
 ---
 
 # Discord Integration
@@ -22,6 +30,14 @@ Use this skill when the user wants to:
 - "Read messages from Discord"
 - "Discord bot isn't working"
 - "Can't access Discord channel"
+
+## When NOT to Use This Skill
+
+**Do NOT use this skill for:**
+- **Discord server management** - Use Discord's admin panel for creating channels, managing roles, or configuring server settings
+- **Complex bot features** - For advanced slash commands, persistent state, or complex workflows, build a dedicated bot application
+- **Real-time message listening** - This skill focuses on sending/reading; continuous message monitoring requires a persistent Gateway connection outside this skill's scope
+- **Voice channel interactions** - This skill only handles text channels
 
 ## Available Bots on This Machine
 
@@ -86,21 +102,30 @@ Use this skill when the user wants to:
 - Requires exact permissions
 - Less reliable than Gateway methods
 
-## Decision Tree: Which Method to Use
+## Integration Method Selection (MANDATORY)
+
+**ALWAYS follow this priority order - do NOT skip steps:**
 
 ```
 User requests Discord interaction
   ↓
-Are MCP tools available? (mcp__discord__send-message)
-  YES → Use MCP tools (Method 1)
+STEP 1: Are MCP tools available? (mcp__discord__send-message)
+  YES → REQUIRED: Use MCP tools (Method 1)
   NO ↓
   ↓
-Can we use send-test-message.js? (file exists, token configured)
-  YES → Use Gateway script (Method 2)
+STEP 2: Can we use send-test-message.js? (file exists, token configured)
+  YES → REQUIRED: Use Gateway script (Method 2)
   NO ↓
   ↓
-Try REST API (Method 3) with warning about limitations
+STEP 3: Try REST API (Method 3) with warning about limitations
+  ↓
+FALLBACK LOGIC:
+  - If Method 1 fails → Immediately try Method 2
+  - If Method 2 fails → Try Method 3
+  - If Method 3 fails → Report error with troubleshooting steps
 ```
+
+**CRITICAL:** You MUST attempt Method 1 (MCP) first, even if you think it won't work. Only fall back after confirming failure.
 
 ## Step-by-Step Instructions
 
@@ -179,6 +204,45 @@ curl -X POST "https://discord.com/api/v10/channels/CHANNEL_ID/messages" \
 ### Step 3: Handle Errors
 
 See troubleshooting section below for specific error codes and solutions.
+
+## Red Flags - STOP
+
+**If you encounter these situations, STOP and address them immediately:**
+
+❌ **Skipping MCP method without trying first**
+- **Why it's bad:** MCP is the most reliable method; skipping wastes time with inferior fallbacks
+- **Fix:** Always attempt `mcp__discord__send-message` before assuming it won't work
+
+❌ **Not checking bot permissions before sending**
+- **Why it's bad:** Results in repeated "Missing Access" errors and wasted API calls
+- **Fix:** Verify bot has "View Channel" and "Send Messages" permissions first
+
+❌ **Retrying same failed method repeatedly**
+- **Why it's bad:** Same input = same output; you're wasting time and rate limits
+- **Fix:** After one failure, switch to next method in priority order
+
+❌ **Missing token/credentials setup**
+- **Why it's bad:** Nothing will work without valid authentication
+- **Fix:** Verify token exists in appropriate .env file and test with `/users/@me` endpoint
+
+❌ **Not handling 403 Forbidden errors properly**
+- **Why it's bad:** 403 means permission issue, not connection issue
+- **Fix:** Check channel-specific permissions or switch to Gateway method (better permission handling)
+
+❌ **Using REST API when Gateway methods are available**
+- **Why it's bad:** REST API has OAuth scope limitations that cause "Missing Access" errors
+- **Fix:** Use MCP tools or Gateway script instead - they have proper intents
+
+## Verification Checklist
+
+**Before marking Discord integration as complete, verify:**
+
+- [ ] **MCP tools attempted first** - You tried `mcp__discord__send-message` before other methods
+- [ ] **Permissions verified for channel** - Bot has "View Channel" and "Send Messages" in target channel
+- [ ] **Message sent successfully** - Received confirmation (not just "no error")
+- [ ] **Error handling implemented** - Code handles failures gracefully with fallback or clear error message
+- [ ] **Correct bot used** - Sombra for MCP/local, GladOSv3 for tjr-suite (not mixed up)
+- [ ] **Token validated** - Tested token with `/users/@me` endpoint returns valid bot info
 
 ## Prerequisites
 
@@ -463,3 +527,20 @@ See `examples.md` in this skill directory for complete working examples.
 - **Gateway Script:** `~/.claude/discordmcp/send-test-message.js`
 - **Discord.js Docs:** https://discord.js.org/
 - **Discord API:** https://discord.com/developers/docs
+
+## Changelog
+
+### Version 1.0.1 (2025-11-14)
+- **Added** superpowers-style improvements for better agent guidance
+- **Added** "When NOT to Use" section to prevent misuse
+- **Enhanced** Integration Method Selection with MANDATORY fallback logic
+- **Added** "Red Flags - STOP" section with 6 common anti-patterns
+- **Added** "Verification Checklist" for completion validation
+- **Improved** frontmatter with version, triggers, and clearer description
+- **Updated** description to emphasize automatic fallback and OAuth scope issue prevention
+
+### Version 1.0.0 (Initial)
+- Initial discord-integration skill
+- Three-tier integration methods (MCP, Gateway, REST API)
+- Comprehensive troubleshooting for common errors
+- Configuration reference for Sombra and GladOSv3 bots

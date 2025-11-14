@@ -1,13 +1,14 @@
 ---
 name: wolf-archetypes
-description: Behavioral archetypes for automatic agent adaptation based on work type
-version: 1.0.0
+description: Use when starting new work or classifying issues - automatically selects behavioral archetype from 11 profiles (product-implementer, security-hardener, perf-optimizer, etc.) and applies overlay lenses; ensures agents adapt their priorities and evidence requirements to work type
+version: 1.0.1
 triggers:
   - "select archetype"
   - "behavioral profile"
-  - "work type"
-  - "agent behavior"
-  - "overlay lens"
+  - "work type classification"
+  - "agent behavior adaptation"
+  - "overlay lens application"
+  - "evidence requirements"
 ---
 
 # Wolf Archetypes Skill
@@ -234,3 +235,10 @@ When multiple labels are present:
 *Source: agents/archetypes/registry.yml, README.md*
 *Last Updated: 2025-10-19*
 *Phase: Hybrid Skills Migration*
+
+## Changelog
+
+### 1.0.1 (2025-11-14)
+- Enhanced frontmatter with specific trigger keywords
+- Improved description to emphasize automatic behavioral adaptation
+- Added evidence requirements to triggers list

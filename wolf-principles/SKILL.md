@@ -1,13 +1,14 @@
 ---
 name: wolf-principles
-description: Wolf's 10 core principles for agent behavior and system design
-version: 1.0.0
+description: "Use when making architectural decisions or justifying design choices - provides Wolf's 10 core principles with implementation guidelines and real examples; ensures alignment with system design philosophy and helps resolve competing priorities"
+version: 1.0.1
 triggers:
   - "wolf principles"
   - "core principles"
+  - "design decision"
+  - "architectural choice"
   - "system guidelines"
-  - "agent behavior"
-  - "decision making"
+  - "trade-offs"
 ---
 
 # Wolf Principles Skill
@@ -21,6 +22,11 @@ This skill provides access to Wolf's 10 core principles that guide the design, i
 - During planning and implementation of new features
 - When resolving conflicts between competing priorities
 - For onboarding new team members or agents
+
+## When NOT to Use This Skill
+
+- **Don't use for implementation details** - Principles are strategic guidance, not tactical coding decisions. Use role-specific skills (wolf-roles) for implementation patterns.
+- **Don't use for tactical coding decisions** - Questions like "which loop to use" or "how to name this variable" are too granular for principles-level guidance.
 
 ## The 10 Core Principles
 
@@ -232,6 +238,18 @@ When principles appear to conflict, use this priority order:
 3. **Operational Efficiency** (Principles 1, 8, 9)
 4. **Governance and Compliance** (Principles 4, 10)
 
+## Common Misapplications
+
+Watch out for these anti-patterns when applying Wolf principles:
+
+- **Using principles to justify shortcuts** - "Principle 9 says incremental delivery, so I'll skip tests" misses that each increment must be fully functional and tested. Principles work together, not in isolation.
+
+- **Citing principles without understanding context** - Quoting "Evidence-Based Decision Making" without actually gathering evidence defeats the purpose. Principles require action, not just acknowledgment.
+
+- **Applying principles rigidly without trade-off analysis** - Blindly following "Research-Before-Code" for a one-line bug fix wastes time. Use judgment about when full principle application adds value.
+
+- **Ignoring principle conflicts** - When Principle 9 (speed) conflicts with Principle 5 (evidence), don't pretend the conflict doesn't exist. Use the priority order above to resolve explicitly.
+
 ## Integration with Other Skills
 
 - **wolf-archetypes**: Principles inform archetype behavior
@@ -254,6 +272,20 @@ These principles evolve based on operational evidence. Changes require:
 
 ---
 
+## Changelog
+
+### 1.0.1 (2025-11-14)
+- Added "When NOT to Use" section for clearer scope boundaries
+- Added "Common Misapplications" section to highlight anti-patterns
+- Improved description with focus on decision-making and alignment
+- Updated triggers to include "design decision", "architectural choice", and "trade-offs"
+
+### 1.0.0 (2025-10-19)
+- Initial release during Hybrid Skills Migration
+- Documented all 10 core principles with implementation guidelines
+- Added query patterns and conflict resolution framework
+
+---
+
 *Source: docs/principles.md (lines 292-527)*
-*Last Updated: 2025-10-19*
-*Phase: Hybrid Skills Migration*
+*Last Updated: 2025-11-14*

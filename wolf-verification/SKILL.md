@@ -1,16 +1,15 @@
 ---
 name: wolf-verification
-description: Three-layer verification architecture (CoVe, HSP, RAG) for self-verification, fact-checking, and hallucination prevention
-version: 1.0.0
+description: Use when making factual claims or generating outputs - implements three-layer verification architecture (CoVe for systematic fact-checking, HSP for multi-level safety validation, RAG for evidence grounding) with verification-first pattern; prevents hallucinations and ensures ≥90% citation coverage before delivery
+version: 1.0.1
 category: quality-assurance
 triggers:
-  - verification
-  - fact checking
-  - hallucination detection
-  - self verification
-  - CoVe
-  - HSP
-  - RAG grounding
+  - "verification architecture"
+  - "fact checking claims"
+  - "hallucination prevention"
+  - "self verification"
+  - "evidence grounding"
+  - "citation coverage"
 dependencies:
   - wolf-principles
   - wolf-governance
@@ -670,3 +669,10 @@ if (detection.hallucinations_found > 0) {
 
 **Last Updated**: October 2025 (Phase 50+)
 **Maintainer**: Verification Team
+
+## Changelog
+
+### 1.0.1 (2025-11-14)
+- Enhanced frontmatter with three-layer architecture emphasis
+- Improved description to highlight verification-first and citation coverage
+- Added evidence grounding and prevention keywords to triggers

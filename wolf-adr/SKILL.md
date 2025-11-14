@@ -1,14 +1,15 @@
 ---
 name: wolf-adr
-description: Architecture Decision Records index with searchable topics and phase-based organization (120+ ADRs from 50+ phases)
-version: 1.0.0
+description: Use when making architectural decisions or researching system evolution - searchable index of 120+ Architecture Decision Records organized by topics and phases; includes critical decisions (MCP knowledge-first pivot, verification architecture, workflow standards) with context, consequences, and living architecture snapshot
+version: 1.0.1
 category: architecture
 triggers:
-  - architecture decision
-  - ADR
-  - design decision
-  - technical decision
-  - system design
+  - "architecture decision"
+  - "ADR lookup"
+  - "design rationale"
+  - "technical decisions"
+  - "system evolution"
+  - "architectural patterns"
 dependencies:
   - wolf-principles
 size: large
@@ -475,3 +476,10 @@ const principles = await mcp__wolf-knowledge__query_principles({
 
 **Last Updated**: October 2025 (Phase 50+)
 **Maintainer**: Architecture Team
+
+## Changelog
+
+### 1.0.1 (2025-11-14)
+- Enhanced frontmatter with searchable index emphasis
+- Improved description to highlight critical decisions and living snapshot
+- Added design rationale and system evolution to triggers

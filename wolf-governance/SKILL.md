@@ -1,13 +1,14 @@
 ---
 name: wolf-governance
-description: Wolf's governance framework, compliance rules, quality gates, and process standards
-version: 1.0.0
+description: Use when checking compliance or process requirements - provides governance framework with quality gates, approval hierarchies, and mandatory validation rules; enforces Definition of Done, two-tier test pipeline, and authority structure across 4 pillars (portability, reproducibility, safety, research value)
+version: 1.0.1
 triggers:
-  - "governance"
-  - "compliance"
-  - "quality gates"
-  - "process rules"
-  - "approval requirements"
+  - "governance framework"
+  - "compliance requirements"
+  - "quality gates enforcement"
+  - "approval hierarchy"
+  - "process standards"
+  - "authority structure"
 ---
 
 # Wolf Governance Skill
@@ -360,3 +361,10 @@ Only for production incidents:
 *Source: docs/governance/*, Canon Charter, ADRs*
 *Last Updated: 2025-10-19*
 *Phase: Hybrid Skills Migration*
+
+## Changelog
+
+### 1.0.1 (2025-11-14)
+- Enhanced frontmatter with governance-specific triggers
+- Improved description to highlight four pillars and mandatory gates
+- Added authority structure and enforcement keywords

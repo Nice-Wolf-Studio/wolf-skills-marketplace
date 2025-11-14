@@ -1,14 +1,15 @@
 ---
 name: wolf-instructions
-description: Four-level instruction cascading system (Global → Domain → Project → Role) with priority-based conflict resolution
-version: 1.0.0
+description: Use when resolving instruction conflicts or onboarding - implements four-level cascading system (Global → Domain → Project → Role) with priority-based conflict resolution; ensures consistent agent behavior across 43 roles while allowing environment-specific customization through 21 global + 3 domain + 3 project instruction files
+version: 1.0.1
 category: agent-coordination
 triggers:
-  - instruction cascade
-  - agent instructions
-  - role boundaries
-  - authority matrix
-  - agent coordination
+  - "instruction cascade"
+  - "instruction conflicts"
+  - "priority resolution"
+  - "role boundaries"
+  - "authority matrix"
+  - "agent coordination"
 dependencies:
   - wolf-roles
   - wolf-governance
@@ -656,3 +657,10 @@ Continue reading this role card for role-specific guidance.
 
 **Last Updated**: October 2025 (Phase 50+)
 **Maintainer**: Governance Team
+
+## Changelog
+
+### 1.0.1 (2025-11-14)
+- Enhanced frontmatter with cascading system emphasis
+- Improved description to highlight conflict resolution and file counts
+- Added instruction conflicts and priority resolution to triggers

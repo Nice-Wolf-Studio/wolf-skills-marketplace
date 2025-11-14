@@ -1,14 +1,15 @@
 ---
 name: wolf-scripts-core
-description: Core automation scripts for archetype selection, evidence validation, quality scoring, and safe bash execution
-version: 1.0.0
+description: Use when automating issue triage or validating work - provides battle-tested automation patterns for archetype selection (keyword/pattern scoring), evidence validation (priority-based conflict resolution), curator rubric (reproducible 1-10 scoring), and safe bash execution (shellcheck + pattern validation)
+version: 1.0.1
 category: automation
 triggers:
-  - archetype selection
-  - evidence validation
-  - quality scoring
-  - curator rubric
-  - bash validation
+  - "archetype selection automation"
+  - "evidence validation"
+  - "quality scoring rubric"
+  - "issue triage"
+  - "bash script validation"
+  - "requirement conflicts"
 dependencies:
   - wolf-archetypes
   - wolf-governance
@@ -458,3 +459,10 @@ All core scripts are in `/agents/shared/scripts/`:
 
 **Last Updated**: October 2025 (Phase 50+)
 **Maintainer**: Wolf Automation Team
+
+## Changelog
+
+### 1.0.1 (2025-11-14)
+- Enhanced frontmatter with automation pattern emphasis
+- Improved description to highlight battle-tested patterns and conflict resolution
+- Added issue triage and requirement conflicts to triggers
