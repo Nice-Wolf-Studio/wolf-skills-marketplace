@@ -1,14 +1,13 @@
 ---
 name: wolf-governance
-description: Use when checking compliance or process requirements - provides governance framework with quality gates, approval hierarchies, and mandatory validation rules; enforces Definition of Done, two-tier test pipeline, and authority structure across 4 pillars (portability, reproducibility, safety, research value)
-version: 1.0.1
+description: Wolf's governance framework, compliance rules, quality gates, and process standards
+version: 1.1.0
 triggers:
-  - "governance framework"
-  - "compliance requirements"
-  - "quality gates enforcement"
-  - "approval hierarchy"
-  - "process standards"
-  - "authority structure"
+  - "governance"
+  - "compliance"
+  - "quality gates"
+  - "process rules"
+  - "approval requirements"
 ---
 
 # Wolf Governance Skill
@@ -356,15 +355,130 @@ Only for production incidents:
 - **wolf-archetypes**: Archetypes follow governance rules
 - **wolf-roles**: Roles have governance boundaries
 
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+- ❌ **"Skipping quality gates to save time"** - STOP. Gates exist because skipping them costs MORE time in rework and incidents.
+- ❌ **"This change is too small for governance"** - Wrong. Small changes compound. All work follows governance.
+- ❌ **"I'll create the journal entry later"** - NO. Journal entry is part of Definition of Done. Create it NOW.
+- ❌ **"Tests are passing locally, CI doesn't matter"** - CI is the source of truth. Local != production.
+- ❌ **"I'm just fixing a typo, no review needed"** - ALL changes need review. Separation of concerns is non-negotiable.
+- ❌ **"We can make an exception this time"** - Exceptions become habits. Follow Advisory-First Enforcement (Principle 4).
+- ❌ **"Documentation can wait until after merge"** - NO. Documentation is part of DoD. Must be complete BEFORE merge.
+- ❌ **"Merging my own PR is faster"** - FORBIDDEN. You cannot approve your own work (Authority Structure).
+
+**STOP. Use `mcp__wolf-knowledge__search_governance` to check compliance requirements BEFORE proceeding.**
+
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+```
+Sequential skill chain - DO NOT skip steps
+```
+
+1. **REQUIRED NEXT SKILL**: Use **wolf-roles** to understand role-specific compliance requirements
+   - **Why**: Governance defines WHAT must be done. Roles define WHO does it and HOW.
+   - **Gate**: Cannot execute governance without understanding role boundaries
+   - **MCP Tool**: `mcp__wolf-knowledge__get_role_guidance({ role_name: "your-role" })`
+   - **Example**: `pm-agent` validates acceptance criteria, `coder-agent` implements, `code-reviewer` approves
+
+2. **REQUIRED NEXT SKILL**: Use **wolf-verification** to set up verification checkpoints
+   - **Why**: Governance gates require verification. Verification skill provides three-layer validation (CoVe, HSP, RAG).
+   - **Gate**: Cannot claim compliance without verification evidence
+   - **When**: Always - verification is mandatory for all governance gates
+   - **Example**: Security gate requires threat model verification + scan validation
+
+3. **REQUIRED BEFORE COMPLETION**: Create compliance artifacts
+   - **Journal Entry**: `YYYY-MM-DD-<kebab-slug>.md` documenting problems, decisions, learnings
+   - **ADR (if applicable)**: For architectural/process changes
+   - **Evidence**: Test results, security scans, performance benchmarks
+   - **Gate**: Cannot merge without complete artifact set
+
+**DO NOT PROCEED to merge without completing steps 1-3.**
+
+### Verification Checklist
+
+Before claiming governance compliance:
+
+- [ ] Archetype selected (from wolf-archetypes)
+- [ ] Quality gates identified for this work type
+- [ ] Definition of Done requirements understood
+- [ ] Role boundaries confirmed (from wolf-roles)
+- [ ] All MUST-have DoD items completed (tests, review, docs, journal, CI)
+- [ ] SHOULD-have items evaluated (performance, security, a11y, metrics)
+- [ ] Approval from authorized reviewer (not self-approval)
+- [ ] CI/CD checks green (not just local)
+
+**Can't check all boxes? Governance compliance incomplete. Return to this skill.**
+
+### Governance Examples by Change Type
+
+**Example 1: Bug Fix (reliability-fixer archetype)**
+```
+DoD Requirements:
+✅ Root cause documented in journal
+✅ Regression test added
+✅ All tests passing (Fast-Lane + Full-Suite)
+✅ Code review approved
+✅ CI checks green
+
+Gates:
+- Fast-Lane: <10 min, linting ≤5 errors, 60% coverage
+- Full-Suite: 90% E2E success, rollback tested
+- Review: Code reviewer approval (not self)
+```
+
+**Example 2: Feature (product-implementer archetype)**
+```
+DoD Requirements:
+✅ Acceptance criteria met (PM validation)
+✅ Tests pass (unit + integration + E2E)
+✅ Documentation updated (README, API docs)
+✅ Journal entry created
+✅ Performance benchmarks met
+
+Gates:
+- PM: Acceptance criteria validation
+- Code Review: Technical quality + tests
+- Security: Scan clean (if data handling involved)
+- CI: Fast-Lane + Full-Suite green
+```
+
+**Example 3: Security Change (security-hardener archetype)**
+```
+DoD Requirements:
+✅ Threat model documented
+✅ Security scan clean
+✅ Penetration test passed
+✅ Defense-in-depth applied
+✅ Monitoring/alerting added
+
+Gates:
+- Security Review: Threat model approved
+- Security Scan: 0 critical, ≤5 high vulns
+- Code Review: Implementation quality
+- CI: Security gates + standard gates
+- ADR: If architectural security decision
+```
+
+### Emergency Override Procedure
+
+**ONLY for production incidents:**
+
+```
+1. Document override reason immediately
+2. Apply minimum necessary temporary fix
+3. Create follow-up ticket for proper fix
+4. Conduct post-mortem within 48 hours
+5. Update governance if process failed
+```
+
+**Override does NOT mean skip governance. It means parallel governance with expedited review.**
+
 ---
 
 *Source: docs/governance/*, Canon Charter, ADRs*
-*Last Updated: 2025-10-19*
-*Phase: Hybrid Skills Migration*
-
-## Changelog
-
-### 1.0.1 (2025-11-14)
-- Enhanced frontmatter with governance-specific triggers
-- Improved description to highlight four pillars and mandatory gates
-- Added authority structure and enforcement keywords
+*Last Updated: 2025-11-14*
+*Phase: Superpowers Skill-Chaining Enhancement v2.0.0*

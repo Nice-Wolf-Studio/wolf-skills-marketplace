@@ -1,14 +1,13 @@
 ---
 name: wolf-archetypes
-description: Use when starting new work or classifying issues - automatically selects behavioral archetype from 11 profiles (product-implementer, security-hardener, perf-optimizer, etc.) and applies overlay lenses; ensures agents adapt their priorities and evidence requirements to work type
-version: 1.0.1
+description: Behavioral archetypes for automatic agent adaptation based on work type
+version: 1.1.0
 triggers:
   - "select archetype"
   - "behavioral profile"
-  - "work type classification"
-  - "agent behavior adaptation"
-  - "overlay lens application"
-  - "evidence requirements"
+  - "work type"
+  - "agent behavior"
+  - "overlay lens"
 ---
 
 # Wolf Archetypes Skill
@@ -230,15 +229,80 @@ When multiple labels are present:
 - **wolf-roles**: Each role adapts behavior per archetype
 - **wolf-governance**: Archetypes enforce governance rules
 
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+- ❌ **"Starting implementation without selecting archetype"** - STOP. Archetype selection is MANDATORY. Use MCP tool NOW.
+- ❌ **"This work doesn't fit any archetype"** - Wrong. Use `research-prototyper` for unknown territory. Every work fits.
+- ❌ **"Applying multiple archetypes to one PR"** - STOP. Split the work into separate PRs with distinct archetypes.
+- ❌ **"Skipping archetype because 'it's obvious'"** - Selection is NOT optional. Evidence before assumptions.
+- ❌ **"I'll select the archetype after I start coding"** - Too late. Archetype GUIDES implementation choices.
+- ❌ **"This is a hotfix, no time for archetypes"** - Hotfixes use `reliability-fixer`. Still requires archetype.
+- ❌ **"Archetypes are just documentation"** - NO. Archetypes enforce quality gates and evidence requirements.
+
+**STOP. Use `mcp__wolf-knowledge__find_archetype` BEFORE proceeding.**
+
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+```
+Sequential skill chain - DO NOT skip steps
+```
+
+1. **REQUIRED NEXT SKILL**: Use **wolf-governance** to identify Definition of Done and quality gates
+   - **Why**: Archetype defines priorities and evidence. Governance defines concrete acceptance criteria and gates.
+   - **Gate**: Cannot start implementation without knowing Definition of Done
+   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "quality gates archetype:" + selectedArchetype })`
+   - **Example**: `security-hardener` requires threat model + security scan gates
+
+2. **REQUIRED NEXT SKILL**: Use **wolf-roles** to understand role-specific behavior
+   - **Why**: Archetypes define WHAT evidence is needed. Roles define HOW to produce it.
+   - **Gate**: Cannot proceed without understanding collaboration patterns
+   - **MCP Tool**: `mcp__wolf-knowledge__get_role_guidance({ role_name: "your-role" })`
+   - **Example**: `pm-agent` translates archetype into acceptance criteria, `coder-agent` implements
+
+3. **REQUIRED IF LENSES APPLIED**: Use **wolf-verification** to understand verification requirements
+   - **Why**: Overlay lenses (security, performance, accessibility, observability) add verification steps
+   - **Gate**: Cannot skip verification when lenses are active
+   - **When**: Applied if security/perf/a11y/observability lenses detected
+   - **Example**: Security lens requires threat modeling + scan validation
+
+**DO NOT PROCEED to implementation without completing steps 1-3.**
+
+### Verification Checklist
+
+Before claiming archetype is properly applied:
+
+- [ ] Archetype selected using MCP tool (not guessed)
+- [ ] Evidence requirements identified for selected archetype
+- [ ] Overlay lenses identified (security/perf/a11y/observability)
+- [ ] Governance gates loaded for this archetype
+- [ ] Role guidance loaded for collaboration patterns
+- [ ] Definition of Done understood and documented
+
+**Can't check all boxes? Archetype selection incomplete. Return to this skill.**
+
+### Archetype-to-Governance Mapping Examples
+
+**Example 1: product-implementer**
+- Governance Gates: Acceptance criteria met, tests pass, documentation updated
+- Definition of Done: Feature complete, tested, documented, deployed
+- Skip If: Work is exploration (use `research-prototyper` instead)
+
+**Example 2: security-hardener**
+- Governance Gates: Threat model approved, security scan clean, pen test passed
+- Definition of Done: Threats mitigated, scan results clear, monitoring active
+- Skip If: No security impact (downgrade to appropriate archetype)
+
+**Example 3: reliability-fixer**
+- Governance Gates: Root cause documented, regression test added, monitoring enhanced
+- Definition of Done: Bug fixed, prevention in place, recurrence impossible
+- Skip If: Not a bug (likely `product-implementer` or `maintainability-refactorer`)
+
 ---
 
 *Source: agents/archetypes/registry.yml, README.md*
-*Last Updated: 2025-10-19*
-*Phase: Hybrid Skills Migration*
-
-## Changelog
-
-### 1.0.1 (2025-11-14)
-- Enhanced frontmatter with specific trigger keywords
-- Improved description to emphasize automatic behavioral adaptation
-- Added evidence requirements to triggers list
+*Last Updated: 2025-11-14*
+*Phase: Superpowers Skill-Chaining Enhancement v2.0.0*

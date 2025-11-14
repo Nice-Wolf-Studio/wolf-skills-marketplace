@@ -1,14 +1,13 @@
 ---
 name: wolf-roles
-description: Use when working as specific agent role or delegating work - provides comprehensive guidance for 50+ specialized roles (pm-agent, coder-agent, qa-agent, etc.) with clear responsibilities, non-goals, collaboration patterns, and escalation paths; ensures role boundaries and proper handoffs
-version: 1.0.1
+description: Guidance for 50+ specialized Wolf agent roles with responsibilities and collaboration patterns
+version: 1.1.0
 triggers:
-  - "agent role guidance"
-  - "role responsibilities"
-  - "role boundaries"
-  - "collaboration patterns"
-  - "escalation paths"
-  - "agent handoffs"
+  - "agent role"
+  - "role guidance"
+  - "responsibilities"
+  - "collaboration"
+  - "escalation"
 ---
 
 # Wolf Roles Skill
@@ -247,15 +246,198 @@ When roles disagree:
 - **wolf-archetypes**: Roles adapt per archetype
 - **wolf-governance**: Roles enforce governance rules
 
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+- ❌ **"I already know my role, no need to load guidance"** - STOP. Role cards evolve. Load current guidance EVERY session.
+- ❌ **"This is outside my role, but I'll do it anyway"** - NO. Respect role boundaries. Escalate or hand off.
+- ❌ **"I can approve my own work since I'm the only one"** - FORBIDDEN. Separation of concerns is non-negotiable.
+- ❌ **"Roles are just documentation"** - NO. Roles define authority, boundaries, and collaboration patterns. Violating them breaks governance.
+- ❌ **"I'll skip the MCP tool and just remember my role"** - Wrong. Use `mcp__wolf-knowledge__get_role_guidance` to load current role card.
+- ❌ **"Handoff protocols are too formal"** - Handoffs prevent dropped work and context loss. Always follow the protocol.
+- ❌ **"I'm doing multiple roles to save time"** - STOP. Role mixing violates separation of concerns. Use orchestrator for coordination.
+
+**STOP. Use `mcp__wolf-knowledge__get_role_guidance({ role_name: "your-role" })` BEFORE proceeding.**
+
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+```
+You've completed the core Wolf skill chain!
+```
+
+**Primary Chain Complete**: wolf-principles → wolf-archetypes → wolf-governance → wolf-roles ✅
+
+### What Happens Next
+
+1. **BEGIN IMPLEMENTATION** with complete context:
+   - ✅ Principles loaded - Strategic guidance active
+   - ✅ Archetype selected - Behavioral profile configured
+   - ✅ Governance understood - Quality gates identified
+   - ✅ Role guidance loaded - Responsibilities clear
+
+2. **REQUIRED DURING WORK**: Use **wolf-verification** at checkpoints
+   - **Why**: Continuous verification prevents late-stage failures
+   - **When**: After each significant milestone or before claiming completion
+   - **How**: Three-layer validation (CoVe, HSP, RAG) ensures quality
+   - **Gate**: Cannot claim work complete without verification evidence
+
+3. **REQUIRED BEFORE MERGE**: Complete governance artifacts
+   - Journal entry (`YYYY-MM-DD-<kebab-slug>.md`)
+   - ADR (if architectural/process change)
+   - Evidence (test results, scans, benchmarks)
+   - Approval from authorized reviewer (NOT self)
+
+### Verification Checklist
+
+Before starting work in your role:
+
+- [ ] Loaded role card using MCP tool (not memory)
+- [ ] Verified role boundaries and non-goals
+- [ ] Understood collaboration patterns with other roles
+- [ ] Identified who reviews your work (cannot be self)
+- [ ] Confirmed escalation paths for blockers
+- [ ] Loaded required tools and workflows
+
+**Can't check all boxes? Role setup incomplete. Return to this skill.**
+
+### Role-Specific Implementation Examples
+
+**Example 1: coder-agent (Development)**
+```
+Chain Complete:
+1. ✅ Principles → Artifact-First, Evidence-Based
+2. ✅ Archetype → product-implementer (feature work)
+3. ✅ Governance → DoD = tests + docs + journal + review
+4. ✅ Role → coder-agent responsibilities loaded
+
+Implementation:
+- Write tests first (TDD)
+- Implement feature meeting acceptance criteria
+- Update documentation
+- Create journal entry
+- Request code-reviewer-agent review
+- DO NOT merge own PR
+```
+
+**Example 2: security-agent (Specialized)**
+```
+Chain Complete:
+1. ✅ Principles → Research-Before-Code, Evidence-Based
+2. ✅ Archetype → security-hardener
+3. ✅ Governance → DoD = threat model + scan + pen test
+4. ✅ Role → security-agent can block any change
+
+Implementation:
+- Create threat model
+- Run security scans
+- Validate defense-in-depth
+- Document findings in journal
+- Block merge if security gates fail
+- Can escalate to CISO
+```
+
+**Example 3: pm-agent (Product)**
+```
+Chain Complete:
+1. ✅ Principles → Incremental Value Delivery
+2. ✅ Archetype → product-implementer (default)
+3. ✅ Governance → Define acceptance criteria
+4. ✅ Role → pm-agent has requirements authority
+
+Implementation:
+- Define acceptance criteria
+- Break into incremental shards
+- Coordinate with coder-agent
+- Validate completed work
+- Sign off on release
+- Cannot implement own requirements
+```
+
+### Handoff Protocol (Multi-Role Work)
+
+When transitioning work between roles:
+
+```yaml
+Step 1: Document Current State
+  - What was completed
+  - What remains
+  - Current blockers
+  - Relevant context
+
+Step 2: Create Handoff Journal Entry
+  - Date and participants
+  - Work summary
+  - Next steps
+  - Open questions
+
+Step 3: Tag Receiving Role
+  - @mention in PR/issue
+  - Link to journal entry
+  - Provide context link
+
+Step 4: Verify Acceptance
+  - Receiving role confirms understanding
+  - Questions resolved
+  - Handoff complete
+```
+
+### Emergency Escalation (Role Conflicts)
+
+If role boundaries are unclear or conflicting:
+
+```
+1. STOP work immediately
+2. Document the conflict in journal
+3. Use mcp__wolf-knowledge__get_role_guidance for both roles
+4. Check authority hierarchy (see Escalation Patterns section)
+5. Escalate to orchestrator-agent if unresolved
+6. Update role cards if pattern emerges
+```
+
+### Common Handoff Patterns
+
+**Pattern 1: PM → Coder → Reviewer**
+```
+pm-agent:
+  - Defines acceptance criteria
+  - Creates GitHub issue with labels
+  - Hands off to coder-agent
+
+coder-agent:
+  - Implements meeting AC
+  - Creates PR with tests + docs + journal
+  - Requests review from code-reviewer-agent
+
+code-reviewer-agent:
+  - Reviews against standards
+  - Validates tests and documentation
+  - Approves or requests changes
+  - Merges (coders cannot merge own PRs)
+```
+
+**Pattern 2: Security Investigation**
+```
+security-agent:
+  - Identifies vulnerability
+  - Creates threat model
+  - Hands off to coder-agent with requirements
+
+coder-agent:
+  - Implements mitigations
+  - Adds security tests
+  - Returns to security-agent for validation
+
+security-agent:
+  - Validates mitigations
+  - Runs security scans
+  - Approves or blocks merge
+```
+
 ---
 
 *Source: agents/roles/*/role-card.md files*
-*Last Updated: 2025-10-19*
-*Phase: Hybrid Skills Migration*
-
-## Changelog
-
-### 1.0.1 (2025-11-14)
-- Enhanced frontmatter with role-specific trigger keywords
-- Improved description to emphasize 50+ roles and handoff patterns
-- Added boundaries and escalation to triggers list
+*Last Updated: 2025-11-14*
+*Phase: Superpowers Skill-Chaining Enhancement v2.0.0*

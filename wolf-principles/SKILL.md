@@ -1,14 +1,13 @@
 ---
 name: wolf-principles
-description: "Use when making architectural decisions or justifying design choices - provides Wolf's 10 core principles with implementation guidelines and real examples; ensures alignment with system design philosophy and helps resolve competing priorities"
-version: 1.0.1
+description: Wolf's 10 core principles for agent behavior and system design
+version: 1.1.0
 triggers:
   - "wolf principles"
   - "core principles"
-  - "design decision"
-  - "architectural choice"
   - "system guidelines"
-  - "trade-offs"
+  - "agent behavior"
+  - "decision making"
 ---
 
 # Wolf Principles Skill
@@ -22,11 +21,6 @@ This skill provides access to Wolf's 10 core principles that guide the design, i
 - During planning and implementation of new features
 - When resolving conflicts between competing priorities
 - For onboarding new team members or agents
-
-## When NOT to Use This Skill
-
-- **Don't use for implementation details** - Principles are strategic guidance, not tactical coding decisions. Use role-specific skills (wolf-roles) for implementation patterns.
-- **Don't use for tactical coding decisions** - Questions like "which loop to use" or "how to name this variable" are too granular for principles-level guidance.
 
 ## The 10 Core Principles
 
@@ -238,18 +232,6 @@ When principles appear to conflict, use this priority order:
 3. **Operational Efficiency** (Principles 1, 8, 9)
 4. **Governance and Compliance** (Principles 4, 10)
 
-## Common Misapplications
-
-Watch out for these anti-patterns when applying Wolf principles:
-
-- **Using principles to justify shortcuts** - "Principle 9 says incremental delivery, so I'll skip tests" misses that each increment must be fully functional and tested. Principles work together, not in isolation.
-
-- **Citing principles without understanding context** - Quoting "Evidence-Based Decision Making" without actually gathering evidence defeats the purpose. Principles require action, not just acknowledgment.
-
-- **Applying principles rigidly without trade-off analysis** - Blindly following "Research-Before-Code" for a one-line bug fix wastes time. Use judgment about when full principle application adds value.
-
-- **Ignoring principle conflicts** - When Principle 9 (speed) conflicts with Principle 5 (evidence), don't pretend the conflict doesn't exist. Use the priority order above to resolve explicitly.
-
 ## Integration with Other Skills
 
 - **wolf-archetypes**: Principles inform archetype behavior
@@ -270,22 +252,58 @@ These principles evolve based on operational evidence. Changes require:
 4. Advisory-first deployment
 5. Post-implementation assessment
 
----
+## Red Flags - STOP
 
-## Changelog
+If you catch yourself thinking:
 
-### 1.0.1 (2025-11-14)
-- Added "When NOT to Use" section for clearer scope boundaries
-- Added "Common Misapplications" section to highlight anti-patterns
-- Improved description with focus on decision-making and alignment
-- Updated triggers to include "design decision", "architectural choice", and "trade-offs"
+- ❌ **"This is too simple to need principles"** - Simple decisions cascade. Even trivial choices compound over time. Query principles BEFORE proceeding.
+- ❌ **"I know the right approach already"** - Evidence before opinions (Principle 5). Your intuition needs validation against principles.
+- ❌ **"Principles don't apply to this work type"** - ALL work has principles. Research? Use Principle 3. Bug fix? Use Principle 1. No exceptions.
+- ❌ **"I'll check principles after implementation"** - Too late. Principles guide implementation, not justify it post-hoc.
+- ❌ **"This conflicts with deadline pressure"** - Principles ENABLE speed by preventing rework. Skipping principles slows you down.
+- ❌ **"I'm just prototyping"** - Prototypes become production (always). Use Principle 9 (incremental value) even for experiments.
 
-### 1.0.0 (2025-10-19)
-- Initial release during Hybrid Skills Migration
-- Documented all 10 core principles with implementation guidelines
-- Added query patterns and conflict resolution framework
+**STOP. Use `mcp__wolf-knowledge__query_principles` BEFORE proceeding.**
+
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+```
+Sequential skill chain - DO NOT skip steps
+```
+
+1. **REQUIRED NEXT SKILL**: Use **wolf-archetypes** to determine behavioral archetype
+   - **Why**: Principles are strategic guidance. Archetypes translate them into tactical requirements for your specific work type.
+   - **Gate**: Cannot proceed to implementation without archetype selection
+   - **MCP Tool**: `mcp__wolf-knowledge__find_archetype({ labels: [...], description: "..." })`
+
+2. **REQUIRED NEXT SKILL**: Use **wolf-governance** to identify quality gates
+   - **Why**: Archetypes define priorities. Governance defines acceptance criteria and Definition of Done.
+   - **Gate**: Cannot claim work complete without meeting governance requirements
+   - **MCP Tool**: `mcp__wolf-knowledge__search_governance({ query: "quality gates" })`
+
+3. **REQUIRED NEXT SKILL**: Use **wolf-roles** to understand collaboration patterns
+   - **Why**: Work rarely happens in isolation. Roles define who does what and how handoffs occur.
+   - **Gate**: Cannot proceed without understanding role boundaries
+   - **MCP Tool**: `mcp__wolf-knowledge__get_role_guidance({ role_name: "your-role" })`
+
+**DO NOT PROCEED to implementation without completing steps 1-3.**
+
+### Verification Checklist
+
+Before claiming you've applied principles:
+
+- [ ] Queried wolf-principles for relevant guidance
+- [ ] Selected archetype using wolf-archetypes
+- [ ] Identified quality gates using wolf-governance
+- [ ] Loaded role guidance using wolf-roles
+- [ ] Created artifact (PR, ADR, journal entry) documenting decisions
+
+**Can't check all boxes? Work is incomplete. Return to this skill.**
 
 ---
 
 *Source: docs/principles.md (lines 292-527)*
 *Last Updated: 2025-11-14*
+*Phase: Superpowers Skill-Chaining Enhancement v2.0.0*
