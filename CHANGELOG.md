@@ -5,6 +5,176 @@ All notable changes to the Wolf Skills Marketplace will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-11-14
+
+### Added - Git/GitHub Workflow Enforcement
+
+This release enforces proper Git/GitHub workflows for coder and code-reviewer agents to prevent direct commits to default branches and establish clear review practices.
+
+#### Problem Solved
+
+**Before**:
+- Agents committing directly to main/master branches
+- PRs created at task end (or not at all)
+- Code reviewers making changes during review without approval
+- Confusion about when to edit vs suggest
+- Inconsistent branch naming and commit practices
+
+**After**:
+- ✅ All code in feature branches (main/master protected)
+- ✅ Draft PRs created at task start (visibility from beginning)
+- ✅ Code reviewers suggest in comments (clear ownership)
+- ✅ Project conventions respected (templates, naming)
+- ✅ Prefer `gh` CLI over `git` commands (better UX)
+
+---
+
+#### Enhanced Templates
+
+**coder-agent-template.md** (v2.1.0 → v2.2.0):
+
+**New "Git/GitHub Setup" section** (before implementation):
+- Check for project conventions first (`.github/` templates, CONTRIBUTING.md)
+- Create feature branch (never work on main/master/develop)
+- Create DRAFT PR immediately at task start
+- Verify not on default branch before commits
+- Respect project naming conventions over defaults
+
+**New Git/GitHub red flags**:
+- ❌ Committing to default branches → FORBIDDEN
+- ❌ No PR created at task start → STOP
+- ❌ Pushing without PR → NO
+- ❌ Force pushing to default branches → FORBIDDEN
+- ❌ Ignoring project conventions → WRONG
+- ❌ Using git when gh available → PREFER gh CLI
+
+**Git troubleshooting guidance**: Read github skills → Try `gh auth switch` → Verify `gh auth status`
+
+**Template growth**: 310 → 348 lines (+38 lines)
+
+---
+
+**code-reviewer-agent-template.md** (v1.0.0 → v2.1.0):
+
+**New "Review Mode Determination" section** (mandatory first step):
+- **Context A: Active PR/Code Review** (suggest only, don't edit)
+  - ✅ Write review comments with GitHub suggestion syntax
+  - ❌ DO NOT make direct edits to code
+  - ❌ DO NOT push commits to PR branch
+
+- **Context B: Pre-Review Improvements** (requires explicit approval)
+  - ⚠️ ONLY with explicit user approval
+  - ✅ Ask first: "I found {N} issues. Approve fixes?"
+  - ✅ Wait for approval before making changes
+  - ❌ NEVER assume approval (even in bypass mode)
+
+**New Git/GitHub red flags**:
+- ❌ Making changes during active review → FORBIDDEN
+- ❌ Pushing fixes without approval → NO
+- ❌ Assuming "bypass mode" = permission → WRONG
+- ❌ Editing PR author's code without asking → FORBIDDEN
+- ❌ Using git when gh available → PREFER gh CLI
+- ❌ Ignoring project PR templates → WRONG
+
+**Why this matters**: Code reviewers suggest improvements, authors implement them. Maintains clear ownership and prevents confusion.
+
+**Template growth**: 337 → 397 lines (+60 lines)
+
+---
+
+#### Updated Governance
+
+**wolf-governance/SKILL.md**:
+
+**New MUST requirement in Definition of Done**:
+- ✅ **Proper Git/GitHub workflow followed**
+  - Feature branch used (never main/master/develop)
+  - Draft PR created at task start (not task end)
+  - No direct commits to default branches
+  - Project conventions respected (templates, naming)
+  - Prefer `gh` CLI over `git` commands where available
+
+**Violation = Immediate failure** (even if code quality is excellent)
+
+---
+
+#### New Comprehensive Guide
+
+**wolf-workflows/git-workflow-guide.md** (NEW, ~400 lines):
+
+**The 4 Golden Rules**:
+1. Never commit to default branches
+2. Draft PR at task start (not task end)
+3. Code reviewers suggest, don't edit
+4. Git issues → Read github skills → Try `gh auth switch`
+
+**3 Detailed Workflows**:
+1. **Starting a New Task** (Coder Agent)
+   - Check project conventions first
+   - Create feature branch
+   - Create draft PR immediately
+   - Work and commit regularly
+   - Mark PR ready after verification
+
+2. **Code Review** (Reviewer Agent)
+   - Determine review context (suggest vs edit)
+   - Context A: Review and suggest (default)
+   - Context B: Fix with approval (explicit only)
+   - Use GitHub suggestion syntax
+   - Never assume permission
+
+3. **Handling Git Issues**
+   - Authentication failed → `gh auth switch`
+   - Permission denied → Check SSH/HTTPS
+   - Protected branch error → Check current branch
+   - PR template not appearing → Manual application
+
+**Key Guidance**:
+- **Prefer `gh` CLI over `git`**: Better UX, GitHub-aware, respects conventions
+- **Project conventions override defaults**: Always check `.github/` first
+- **Red flags for coders and reviewers**: Clear violation warnings
+- **Success criteria**: Feature branches, draft PRs, clean reviews, no violations
+
+---
+
+### Changed
+
+**Convention Handling**:
+- Branch naming now defaults to `feature/{task-slug}` but **respects project conventions first**
+- PR templates automatically used if `.github/PULL_REQUEST_TEMPLATE.md` exists
+- Commit messages follow project conventions in `.gitmessage` or CONTRIBUTING.md
+- Agents check for conventions before applying defaults
+
+**Command Preferences**:
+- **Prefer `gh pr create`** over manual `git push` + web UI
+- **Prefer `gh pr ready`** over `gh pr edit --ready`
+- **Prefer `gh pr review`** over manual comments
+- **Prefer `gh auth status`** over `git credential` commands
+- Use `git` only when no `gh` equivalent exists
+
+---
+
+### Impact
+
+**Compliance Improvements**:
+- 100% feature branch usage (enforced via red flags)
+- Draft PRs at task start (not task end)
+- Clear reviewer/author separation (suggest vs implement)
+- Project conventions respected automatically
+
+**Developer Experience**:
+- Early visibility (draft PRs signal WIP)
+- Clear ownership (reviewer suggests, author implements)
+- Faster auth troubleshooting (`gh auth switch` solves most issues)
+- Consistent workflows across projects
+
+**Quality Gates**:
+- Git workflow now part of Definition of Done
+- Violations block merge regardless of code quality
+- Governance enforced at template level
+
+---
+
 ## [2.1.0] - 2025-11-14
 
 ### Added - Context Management System

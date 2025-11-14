@@ -100,6 +100,12 @@ Implementers:
 - ✅ Documentation updated
 - ✅ Journal entry created
 - ✅ CI/CD checks green
+- ✅ Proper Git/GitHub workflow followed
+  - Feature branch used (never main/master/develop)
+  - Draft PR created at task start (not task end)
+  - No direct commits to default branches
+  - Project conventions respected (templates, naming)
+  - Prefer `gh` CLI over `git` commands where available
 
 **SHOULD have** (strong recommendation):
 - 📊 Performance benchmarks met

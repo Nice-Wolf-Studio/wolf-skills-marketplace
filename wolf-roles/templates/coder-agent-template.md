@@ -77,6 +77,32 @@ Before starting implementation:
 - [ ] Understood acceptance criteria completely
 - [ ] Identified who will review (code-reviewer-agent)
 
+**Git/GitHub Setup** (MANDATORY):
+
+- [ ] Check for project-specific conventions first
+  - Look for `.github/PULL_REQUEST_TEMPLATE.md` (use if exists)
+  - Look for `.github/BRANCH_NAMING.md` or project docs
+  - Check for commit message conventions in CONTRIBUTING.md
+  - Respect existing project patterns over defaults below
+
+- [ ] Create feature branch (never work on main/master/develop)
+  - **Default naming**: `feature/{task-slug}` or `fix/{issue-number}`
+  - **Check project convention first**: May use different pattern
+  - **Use gh CLI**: `gh repo view --json defaultBranch -q .defaultBranch` (get default branch)
+  - **Create branch**: `git checkout -b {branch-name}` (no gh equivalent)
+
+- [ ] Create DRAFT PR immediately at task start (not task end)
+  - **Purpose**: Signal to team what you're working on
+  - **Check for PR template**: Use `.github/PULL_REQUEST_TEMPLATE.md` if exists
+  - **Default title**: `[DRAFT] {Phase}/{Shard}: {Feature title}`
+  - **Command (prefer gh)**: `gh pr create --draft --title "..." --body "..."`
+  - **Mark ready after verification**: `gh pr ready` (not `gh pr edit --ready`)
+
+- [ ] Verify not on default branch before first commit
+  - **Check current branch**: `git branch --show-current`
+  - **If on main/master/develop**: STOP, create feature branch first
+  - **List branches**: `gh pr list` or `gh repo view` to see default
+
 **Context Management** (wolf-context-management):
 
 - [ ] If exploration phase complete (found relevant files), create exploration checkpoint
@@ -242,6 +268,16 @@ After completing implementation:
 - ❌ **"Quick fix without understanding the bug"** → FORBIDDEN. Use superpowers:systematic-debugging. Root cause FIRST.
 - ❌ **"Tests pass on my machine, good enough"** → NO. Use superpowers:verification-before-completion. CI is source of truth.
 
+**Git/GitHub Violations:**
+- ❌ **Committing to main/master/develop** → FORBIDDEN. Always use feature branches.
+- ❌ **No PR created at task start** → STOP. Create draft PR immediately, not at task end.
+- ❌ **Pushing without PR** → NO. All code goes through PR review (even if you can bypass).
+- ❌ **Force pushing to default branches** → FORBIDDEN. Never `git push --force` to main/master.
+- ❌ **Ignoring project conventions** → WRONG. Check `.github/` templates first, respect project patterns.
+- ❌ **Using git when gh available** → PREFER gh. Use `gh pr create`, `gh pr ready`, `gh auth status` over git equivalents.
+
+**Git Troubleshooting**: If auth/permission errors → Read github skills, try `gh auth switch`, verify with `gh auth status`.
+
 ## After Using This Template
 
 **RECOMMENDED NEXT SKILLS** (depending on work phase):
@@ -305,7 +341,7 @@ After completing implementation:
 
 ---
 
-*Template Version: 2.1.0 - Enhanced with Superpowers Workflows + Context Management*
+*Template Version: 2.2.0 - Enhanced with Superpowers + Context Management + Git/GitHub Workflow*
 *Role: coder-agent*
-*Part of Wolf Skills Marketplace v2.1.0*
-*Integrations: 6 Superpowers development workflow skills + wolf-context-management*
+*Part of Wolf Skills Marketplace v2.2.0*
+*Integrations: 6 Superpowers development workflow skills + wolf-context-management + git/GitHub best practices*
