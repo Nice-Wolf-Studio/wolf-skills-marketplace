@@ -1,6 +1,15 @@
 ---
 name: databento
-description: Professional market data analysis using Databento API for ES/NQ futures. Use when fetching market data, analyzing futures, performing backtests, or working with order flow. Provides essential schema/symbology knowledge, MCP tool guidance, and reusable data fetching patterns to eliminate repeated documentation lookups.
+description: Use when working with ES/NQ futures market data, before calling any Databento API - follow mandatory four-step workflow (cost check, availability check, fetch, validate); prevents costly API errors and ensures data quality
+version: 1.0.1
+triggers:
+  - "ES futures"
+  - "NQ futures"
+  - "market data"
+  - "databento"
+  - "historical prices"
+  - "order flow"
+  - "mcp__databento"
 ---
 
 # Databento - ES/NQ Futures Market Data Analysis
@@ -24,12 +33,22 @@ Trigger this skill when:
 - User needs order flow or market microstructure analysis
 - About to use any `mcp__databento__*` MCP tool
 
-## Mandatory Workflow: The Four Steps
+## When NOT to Use This Skill
 
-Follow these four steps for EVERY data request to avoid wasted cycles and errors:
+Don't use this skill for:
+- Real-time streaming data (use WebSocket connections directly, not REST API)
+- Options or spread analysis (limited support in current skill)
+- Non-CME futures exchanges (skill focuses on GLBX.MDP3 dataset)
+- Equities-only analysis (use equity-specific tools unless correlating with futures)
+- Data you already have cached (don't re-fetch repeatedly)
 
-### Step 1: Check Cost BEFORE Fetching
-**Always** estimate cost before any data request using `mcp__databento__metadata_get_cost`.
+## The Four Steps (MANDATORY - NO EXCEPTIONS)
+
+**You MUST complete each step before proceeding to the next. Skipping steps leads to wasted API calls, unexpected costs, or missing data.**
+
+### Step 1: Check Cost BEFORE Fetching (REQUIRED)
+
+**BEFORE any data fetch, estimate cost** using `mcp__databento__metadata_get_cost`.
 
 Parameters needed:
 - dataset (e.g., "GLBX.MDP3")
@@ -38,17 +57,23 @@ Parameters needed:
 - symbols (e.g., "ES.c.0")
 - schema (e.g., "ohlcv-1h")
 
-This prevents unexpected charges and helps optimize data requests.
+**Why:** Prevents unexpected charges and helps optimize data requests.
 
-### Step 2: Validate Dataset Availability
+**Gate:** You cannot proceed to Step 3 (fetch) without completing this cost check.
+
+### Step 2: Validate Dataset Availability (REQUIRED)
+
 Check that data exists for your requested date range using `mcp__databento__metadata_get_dataset_range`.
 
 Parameters needed:
 - dataset (e.g., "GLBX.MDP3")
 
-This returns the available date range so you don't request data that doesn't exist.
+**Why:** Returns the available date range so you don't request data that doesn't exist.
 
-### Step 3: Fetch Data Appropriately
+**Gate:** If your requested date range is outside the available range, STOP and adjust your request.
+
+### Step 3: Fetch Data Appropriately (REQUIRED)
+
 Choose the right tool based on data size:
 
 **For small/quick requests (< 5GB, typically < 1 day tick data):**
@@ -61,7 +86,10 @@ Choose the right tool based on data size:
 - Poll status with `mcp__databento__batch_list_jobs`
 - Download with `mcp__databento__batch_download`
 
-### Step 4: Validate Data Post-Fetch
+**Gate:** If fetch returns an error, DO NOT retry without checking Steps 1 and 2 first.
+
+### Step 4: Validate Data Post-Fetch (REQUIRED)
+
 After receiving data, always validate:
 - Check for timestamp gaps
 - Verify expected record counts
@@ -69,6 +97,34 @@ After receiving data, always validate:
 - Check for duplicate timestamps
 
 Use `scripts/validate_data.py` for automated validation.
+
+**Gate:** Do not proceed with analysis until validation passes.
+
+## Red Flags - STOP
+
+If you catch yourself:
+- ❌ Fetching data without checking cost first
+- ❌ Assuming data exists for your date range without checking
+- ❌ Using `timeseries_get_range` for multi-day tick data (> 5GB)
+- ❌ Skipping post-fetch validation
+- ❌ Making multiple identical API calls (cache your data!)
+- ❌ Using wrong `stype_in` for continuous contracts
+- ❌ Requesting data in wrong date format (not YYYY-MM-DD)
+
+**STOP. Return to The Four Steps. Follow them in order.**
+
+## Verification Checklist
+
+Before marking data work complete:
+
+- [ ] Cost estimated and acceptable
+- [ ] Dataset availability confirmed for date range
+- [ ] Appropriate fetch method chosen (timeseries vs batch)
+- [ ] Data fetched successfully
+- [ ] Post-fetch validation passed (no gaps, valid prices, expected count)
+- [ ] Data cached locally (not fetching repeatedly)
+
+Can't check all boxes? A step was skipped. Review The Four Steps above.
 
 ## Quick Reference: Essential Information
 
@@ -197,16 +253,6 @@ mcp__databento__metadata_get_cost
 - schema: "ohlcv-1h"
 ```
 
-## Common Mistakes to Avoid
-
-1. **Skipping cost check** - Always check cost before fetching data
-2. **Using timeseries for large data** - Use batch jobs for > 1 day of tick/trade data
-3. **Wrong stype_in** - When using continuous contracts, specify `stype_in: "continuous"`
-4. **Assuming data exists** - Always validate dataset range before requesting
-5. **Not validating post-fetch** - Always check for gaps and data quality issues
-6. **Incorrect date format** - Use "YYYY-MM-DD" or ISO 8601 format
-7. **Exceeding limits** - Timeseries has default 100 record limit, adjust with limit parameter
-
 ## Analysis Workflow Patterns
 
 ### Historical Backtesting (OHLCV)
@@ -312,3 +358,18 @@ Filter data by trading session (Asian/London/NY).
 6. **Consider T+1 data** - Historical data (24+ hours old) has lower costs
 7. **Use appropriate schema** - Match schema granularity to analysis needs
 8. **Filter by session when relevant** - Session-based patterns are important for ES/NQ
+
+## Changelog
+
+**v1.0.1** (2025-11-14)
+- Added structured frontmatter with triggers list
+- Added "When NOT to Use" section
+- Strengthened "The Four Steps" with MANDATORY language and gates
+- Added "Red Flags - STOP" section
+- Added "Verification Checklist"
+- Improved description to follow superpowers pattern
+
+**v1.0.0** (2025-11-06)
+- Initial databento skill creation
+- Comprehensive reference tables and MCP tool guide
+- Bundled resources (references and scripts)
