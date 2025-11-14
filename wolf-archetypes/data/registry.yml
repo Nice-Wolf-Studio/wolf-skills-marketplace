@@ -1,0 +1,188 @@
+version: 1
+
+# Coding Archetype Selection Registry
+# Maps issue/PR characteristics to execution behavior profiles
+
+# Selection precedence (first match wins)
+match_order:
+  # Security takes highest priority
+  - labels_any: [security, security-sensitive, auth, vulnerability]
+    archetype: security-hardener
+    reason: "Security-sensitive work requires specialized threat analysis"
+
+  # Performance issues need focused optimization
+  - labels_any: [perf, performance-risk, optimization, hotpath]
+    archetype: perf-optimizer
+    reason: "Performance work requires measurement-driven approach"
+
+  # Bugs and regressions need systematic fixing
+  - labels_any: [bug, regression, hotfix, incident]
+    archetype: reliability-fixer
+    reason: "Reliability issues require root cause analysis and prevention"
+
+  # Accessibility work needs specialized knowledge
+  - labels_any: [a11y, accessibility, wcag]
+    archetype: accessibility-champion
+    reason: "Accessibility requires domain expertise and specific testing"
+
+  # Data and contract changes need compatibility focus
+  - labels_any: [schema, migration, api, contract, breaking-change]
+    archetype: data-contract-steward
+    reason: "Contract changes require backward compatibility and migration planning"
+
+  # Infrastructure and tooling work
+  - labels_any: [infra, ci, build, tooling, dx]
+    archetype: platform-gardener
+    reason: "Platform work affects team productivity and needs metrics"
+
+  # Repository hygiene and maintenance
+  - labels_any:
+      [hygiene, repo-cleanup, gitignore, dependencies, file-organization]
+    archetype: repository-hygienist
+    reason: "Repository hygiene requires systematic cleanup and preventive measures"
+
+  # Refactoring and tech debt cleanup
+  - labels_any: [refactor, tech-debt, cleanup, maintainability]
+    archetype: maintainability-refactorer
+    reason: "Refactoring requires discipline to avoid behavior changes"
+
+  # Research and exploration work
+  - labels_any: [spike, research, explore, prototype, unknown]
+    archetype: research-prototyper
+    reason: "Research work needs timeboxing and hypothesis validation"
+
+  # AI-heavy tasks (documentation, codegen, etc.)
+  - labels_any: [ai-assist, codegen, docs-rewrite, automation]
+    archetype: ai-assist-conductor
+    reason: "AI-assisted work requires human oversight and validation"
+
+# Default for normal feature work
+fallback: product-implementer
+
+# File-based triggers (secondary to labels)
+file_triggers:
+  performance:
+    patterns:
+      ["**/hotpath/**", "**/*.perf.ts", "**/queries.sql", "**/benchmark/**"]
+    archetype: perf-optimizer
+
+  security:
+    patterns:
+      ["**/auth/**", "**/security/**", "**/crypto/**", "**/validation/**"]
+    archetype: security-hardener
+
+  infrastructure:
+    patterns:
+      [
+        ".github/workflows/**",
+        "**/docker/**",
+        "**/ci/**",
+        "turbo.json",
+        "package.json",
+      ]
+    archetype: platform-gardener
+
+  data:
+    patterns:
+      ["**/prisma/**", "**/migrations/**", "**/schema/**", "**/graphql/**"]
+    archetype: data-contract-steward
+
+  accessibility:
+    patterns:
+      ["**/components/**", "**/pages/**", "**/*.stories.tsx", "**/a11y/**"]
+    archetype: accessibility-champion
+
+  hygiene:
+    patterns:
+      [
+        ".gitignore",
+        "**/.gitignore",
+        "**/node_modules/**",
+        "package-lock.json",
+        "yarn.lock",
+        ".env*",
+      ]
+    archetype: repository-hygienist
+
+# Anti-patterns (explicitly banned)
+banned_patterns:
+  cowboy-coder:
+    description: "Skips process, quality gates, or proper testing"
+    indicators:
+      - "Large PRs without justification (>500 lines)"
+      - "Missing tests on logic changes"
+      - "Bypassing required checks"
+      - "No issue link or AC"
+    rejection_message: |
+      🚫 **Cowboy Coding Detected**
+
+      This work pattern bypasses quality gates and process. Please:
+      1. Break large changes into smaller, reviewable PRs
+      2. Add comprehensive tests for logic changes
+      3. Link to issue with clear acceptance criteria
+      4. Ensure all required checks pass
+
+      See: agents/instructions/global/validation-gates.md
+
+# Confidence-based selection
+confidence_overrides:
+  low_confidence: # <5 on PM confidence scale
+    force_archetype: research-prototyper
+    reason: "Low confidence work needs exploration before implementation"
+
+  high_risk: # multiple risk labels
+    upgrade_archetype:
+      from: product-implementer
+      to: reliability-fixer
+      reason: "High risk work needs extra validation"
+
+# Team size adjustments
+team_scaling:
+  small_team: # <5 engineers
+    simplify_archetypes:
+      - merge: [perf-optimizer, reliability-fixer]
+        into: product-implementer
+        reason: "Small teams need generalists, not specialists"
+
+  large_team: # >15 engineers
+    specialize_archetypes:
+      - split: product-implementer
+        into: [frontend-implementer, backend-implementer]
+        reason: "Large teams can afford specialization"
+
+# Context-sensitive selection
+context_modifiers:
+  hotfix_mode: # production incident
+    override_all: reliability-fixer
+    max_pr_size: 50_lines
+    required_approvals: 2
+
+  feature_freeze: # release preparation
+    banned_archetypes: [research-prototyper, maintainability-refactorer]
+    preferred: [reliability-fixer, security-hardener]
+
+  tech_debt_sprint:
+    preferred: [maintainability-refactorer, platform-gardener]
+    relaxed_timeline: true
+
+# Archetype combinations (when multiple labels present)
+combination_rules:
+  security_and_performance:
+    primary: security-hardener
+    secondary_checks: perf-optimizer.evidence.requires
+
+  bug_in_performance_code:
+    primary: reliability-fixer
+    secondary_checks: perf-optimizer.checklists
+
+  refactor_with_new_features:
+    reject: "Refactoring and new features should be separate PRs"
+    split_suggestion: "Create separate PRs: one for refactor, one for features"
+
+# Learning and adaptation
+selection_feedback:
+  track_success_rate: true
+  adjust_thresholds: weekly
+  escalate_mismatches: # when archetype doesn't match actual work
+    threshold: 3_mismatches_per_week
+    action: review_registry_rules

@@ -1,0 +1,49 @@
+{
+  "name": "wolf-skills-marketplace",
+  "owner": {
+    "name": "Jeremy Miranda",
+    "email": "jeremy@nicewolfstudio.com"
+  },
+  "metadata": {
+    "description": "Custom Wolf Agent skills and integration tools",
+    "version": "1.0.0",
+    "repository": "https://github.com/Nice-Wolf-Studio/wolf-skills-marketplace"
+  },
+  "plugins": [
+    {
+      "name": "wolf-core",
+      "description": "Core Wolf Agent behavioral framework including principles, archetypes, governance, roles, instructions, verification, and ADRs",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./wolf-principles",
+        "./wolf-archetypes",
+        "./wolf-governance",
+        "./wolf-roles",
+        "./wolf-instructions",
+        "./wolf-verification",
+        "./wolf-adr"
+      ]
+    },
+    {
+      "name": "wolf-automation",
+      "description": "Wolf Agent automation scripts for core operations and agent coordination",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./wolf-scripts-core",
+        "./wolf-scripts-agents"
+      ]
+    },
+    {
+      "name": "integrations",
+      "description": "Integration tools for external services including Databento market data and Discord",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./databento",
+        "./discord-integration"
+      ]
+    }
+  ]
+}
