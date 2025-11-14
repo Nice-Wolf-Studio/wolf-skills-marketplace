@@ -1,7 +1,7 @@
 ---
 name: wolf-governance
 description: Wolf's governance framework, compliance rules, quality gates, and process standards
-version: 1.1.0
+version: 1.2.0
 triggers:
   - "governance"
   - "compliance"
@@ -133,6 +133,176 @@ Requirements:
 - Security: Score ≥80/100
 - Cross-platform: Node 18/20/21 compatible
 - Migration: Rollback procedures tested
+
+### Good/Bad Examples: Definition of Done
+
+#### Example 1: Feature Pull Request
+
+<Good>
+**PR #456: Add user authentication**
+
+✅ **All MUST-have items complete:**
+- Tests: 47 tests passing (unit + integration + E2E)
+  - Fast-Lane: ✅ 8min, 0 linting errors, 85% coverage
+  - Full-Suite: ✅ 45min, 95% E2E success, perf 75/100, security 85/100
+- Review: Approved by @code-reviewer-agent (not self-approved)
+- Documentation:
+  - README.md updated with auth setup instructions
+  - API.md documents new endpoints
+  - CHANGELOG.md entry added
+- Journal: `2025-11-14-user-authentication.md` created
+  - Problems: OAuth token refresh edge case
+  - Decisions: Chose JWT over sessions for scalability
+  - Learnings: Auth middleware testing patterns
+- CI: All checks green ✅
+
+✅ **SHOULD-have items addressed:**
+- Performance: Login latency <200ms (target: <300ms) ✅
+- Security: OAuth2 threat model documented, scan clean ✅
+- Metrics: Login success rate tracking added ✅
+
+**Assessment**: Meets Definition of Done. ✅ Ready to merge.
+</Good>
+
+<Bad>
+**PR #457: Fix login bug**
+
+❌ **Missing MUST-have items:**
+- Tests: "Tests pass on my machine" (no CI evidence)
+  - Fast-Lane: Not run
+  - Full-Suite: Skipped "to save time"
+- Review: Self-approved "since it's urgent"
+- Documentation: "Will update later"
+- Journal: No entry created
+- CI: Checks failing (linting errors, 2 test failures)
+
+❌ **Governance violations:**
+- Merged own PR (violates separation of concerns)
+- Skipped quality gates "because it's a hotfix"
+- No root cause analysis (reliability-fixer archetype requirement)
+- No regression test added
+
+**Assessment**: Does NOT meet Definition of Done. ❌ Should be reverted and reworked.
+
+**Why this is wrong:**
+- Hotfixes still require governance (use expedited review, not no review)
+- Self-approval violates authority structure
+- Skipping tests means bug might not actually be fixed
+- No journal = no learning capture = problem will recur
+</Bad>
+
+#### Example 2: Security Change
+
+<Good>
+**PR #789: Implement rate limiting**
+
+✅ **Security-hardener archetype requirements:**
+- Threat Model: `docs/security/rate-limiting-threats.md`
+  - Attack vectors documented
+  - Mitigation strategies defined
+  - Residual risks assessed
+- Security Scan: ✅ 0 critical, 2 high (false positives documented)
+- Penetration Test: Manual testing results in journal
+- Defense-in-Depth: Multiple layers (IP-based, user-based, endpoint-based)
+
+✅ **Standard DoD:**
+- Tests: Rate limit scenarios covered (100% of rate limit logic)
+- Review: Approved by @security-agent + @code-reviewer-agent
+- Documentation: Rate limit policies documented
+- Journal: `2025-11-14-rate-limiting-implementation.md`
+- CI: All gates green including security gates
+
+✅ **ADR created:**
+- `ADR-042-rate-limiting-strategy.md` documents algorithm choice
+
+**Assessment**: Exemplary security change. ✅ All gates passed.
+</Good>
+
+<Bad>
+**PR #790: Add encryption**
+
+❌ **Security-hardener failures:**
+- Threat Model: "Encryption is obviously good" (no actual model)
+- Security Scan: Skipped "because I used a well-known library"
+- Penetration Test: None performed
+- Defense-in-Depth: Single layer only
+
+❌ **Code quality issues:**
+- Using deprecated crypto algorithm (MD5 for hashing)
+- Hardcoded encryption keys in code
+- No key rotation mechanism
+- Error messages leak sensitive info
+
+❌ **Missing standard DoD:**
+- Tests: Only happy path tested
+- Review: Only one approval (needs security-agent review)
+- Documentation: No encryption policy documented
+- Journal: No entry
+- ADR: No architecture decision documented
+
+**Assessment**: Critical security issues. ❌ Must be blocked and reworked.
+
+**Why this is dangerous:**
+- Wrong crypto creates false sense of security
+- Hardcoded keys = security theater
+- No threat model = don't understand what we're protecting against
+- Missing security-agent review = no domain expert validation
+</Bad>
+
+#### Example 3: Refactoring
+
+<Good>
+**PR #234: Refactor auth middleware**
+
+✅ **Maintainability-refactorer archetype requirements:**
+- Complexity Reduction: Cyclomatic complexity 15 → 6 (documented)
+- Test Coverage: Maintained at 85% (no regression)
+- Behavior Unchanged: All tests still pass (no behavior changes)
+
+✅ **Evidence-based changes:**
+- Before metrics: 150 LOC, complexity 15, 4 code smells
+- After metrics: 95 LOC, complexity 6, 0 code smells
+- Performance: No degradation (latency unchanged)
+
+✅ **Standard DoD:**
+- Tests: All existing tests pass + new tests for extracted functions
+- Review: Approved by @code-reviewer-agent
+- Documentation: Code comments improved, architecture notes updated
+- Journal: `2025-11-14-auth-middleware-refactor.md`
+  - Decisions: Extracted 3 functions for clarity
+  - Learnings: Middleware composition patterns
+- CI: All gates green
+
+**Assessment**: Clean refactoring. ✅ Improves maintainability without risk.
+</Good>
+
+<Bad>
+**PR #235: Clean up code**
+
+❌ **Refactoring violations:**
+- Behavior Changed: Added "small feature" during refactor
+- Test Coverage: Dropped from 85% → 60%
+- No Metrics: Can't prove complexity improved
+
+❌ **Mixed concerns:**
+- Refactoring + feature + bug fix in one PR
+- 847 lines changed across 23 files
+- No clear focus or archetype
+
+❌ **Missing DoD:**
+- Tests: 12 tests now failing "will fix in follow-up"
+- Review: "Just cleanup, no review needed"
+- Documentation: Not updated to reflect changes
+- Journal: No entry
+
+**Assessment**: Dangerous refactoring. ❌ Reject and split into focused PRs.
+
+**Why this fails:**
+- Mixed refactor + feature = impossible to review safely
+- Dropping coverage during refactor = introducing bugs
+- Behavior change during refactor = violates maintainability-refactorer archetype
+- No metrics = can't prove improvement
+</Bad>
 
 ## Process Requirements
 

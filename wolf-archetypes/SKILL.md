@@ -1,7 +1,7 @@
 ---
 name: wolf-archetypes
 description: Behavioral archetypes for automatic agent adaptation based on work type
-version: 1.1.0
+version: 1.2.0
 triggers:
   - "select archetype"
   - "behavioral profile"
@@ -199,6 +199,331 @@ When multiple labels are present:
 - **Security + Performance**: Primary = `security-hardener`, add performance evidence
 - **Bug + Performance**: Primary = `reliability-fixer`, add performance checks
 - **Refactor + Features**: Reject - should be separate PRs
+
+### Good/Bad Examples: Archetype Selection
+
+#### Example 1: Feature Development
+
+<Good>
+**Issue #123: Add user profile dashboard**
+
+**Labels**: `feature`, `enhancement`, `user-story`
+
+**MCP Tool Call**:
+```javascript
+mcp__wolf-knowledge__find_archetype({
+  labels: ["feature", "enhancement", "user-story"],
+  description: "Create dashboard showing user profile, activity history, and settings"
+})
+```
+
+**Selected Archetype**: `product-implementer`
+
+**Why this is correct**:
+- Primary label is `feature` → product-implementer
+- Work is clearly additive (new functionality)
+- Priorities align: delivery speed, user value, completeness
+
+**Evidence Requirements**:
+- ✅ Acceptance criteria met
+- ✅ Tests pass (unit + integration + E2E)
+- ✅ Documentation updated
+- ✅ User-facing feature requires accessibility lens
+
+**Execution**:
+- Implements incrementally (Principle #9)
+- Creates PR with tests + docs + journal
+- Requests review from code-reviewer-agent
+- Cannot merge own PR
+</Good>
+
+<Bad>
+**Issue #124: Add user dashboard**
+
+**Labels**: `feature`, `enhancement`, `user-story`, `refactor`, `performance`, `security`
+
+**Mistake**: "I'll handle everything in one PR"
+
+**Why this is wrong**:
+- ❌ Mixed archetypes (product-implementer + maintainability-refactorer + perf-optimizer + security-hardener)
+- ❌ Impossible to review - too many concerns
+- ❌ Cannot determine primary priority order
+- ❌ Evidence requirements conflict
+- ❌ Violates Principle #9 (incremental value)
+
+**Correct Approach**:
+Split into separate PRs:
+1. **PR #1**: Security review of existing code (`security-hardener`)
+2. **PR #2**: Refactor for performance (`maintainability-refactorer` + performance lens)
+3. **PR #3**: Add user dashboard feature (`product-implementer` + accessibility lens)
+
+Each PR has clear archetype, focused scope, and distinct evidence requirements.
+</Bad>
+
+#### Example 2: Bug Fix
+
+<Good>
+**Issue #456: Login fails after 3rd retry**
+
+**Labels**: `bug`, `regression`, `high-priority`
+
+**MCP Tool Call**:
+```javascript
+mcp__wolf-knowledge__find_archetype({
+  labels: ["bug", "regression", "high-priority"],
+  description: "Users cannot login after 3 failed attempts, need to investigate retry logic"
+})
+```
+
+**Selected Archetype**: `reliability-fixer`
+
+**Why this is correct**:
+- Primary label is `bug` → reliability-fixer
+- Work focuses on stability and prevention
+- Priorities: root cause analysis, prevention, stability
+
+**Evidence Requirements**:
+- ✅ Root cause documented in journal
+- ✅ Regression test added (watch it fail, then pass)
+- ✅ Monitoring enhanced to prevent recurrence
+- ✅ All tests passing
+
+**Execution**:
+- Documents root cause: race condition in retry counter
+- Adds regression test reproducing the issue
+- Fixes the bug
+- Adds monitoring for retry failures
+- Creates journal with learnings
+</Good>
+
+<Bad>
+**Issue #457: Login broken**
+
+**Labels**: `bug`
+
+**Mistake**: Assumed `product-implementer` because "I'm adding better login"
+
+**Why this is wrong**:
+- ❌ Ignored `bug` label (should be `reliability-fixer`)
+- ❌ "Better login" = feature addition during bug fix
+- ❌ No root cause analysis (reliability-fixer requirement)
+- ❌ Mixed fix + enhancement in one PR
+
+**What happens**:
+- Agent codes "improved" login flow
+- Original bug still present
+- Added new features without proper testing
+- No regression test for original issue
+- Cannot determine if bug was actually fixed
+
+**Correct Approach**:
+1. Use `reliability-fixer` archetype for Issue #457
+2. Document root cause
+3. Add regression test
+4. Fix ONLY the bug
+5. Create separate Issue #458 for login improvements (`product-implementer`)
+</Bad>
+
+#### Example 3: Security Work
+
+<Good>
+**Issue #789: SQL injection vulnerability in search**
+
+**Labels**: `security`, `vulnerability`, `critical`
+
+**MCP Tool Call**:
+```javascript
+mcp__wolf-knowledge__find_archetype({
+  labels: ["security", "vulnerability", "critical"],
+  description: "User input in search not properly sanitized, allows SQL injection"
+})
+```
+
+**Selected Archetype**: `security-hardener`
+
+**Why this is correct**:
+- Primary label is `security` → security-hardener
+- Work requires specialized security analysis
+- Priorities: threat reduction, defense-in-depth, least privilege
+
+**Evidence Requirements**:
+- ✅ Threat model: SQL injection attack vectors documented
+- ✅ Security scan: Clean results after fix
+- ✅ Penetration test: Manual SQL injection attempts blocked
+- ✅ Defense-in-depth: Parameterized queries + input validation + WAF rules
+
+**Execution**:
+- Creates threat model
+- Implements parameterized queries
+- Adds input validation layer
+- Updates WAF rules
+- Runs security scan
+- Manual penetration testing
+- Documents in journal
+- Requires security-agent review
+</Good>
+
+<Bad>
+**Issue #790: Fix search**
+
+**Labels**: `bug`, `search`
+
+**Mistake**: Used `reliability-fixer` for security vulnerability
+
+**Why this is dangerous**:
+- ❌ Security vulnerability labeled as generic bug
+- ❌ `reliability-fixer` doesn't require threat model
+- ❌ No security-agent review required
+- ❌ No penetration testing
+- ❌ Might fix symptom without understanding threat
+
+**What happens**:
+- Agent adds basic input validation
+- Doesn't understand full attack surface
+- Single-layer defense (no depth)
+- No security scan performed
+- Vulnerability might remain exploitable via other vectors
+
+**Correct Approach**:
+1. **Re-label** Issue #790 with `security`, `vulnerability`
+2. Use `security-hardener` archetype
+3. Create threat model
+4. Implement defense-in-depth
+5. Require security-agent review
+6. Run security scan + penetration test
+</Bad>
+
+#### Example 4: Research/Exploration
+
+<Good>
+**Issue #999: Explore GraphQL vs REST for new API**
+
+**Labels**: `spike`, `research`, `architecture`
+
+**MCP Tool Call**:
+```javascript
+mcp__wolf-knowledge__find_archetype({
+  labels: ["spike", "research", "architecture"],
+  description: "Evaluate GraphQL vs REST for upcoming API redesign, need recommendation"
+})
+```
+
+**Selected Archetype**: `research-prototyper`
+
+**Why this is correct**:
+- Primary label is `research` → research-prototyper
+- Work is exploratory, not implementation
+- Priorities: learning, hypothesis validation, risk reduction
+
+**Evidence Requirements**:
+- ✅ Findings documented (comparison matrix)
+- ✅ Recommendations provided with rationale
+- ✅ Risks identified for each option
+- ✅ Prototype code (throwaway, not production)
+- ✅ Timebox: 1-2 days max
+
+**Execution**:
+- Creates comparison matrix (performance, complexity, ecosystem)
+- Builds small prototype of each
+- Benchmarks typical operations
+- Documents findings in journal
+- Makes recommendation in ADR
+- **Does not implement production code**
+</Good>
+
+<Bad>
+**Issue #998: Try GraphQL**
+
+**Labels**: `feature`
+
+**Mistake**: Used `product-implementer` for research work
+
+**Why this fails**:
+- ❌ Research mislabeled as feature
+- ❌ `product-implementer` expects production-ready code
+- ❌ No timebox (research can expand infinitely)
+- ❌ Prototype code might become production
+
+**What happens**:
+- Agent starts implementing GraphQL fully
+- Weeks of work without validation
+- No comparison with alternatives
+- Prototype becomes "production" without proper testing
+- No ADR documenting decision rationale
+
+**Correct Approach**:
+1. **Re-label** Issue #998 as `spike`, `research`
+2. Use `research-prototyper` archetype
+3. Timebox to 2 days
+4. Create comparison ADR
+5. **After research complete**, create Issue #1000: "Implement GraphQL" with `feature` label (`product-implementer`)
+</Bad>
+
+#### Example 5: Multiple Lenses
+
+<Good>
+**Issue #555: Add payment processing**
+
+**Labels**: `feature`, `security`, `performance`, `critical`
+
+**MCP Tool Call**:
+```javascript
+mcp__wolf-knowledge__find_archetype({
+  labels: ["feature", "security", "performance", "critical"],
+  description: "Integrate Stripe payment processing with encryption and sub-100ms latency"
+})
+```
+
+**Selected Archetype**: `product-implementer` + **security lens** + **performance lens**
+
+**Why this is correct**:
+- Primary archetype: `product-implementer` (it's a feature)
+- Security lens: Payment data requires security-hardener evidence
+- Performance lens: Sub-100ms latency requires perf-optimizer evidence
+
+**Evidence Requirements**:
+- **Product-implementer**: AC met, tests, docs, journal
+- **+ Security lens**: Threat model, security scan, PCI compliance
+- **+ Performance lens**: Baseline metrics, post-change metrics, latency budgets
+
+**Execution**:
+- Implements Stripe integration (feature)
+- Creates threat model for payment data (security lens)
+- Encrypts payment details (security lens)
+- Runs security scan (security lens)
+- Benchmarks payment flow (performance lens)
+- Optimizes to <100ms (performance lens)
+- All evidence documented
+
+**Assessment**: Properly handles multi-faceted requirements through lens stacking
+</Good>
+
+<Bad>
+**Issue #556: Add payments**
+
+**Labels**: `feature`
+
+**Mistake**: Ignored security and performance requirements
+
+**Why this fails**:
+- ❌ Payment processing = critical security requirement (missing security lens)
+- ❌ No threat model for sensitive data
+- ❌ No performance validation
+- ❌ Might violate PCI compliance
+
+**What happens**:
+- Agent implements basic Stripe integration
+- No encryption consideration
+- No security scan
+- No performance benchmarking
+- Latency might be 500ms+ (unusable)
+- Fails security audit in production
+
+**Correct Approach**:
+1. **Add labels**: `security`, `performance` to Issue #556
+2. Use `product-implementer` + security lens + performance lens
+3. Complete evidence for all three: feature + security + performance
+</Bad>
 
 ## Anti-Patterns to Avoid
 

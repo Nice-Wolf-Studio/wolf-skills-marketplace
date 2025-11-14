@@ -5,6 +5,106 @@ All notable changes to the Wolf Skills Marketplace will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-11-14
+
+### Added - Phase 2: Examples & Templates
+
+This release adds comprehensive Good/Bad examples, subagent templates, and extends skill-chaining patterns to wolf-verification.
+
+#### Good/Bad Examples
+
+**wolf-governance (v1.1.0 → v1.2.0)**
+- Added 3 comprehensive Good/Bad example pairs (+168 lines):
+  - Example 1: Feature Pull Request (compliant vs non-compliant DoD)
+  - Example 2: Security Change (proper security-hardener vs security theater)
+  - Example 3: Refactoring (clean refactor vs mixed-concern mess)
+- Each example shows:
+  - ✅ Good: Proper DoD completion with evidence and rationale
+  - ❌ Bad: Common violations with explanation of dangers
+  - Assessment: Clear pass/fail determination
+
+**wolf-archetypes (v1.1.0 → v1.2.0)**
+- Added 5 comprehensive Good/Bad example pairs (+323 lines):
+  - Example 1: Feature Development (proper archetype vs mixed concerns)
+  - Example 2: Bug Fix (reliability-fixer vs feature creep during bug fix)
+  - Example 3: Security Work (security-hardener vs mislabeled security bug)
+  - Example 4: Research/Exploration (research-prototyper vs runaway implementation)
+  - Example 5: Multiple Lenses (proper lens stacking vs ignoring critical requirements)
+- Each example includes MCP tool call syntax and archetype rationale
+
+#### Subagent Templates
+
+**wolf-roles (v1.1.0 → v1.2.0)**
+- Added templates directory with 4 comprehensive role templates (+940 lines total):
+  1. **coder-agent-template.md** (139 lines) - Implementation task guidance
+  2. **pm-agent-template.md** (188 lines) - Requirements definition guidance
+  3. **security-agent-template.md** (276 lines) - Security analysis guidance
+  4. **code-reviewer-agent-template.md** (337 lines) - Code review guidance
+- Each template includes:
+  - Role context with Wolf framework integration
+  - Mission statement with placeholders for customization
+  - Execution checklists (before, during, after)
+  - Handoff protocols to other roles
+  - Red Flags - STOP sections
+  - Success criteria
+- Updated wolf-roles SKILL.md with:
+  - Subagent Templates documentation section
+  - When to use templates guidance
+  - Template structure explanation
+  - Placeholder format documentation
+  - Multi-role workflow patterns
+  - Benefits documentation (+89 lines)
+
+#### Verification Enhancement
+
+**wolf-verification (v1.0.0 → v1.1.0)**
+- Added "Red Flags - STOP" section (7 rationalization blockers)
+- Added "After Using This Skill" with integration points
+- Added verification checklist (6 items)
+- Added 2 Good/Bad examples:
+  - Example 1: Feature Implementation (proper verification-first workflow)
+  - Example 2: Security Review (bad - skipped verification with consequences)
+- Added performance vs quality trade-offs documentation
+- Total additions: +189 lines
+
+#### Documentation
+
+**PLAN.md** (NEW)
+- Comprehensive living document for session recovery (+494 lines)
+- Vision, goals, and expected impact documentation
+- Phase 1 complete implementation details
+- Phase 2 in-progress tracking
+- Phase 3 planned items
+- Implementation statistics (files modified, lines added)
+- Skill chain diagram
+- Pattern examples (before/after)
+- Success metrics tracking
+- Maintenance notes and collaboration protocol
+
+### Changed
+
+**Version Bumps**:
+- wolf-governance: v1.1.0 → v1.2.0 (examples added)
+- wolf-archetypes: v1.1.0 → v1.2.0 (examples added)
+- wolf-roles: v1.1.0 → v1.2.0 (templates + documentation added)
+- wolf-verification: v1.0.0 → v1.1.0 (patterns + examples added)
+
+### Impact
+
+**Phase 2 Enhancements**:
+- **Example Density**: +491 lines of Good/Bad examples across 3 skills
+- **Template Infrastructure**: +940 lines of reusable role templates
+- **Verification Integration**: +189 lines extending patterns to wolf-verification
+- **Documentation**: +494 lines of living project documentation
+
+**Total Phase 2 Additions**: 12 files, +2,114 lines
+
+**Enhanced Developer Experience**:
+- Subagent templates enable easy role delegation
+- Good/Bad examples show concrete compliance patterns
+- PLAN.md enables seamless session recovery
+- Verification skill now part of unified chain
+
 ## [1.1.0] - 2025-11-14
 
 ### Added - Superpowers Skill-Chaining Patterns

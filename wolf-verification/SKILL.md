@@ -1,15 +1,16 @@
 ---
 name: wolf-verification
-description: Use when making factual claims or generating outputs - implements three-layer verification architecture (CoVe for systematic fact-checking, HSP for multi-level safety validation, RAG for evidence grounding) with verification-first pattern; prevents hallucinations and ensures ≥90% citation coverage before delivery
-version: 1.0.1
+description: Three-layer verification architecture (CoVe, HSP, RAG) for self-verification, fact-checking, and hallucination prevention
+version: 1.1.0
 category: quality-assurance
 triggers:
-  - "verification architecture"
-  - "fact checking claims"
-  - "hallucination prevention"
-  - "self verification"
-  - "evidence grounding"
-  - "citation coverage"
+  - verification
+  - fact checking
+  - hallucination detection
+  - self verification
+  - CoVe
+  - HSP
+  - RAG grounding
 dependencies:
   - wolf-principles
   - wolf-governance
@@ -654,12 +655,190 @@ if (detection.hallucinations_found > 0) {
 
 ---
 
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+- ❌ **"This is low-stakes, no need for verification"** - STOP. Unverified claims compound. All factual claims need verification.
+- ❌ **"I'll verify after I finish the response"** - NO. Use Verification-First pattern. Generate checklist BEFORE responding.
+- ❌ **"The model is confident, that's good enough"** - Wrong. Model confidence ≠ factual accuracy. Always verify with external evidence.
+- ❌ **"Verification is too slow for this deadline"** - False. Full pipeline averages <20ms. Verification saves time by preventing rework.
+- ❌ **"I'll skip CoVe and just use RAG"** - NO. Each layer serves different purposes. CoVe = atomic facts, RAG = Wolf context, HSP = safety.
+- ❌ **"This is just internal documentation, no need to verify"** - Wrong. Incorrect internal docs are worse than no docs. Verify anyway.
+- ❌ **"Verification is optional for exploration"** - If generating factual claims, verification is MANDATORY. Mark speculation explicitly.
+
+**STOP. Use verification tools BEFORE claiming anything is factually accurate.**
+
+## After Using This Skill
+
+**VERIFICATION IS CONTINUOUS** - This skill is called DURING work, not after
+
+### When Verification Happens
+
+**Called by wolf-governance:**
+- During Definition of Done validation
+- As part of quality gate assessment
+- Before merge approval
+
+**Called by wolf-roles:**
+- During implementation checkpoints
+- Before PR creation
+- As continuous validation loop
+
+**Called by wolf-archetypes:**
+- When security lens applied (HSP required)
+- When research-prototyper needs evidence
+- When reliability-fixer validates root cause
+
+### Integration Points
+
+**1. With wolf-governance (Primary Caller)**
+- **When**: Before declaring work complete
+- **Why**: Verification is part of Definition of Done
+- **How**:
+  ```javascript
+  // Governance checks if verification passed
+  mcp__wolf-core-ip__check_confidence({
+    model_confidence: 0.75,
+    evidence_count: passages.length,
+    complexity: 0.6,
+    high_stakes: false
+  })
+  ```
+- **Gate**: Cannot claim DoD complete without verification evidence
+
+**2. With wolf-roles (Continuous Validation)**
+- **When**: During implementation at checkpoints
+- **Why**: Prevents late-stage verification failures
+- **How**: Use verification-first pattern for each claim
+- **Example**: coder-agent verifies API docs are accurate before committing
+
+**3. With wolf-archetypes (Lens-Driven)**
+- **When**: Security or research archetypes selected
+- **Why**: Specialized verification requirements
+- **How**:
+  - Security-hardener → HSP for safety validation
+  - Research-prototyper → CoVe for fact-checking
+  - Reliability-fixer → Verification of root cause analysis
+
+### Verification Checklist
+
+Before claiming verification is complete:
+
+- [ ] Generated verification checklist FIRST (verification-first pattern)
+- [ ] Used appropriate verification layer:
+  - [ ] CoVe for factual claims
+  - [ ] HSP for safety validation
+  - [ ] RAG for Wolf-specific context
+- [ ] Checked confidence scores:
+  - [ ] Overall confidence ≥0.8 for proceed
+  - [ ] 0.5-0.8 = needs more evidence (abstain)
+  - [ ] <0.5 = escalate to human review
+- [ ] Documented verification results in journal
+- [ ] Provided evidence sources for claims
+- [ ] Identified and documented open risks
+
+**Can't check all boxes? Verification incomplete. Return to this skill.**
+
+### Verification Examples
+
+#### Example 1: Feature Implementation
+
+```yaml
+Scenario: Coder-agent implementing user authentication
+
+Verification-First:
+  Step 1: Generate checklist BEFORE coding
+    - Assumptions: User has email, password requirements known
+    - Sources: OAuth 2.0 spec, bcrypt documentation
+    - Claims: bcrypt is secure for password hashing
+    - Tests: Verify bcrypt parameters against OWASP recommendations
+    - Open Risks: Password requirements may need to evolve
+
+  Step 2: Implement with checklist guidance
+
+  Step 3: Verify claims with CoVe
+    - Claim: "bcrypt is recommended by OWASP for password hashing"
+    - CoVe verification: ✅ Confidence 0.95
+    - Evidence: [OWASP Cheat Sheet, bcrypt documentation]
+
+  Step 4: Check overall confidence
+    - Model confidence: 0.85
+    - Evidence count: 3 passages
+    - Complexity: 0.4 (low)
+    - Result: 'proceed' ✅
+
+Assessment: Verified implementation, safe to proceed
+```
+
+#### Example 2: Security Review (Bad)
+
+```yaml
+Scenario: Security-agent reviewing authentication without verification
+
+❌ What went wrong:
+  - Skipped verification-first checklist generation
+  - Assumed encryption was correct without verifying
+  - No HSP safety validation performed
+  - No evidence retrieved for claims
+
+❌ Result:
+  - Claimed "authentication is secure" without evidence
+  - Missed hardcoded secrets (HSP would have caught)
+  - Missed deprecated crypto usage (CoVe would have caught)
+  - High confidence but no verification = hallucination
+
+Correct Approach:
+  1. Generate verification checklist for security claims
+  2. Use HSP to scan for secrets, PII, unsafe patterns
+  3. Use CoVe to verify crypto library recommendations
+  4. Use RAG to ground in Wolf security best practices
+  5. Check confidence before approving
+  6. Document verification evidence in journal
+```
+
+### Performance vs Quality Trade-offs
+
+**Verification is NOT slow:**
+- Full pipeline: <20ms average
+- CoVe (5 steps): ~150ms
+- HSP (per claim): ~2ms
+- RAG (k=5): ~3-5ms
+
+**Cost of skipping verification:**
+- Merge rejected due to factual errors: Hours of rework
+- Security vulnerability shipped: Days to patch + incident response
+- Documentation errors: Weeks of support burden + reputation damage
+
+**Verification is an investment, not overhead.**
+
 ## Related Skills
 
-- **wolf-principles**: Evidence-based decision making principle
-- **wolf-governance**: Quality gate requirements
+- **wolf-principles**: Evidence-based decision making principle (#5)
+- **wolf-governance**: Quality gate requirements (verification is DoD item)
+- **wolf-roles**: Roles call verification at checkpoints
+- **wolf-archetypes**: Lenses determine verification requirements
 - **wolf-adr**: ADR-043 (Verification Architecture)
 - **wolf-scripts-core**: Evidence validation patterns
+
+## Integration with Other Skills
+
+**Primary Chain Position**: Called DURING work (not after)
+
+```
+wolf-principles → wolf-archetypes → wolf-governance → wolf-roles
+                                            ↓
+                                    wolf-verification (YOU ARE HERE)
+                                            ↓
+                                    Continuous validation throughout implementation
+```
+
+**You are a supporting skill that enables quality:**
+- Governance depends on you for evidence
+- Roles depend on you for confidence
+- Archetypes depend on you for lens validation
+
+**DO NOT wait until the end to verify. Verify continuously.**
 
 ---
 
@@ -667,12 +846,6 @@ if (detection.hallucinations_found > 0) {
 **Test Coverage**: ≥90% required (achieved: 98%+)
 **Production Status**: Active in Phase 50+
 
-**Last Updated**: October 2025 (Phase 50+)
-**Maintainer**: Verification Team
-
-## Changelog
-
-### 1.0.1 (2025-11-14)
-- Enhanced frontmatter with three-layer architecture emphasis
-- Improved description to highlight verification-first and citation coverage
-- Added evidence grounding and prevention keywords to triggers
+**Last Updated**: 2025-11-14
+**Phase**: Superpowers Skill-Chaining Enhancement v2.0.0
+**Version**: 1.1.0

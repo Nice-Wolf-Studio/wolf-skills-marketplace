@@ -1,7 +1,7 @@
 ---
 name: wolf-roles
 description: Guidance for 50+ specialized Wolf agent roles with responsibilities and collaboration patterns
-version: 1.1.0
+version: 1.2.0
 triggers:
   - "agent role"
   - "role guidance"
@@ -222,6 +222,91 @@ When roles disagree:
 - `lookup.js` - Find role by name, responsibility, or category
 - `matrix.js` - Generate collaboration matrix for roles
 - `escalate.js` - Determine escalation path for conflicts
+
+## Subagent Templates (NEW in v1.1.0)
+
+**Purpose**: Enable easy delegation of work to specialized roles using the Task tool
+
+**Available Templates**:
+1. **templates/coder-agent-template.md** - For implementation tasks
+2. **templates/pm-agent-template.md** - For requirements definition
+3. **templates/security-agent-template.md** - For security analysis
+4. **templates/code-reviewer-agent-template.md** - For code reviews
+
+### When to Use Templates
+
+**Use subagent templates when:**
+- Task requires role-specific expertise
+- Work can be delegated to isolated context
+- Clear handoff protocol needed
+- Want to ensure role boundaries respected
+
+**Example**: Dispatching coder-agent for implementation
+
+```
+I'm using the Task tool to dispatch a coder-agent subagent:
+
+Prompt: You are coder-agent working on implementing user authentication.
+Load templates/coder-agent-template.md and fill in:
+- TASK_TITLE: "Implement user authentication"
+- ARCHETYPE: "product-implementer"
+- ACCEPTANCE_CRITERIA: "1. Users can login, 2. Users can logout, 3. Sessions managed"
+- FILES_TO_MODIFY: "src/auth/*"
+
+Complete implementation following template checklist.
+```
+
+### Template Structure
+
+Each template includes:
+- **Role Context**: Loaded wolf-principles, archetypes, governance, roles
+- **Mission**: Clear statement of what to accomplish
+- **Execution Checklist**: Step-by-step guidance
+- **Handoff Protocol**: How to return work or escalate
+- **Red Flags**: Common mistakes to avoid
+- **Success Criteria**: How to know when done
+
+### Template Placeholders
+
+All templates use `{PLACEHOLDER}` format:
+- `{TASK_TITLE}` - Title of work
+- `{ARCHETYPE}` - Selected behavioral archetype
+- `{ACCEPTANCE_CRITERIA}` - What defines done
+- `{FILES_TO_MODIFY}` - Which files to change
+- `{EVIDENCE_REQUIREMENTS}` - What proof needed
+
+**Fill placeholders before dispatching subagent.**
+
+### Multi-Role Workflows
+
+**Pattern**: Chain subagents through templates
+
+```
+1. pm-agent: Define requirements using pm-agent-template.md
+   ↓ Creates GitHub issue with AC
+2. coder-agent: Implement using coder-agent-template.md
+   ↓ Creates PR with tests + docs
+3. code-reviewer-agent: Review using code-reviewer-agent-template.md
+   ↓ Approves or requests changes
+4. Merge when approved
+```
+
+### Benefits of Templates
+
+**Consistency:**
+- All subagents follow same checklists
+- No role-specific knowledge forgotten
+- Governance automatically enforced
+
+**Isolation:**
+- Each subagent has clear boundaries
+- Handoffs are explicit
+- No role mixing
+
+**Quality:**
+- Checklists prevent skipped steps
+- Red flags block common mistakes
+- Success criteria ensure completeness
 
 ## Quality Gates by Role
 
