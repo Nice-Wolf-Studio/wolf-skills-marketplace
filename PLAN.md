@@ -977,6 +977,156 @@ Added "After Using This Skill" sections for skill-chaining integration:
 
 ---
 
+## Phase 8: Coding Patterns Enhancement (Wave 1) 🔄 IN PROGRESS
+
+**Version**: v2.7.0
+**Date**: 2025-11-15
+**Status**: 🔄 IN PROGRESS
+
+### Problem Identified
+
+After Phase 7, coder-agent template focuses heavily on *process* (TDD, verification, debugging, Git/GitHub) but lacks *design pattern* guidance for common coding scenarios.
+
+**Gap**: Agents don't have structured guidance on:
+- When to apply which design pattern
+- How to decompose complex functions (cyclomatic complexity > 10)
+- Modern architectural patterns (orchestration, vertical slice, pure functions)
+- Function-level best practices (SRP, pure vs impure, composition)
+
+**User request**: "Coding best practices with orchestration pattern, functional programming style, proper design patterns, keeping functions smaller"
+
+---
+
+### Solution: Hybrid Approach (New Skill + Template Enhancement)
+
+**Strategy**:
+1. **Create new skill**: `coding-patterns` with searchable index and detailed patterns
+2. **Enhance template**: Add "When to Consult Patterns" trigger section (~20 lines)
+3. **Enable skill chaining**: Template triggers → coding-patterns → specific pattern
+
+**Why hybrid**:
+- Template stays lean (~440 lines vs 420 now, only +20 lines)
+- Detailed patterns loaded on-demand (token-efficient)
+- Extensible (add more patterns without bloating template)
+- Reusable across roles (architect, code-reviewer)
+
+---
+
+### Wave 1: Core Patterns (HIGH PRIORITY)
+
+**Deliverables**:
+
+1. **Create `coding-patterns/SKILL.md`** (~520 lines)
+   - Pattern Index (searchable by problem type, complexity, architecture)
+   - 4 Core Patterns with examples
+
+2. **Core Patterns**:
+   - **Orchestration Pattern** (~150 lines)
+     - User's explicit request
+     - Multi-service coordination, Saga pattern
+     - Central coordinator for complex workflows
+
+   - **Pure Functions + Side Effect Isolation** (~120 lines)
+     - 80/20 rule (80% pure, 20% side effects at edges)
+     - Testability without mocks
+     - Functional programming principles
+
+   - **Function Decomposition** (~150 lines)
+     - When to extract functions (complexity > 10, >50 lines, SRP violations)
+     - Decision tree for decomposition
+     - Cyclomatic complexity guidelines
+
+   - **Vertical Slice Architecture** (~100 lines)
+     - Feature-based organization (vs layered)
+     - Aligns with incremental PR strategy
+     - Colocate feature code (UI, logic, data)
+
+3. **Create Examples**
+   - TypeScript/JavaScript examples (most common in Wolf ecosystem)
+   - Before/after refactoring snippets
+
+4. **Enhance `coder-agent-template.md`** (+20 lines)
+   - Add "When to Consult Coding Patterns Skill" section
+   - Triggers: complexity > 10, multi-service coordination, testing difficulties, organization unclear
+
+---
+
+### Deferred to Future Waves
+
+**Wave 2** (MEDIUM priority, if Wave 1 successful):
+- Composition Over Inheritance
+- Dependency Injection
+- SOLID Principles (S + D)
+- Anti-Patterns (God Object, Spaghetti Code, Copy-Paste)
+
+**Wave 3** (LOW priority, optional):
+- Strategy Pattern (functional approach)
+- Factory Pattern
+- Observer Pattern (event-driven)
+- Hexagonal/Clean Architecture
+
+---
+
+### Research Completed
+
+**Modern patterns researched** (2024-2025 sources):
+- 12 patterns documented with value analysis
+- Function decomposition guidelines (industry standards)
+- Token efficiency analysis
+- Integration strategy evaluation
+
+**Key findings**:
+- Orchestration pattern critical for microservices/multi-agent coordination
+- Pure functions (80/20 rule) dramatically improves testability
+- Function decomposition rules prevent complexity bloat (>10 cyclomatic, >50 lines)
+- Vertical slice architecture aligns with incremental delivery
+
+---
+
+### Files to Create/Modify
+
+**New Files**:
+- `coding-patterns/SKILL.md` (~520 lines)
+- `coding-patterns/examples/typescript/` (code examples)
+
+**Modified Files**:
+- `coder-agent-template.md` (+20 lines for trigger section)
+- `CHANGELOG.md` (v2.7.0 entry)
+
+**Total additions**: ~540 lines
+
+---
+
+### Success Criteria
+
+- [ ] Orchestration pattern documented with multi-service example
+- [ ] Function decomposition decision tree clear and actionable
+- [ ] Pure functions 80/20 rule explained with code examples
+- [ ] Vertical slice architecture explained with folder structure example
+- [ ] Template triggers enable skill discovery
+- [ ] Real-world test validates patterns are helpful (not pedantic)
+
+---
+
+### Implementation Plan
+
+1. Create `coding-patterns/SKILL.md` with frontmatter, index, 4 patterns
+2. Create TypeScript/JavaScript examples for each pattern
+3. Enhance `coder-agent-template.md` with trigger section
+4. Update CHANGELOG.md with v2.7.0 entry
+5. Commit and push
+6. Test with real coding task (validate value, observe usage)
+
+---
+
+### Phase 8 Status
+
+**Current**: 🔄 IN PROGRESS (Wave 1 implementation)
+**Timeline**: 2025-11-15
+**Estimated effort**: 2-3 hours
+
+---
+
 ## Implementation Statistics
 
 ### Files Modified (Phase 1 + Phase 2)

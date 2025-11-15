@@ -5,6 +5,267 @@ All notable changes to the Wolf Skills Marketplace will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2025-11-15
+
+### Added - Coding Patterns Skill (Phase 8 Wave 1)
+
+This release adds comprehensive coding pattern guidance for coder-agent through a new `coding-patterns` skill with searchable index and 4 core modern design patterns (2024-2025).
+
+#### Problem Solved
+
+**Before**:
+- coder-agent template focused heavily on *process* (TDD, verification, debugging, Git/GitHub) but lacked *design pattern* guidance
+- No structured guidance on when to apply which pattern
+- No function decomposition rules (when to extract, complexity limits)
+- No modern architectural patterns (orchestration, vertical slice, pure functions)
+- Functions could grow to >100 lines with complexity >15 without clear extraction rules
+
+**After**:
+- ✅ New `coding-patterns` skill (v1.0.0) with searchable index by problem type, complexity, architecture
+- ✅ 4 core patterns with TypeScript examples: Orchestration, Pure Functions, Function Decomposition, Vertical Slice
+- ✅ Template triggers for pattern discovery (complexity >10, >50 lines, testing difficulties)
+- ✅ Function size/complexity guidelines (industry-standard: <50 lines, complexity <10)
+- ✅ ~590 lines of pattern guidance (loaded on-demand via skill chaining)
+- ✅ +23 lines in coder-agent template (minimal overhead, triggers only)
+
+---
+
+#### New Skill: coding-patterns (v1.0.0)
+
+**Skill Details**:
+- **File**: `coding-patterns/SKILL.md` (~590 lines)
+- **Triggers**: coding patterns, design patterns, orchestration pattern, function decomposition, pure functions, vertical slice, clean code, cyclomatic complexity, testability, code organization
+- **Integration**: Hybrid approach (new skill + template enhancement)
+
+**Core Patterns** (Wave 1 - HIGH PRIORITY):
+
+**1. Orchestration Pattern** (~150 lines)
+- **What**: Central orchestrator coordinates multi-service workflows with Saga pattern (compensating transactions)
+- **When**: Microservices needing coordinated transactions, multi-step workflows, complex error handling
+- **Example**: Order processing (payment → inventory → shipping) with automatic rollback on failure
+- **Benefits**: Centralized error handling, testable rollback paths, transactional integrity
+- **User's explicit request**: "orchestration pattern" specified in Phase 8 requirements
+
+**2. Pure Functions + Side Effect Isolation** (~120 lines)
+- **What**: 80/20 rule - 80% pure functions (no side effects), 20% impure at edges (I/O, logging)
+- **When**: Business logic that should be testable without mocks, calculations, transformations
+- **Example**: Order pricing logic (discounts, tax) separated from database/email operations
+- **Benefits**: Testable without mocks, composable, debuggable, memoizable
+- **User's explicit request**: "functions that are mainly logic based... functional programming works"
+
+**3. Function Decomposition** (~150 lines)
+- **What**: Structured approach to breaking down complex functions (decision tree for when to extract)
+- **When**: Function >50 lines, cyclomatic complexity >10, function name has "and"/"or", deep nesting >4 levels
+- **Recommended limits**: 20-50 lines (target ~30), complexity <10, parameters <5, nesting <4 levels
+- **Example**: 65-line order processing function decomposed into 6 focused functions (~15 lines each, complexity <5)
+- **Benefits**: Single responsibility, testable independently, self-documenting, reusable, lower complexity
+- **User's explicit request**: "keeping functions smaller" and "proper design patterns"
+
+**4. Vertical Slice Architecture** (~100 lines)
+- **What**: Organize code by feature/business capability (vertical slices) vs technical layers (horizontal)
+- **When**: Feature-rich applications, teams on independent features, incremental PRs
+- **Example**: `features/user-registration/` contains all layers (controller, service, repository, tests) in one directory
+- **Benefits**: Feature cohesion, small PRs (each feature = one directory), parallel development, no merge conflicts
+- **Aligns with**: Incremental PR strategy from coder-agent template (<500 lines per PR, feature-complete)
+
+**Pattern Index**:
+- **By Problem Type**: Coordinating services → Orchestration, Hard to test → Pure Functions, Complex function → Decomposition, Feature organization → Vertical Slice
+- **By Complexity Signal**: Complexity >10 → Decomposition, >50 lines → Decomposition, "and"/"or" in name → Decomposition
+- **By Architecture**: Microservices → Orchestration, Feature-driven → Vertical Slice, Layered monolith → Traditional
+
+**Quality Assurance**:
+- Red Flags section (8 anti-patterns to avoid)
+- Verification Checklist (function quality, pattern application, testability, code organization)
+- "When to Use" AND "When NOT to Use" for each pattern (prevents over-engineering)
+- Token efficiency analysis for each pattern
+
+---
+
+#### Enhanced: coder-agent-template.md (v2.4.0 → v2.5.0)
+
+**File**: `wolf-roles/templates/coder-agent-template.md` (+23 lines)
+
+**New Section**: "Coding Patterns & Design (RECOMMENDED)" (inserted after "Documentation & API Research", line 106)
+
+**Pattern Triggers**:
+- **Function Complexity**: >50 lines, cyclomatic complexity >10, "and"/"or" in function name
+- **Multi-Service Workflows**: Coordinating multiple services/APIs (→ orchestration pattern)
+- **Testing Difficulties**: Hard to test without extensive mocks (→ pure functions + DI)
+- **Code Organization**: Feature-based vs layered architecture decision (→ vertical slice)
+- **Complex Logic**: Multi-step business rules, branching logic (→ function decomposition)
+
+**Quick Pattern Lookup**:
+```bash
+# Use Skill tool to load coding-patterns
+Skill "coding-patterns"
+
+# Pattern index provides quick lookup by:
+# - Problem type (coordinating services, testing, organization)
+# - Complexity signal (>10 complexity, >50 lines, deep nesting)
+# - Architecture decision (microservices, feature-driven)
+```
+
+**Template Footer Updated**:
+```markdown
+*Template Version: 2.5.0 - Enhanced with Coding Patterns + Superpowers + Context Management + Git/GitHub Workflow + Incremental PR Strategy + Documentation Lookup First*
+*Part of Wolf Skills Marketplace v2.7.0*
+*Integrations: 6 Superpowers development workflow skills + coding-patterns skill + wolf-context-management + git/GitHub best practices + incremental PR framework + WebSearch-first documentation guidance*
+```
+
+**Why "RECOMMENDED" not "MANDATORY"**:
+- Not all coding tasks require pattern guidance (simple CRUD, one-off scripts)
+- Triggers are clear signals (complexity metrics, testing difficulty)
+- Prevents pedantic pattern application (user requirement: "don't overload/overkill")
+
+---
+
+### Research & Wave-Based Implementation
+
+**Research Conducted** (via Plan agent):
+- Web search for modern coding patterns 2024-2025
+- 12 patterns identified (Orchestration, Vertical Slice, Pure Functions, Composition, DI, SOLID, Strategy, Factory, Observer, Hexagonal, Function Decomposition, Anti-Patterns)
+- Industry-standard function size/complexity guidelines compiled (PMD, Checkstyle, Martin Fowler, McCabe, ISO 26262)
+
+**Wave 1 (HIGH PRIORITY)** - v2.7.0 (THIS RELEASE):
+- ✅ Orchestration Pattern (user's explicit request)
+- ✅ Pure Functions + Side Effect Isolation (functional programming style)
+- ✅ Function Decomposition (keep functions smaller)
+- ✅ Vertical Slice Architecture (aligns with incremental PR strategy)
+
+**Deferred to Future Waves**:
+- **Wave 2 (MEDIUM)**: Composition Over Inheritance, Dependency Injection, SOLID Principles, Anti-Patterns (God Object, Spaghetti Code)
+- **Wave 3 (LOW/OPTIONAL)**: Strategy Pattern, Factory Pattern, Observer Pattern, Hexagonal Architecture
+
+**Decision**: Wave-based approach prevents overwhelming agents with 12+ patterns. Wave 1 focuses on highest-impact patterns solving immediate pain points (complexity bloat, testability, multi-service coordination).
+
+---
+
+### Integration Strategy: Hybrid Approach
+
+**Why Hybrid (New Skill + Template Enhancement)?**
+
+**Option A: All patterns in template** (~520 lines added to template)
+- ❌ Bloats template from 420 lines to 940 lines
+- ❌ All agents loading template pay token cost
+- ❌ Hard to extend with Wave 2, Wave 3
+
+**Option B: All patterns in new skill** (no template changes)
+- ❌ Low discoverability (agents don't know skill exists)
+- ❌ Requires agents to remember to load skill
+
+**Option C: Hybrid (CHOSEN)** (~23 lines in template, ~590 lines in skill)
+- ✅ Template stays lean (420 → 443 lines, only +5% overhead)
+- ✅ Clear triggers in template (agents know when to load skill)
+- ✅ Detailed patterns loaded on-demand (token-efficient)
+- ✅ Extensible (Wave 2, Wave 3 add to skill, template unchanged)
+- ✅ Reusable (architect, code-reviewer can use coding-patterns too)
+- ✅ Skill chaining: template triggers → coding-patterns → specific pattern
+
+---
+
+### Token Efficiency Analysis
+
+**Template Overhead**:
+- Before: 420 lines (coder-agent-template v2.4.0)
+- After: 443 lines (coder-agent-template v2.5.0)
+- **Overhead**: +23 lines (+5.5%) - minimal cost for all coder-agent loads
+
+**Skill On-Demand Loading**:
+- Skill file: ~590 lines (coding-patterns v1.0.0)
+- Loaded only when triggered (complexity >10, >50 lines, testing difficulties, architecture decisions)
+- **Benefit**: Agents without pattern needs don't pay token cost
+
+**Comparison**:
+- All-in-template approach: +520 lines (100% of agents pay cost)
+- Hybrid approach: +23 lines template + ~590 lines skill (only agents needing patterns pay cost)
+- **Savings**: ~497 lines for agents not needing patterns (~84% reduction)
+
+---
+
+### Files Added/Modified
+
+**New Files** (1):
+- `coding-patterns/SKILL.md` (~590 lines) - Wave 1 core patterns with TypeScript examples
+
+**Modified Files** (2):
+- `wolf-roles/templates/coder-agent-template.md` (+23 lines, v2.4.0 → v2.5.0) - Pattern triggers section
+- `PLAN.md` (+149 lines) - Phase 8 documentation (problem, solution, waves, success criteria)
+- `CHANGELOG.md` (this entry) - v2.7.0 release notes
+
+**Total Additions**: ~762 lines of pattern guidance and documentation
+
+---
+
+### Success Criteria (Phase 8 Wave 1)
+
+**Immediate** (Technical Completion):
+- ✅ `coding-patterns` skill created with 4 core patterns
+- ✅ TypeScript examples for each pattern (inline in skill)
+- ✅ Template enhanced with pattern triggers
+- ✅ CHANGELOG updated with v2.7.0 entry
+- ✅ PLAN.md updated with Phase 8 documentation
+
+**Next Steps** (Validation):
+- [ ] Test with real coding task (validate patterns are helpful, not pedantic)
+- [ ] Observe pattern usage by coder-agent in production
+- [ ] Collect feedback on pattern clarity and usefulness
+- [ ] Decide whether to proceed with Wave 2 (Composition, DI, SOLID, Anti-Patterns)
+
+---
+
+### Impact
+
+**For Coder-Agent**:
+- ✅ Clear guidance on when to apply design patterns (no guessing)
+- ✅ Function decomposition rules prevent complexity bloat (stop at 50 lines, complexity <10)
+- ✅ Functional programming principles improve testability (80% pure functions)
+- ✅ Modern architectural patterns (orchestration for services, vertical slice for features)
+- ✅ Searchable index for quick pattern lookup (by problem, complexity, architecture)
+
+**For Code Quality**:
+- ✅ Functions stay small (20-50 lines, target ~30) - easier to read, test, maintain
+- ✅ Testable code without mocks (80% pure functions) - faster tests, less setup
+- ✅ Better organization (vertical slice aligns with incremental PRs <500 lines)
+- ✅ Coordinated workflows (orchestration pattern with Saga rollback)
+- ✅ Industry-standard complexity limits (cyclomatic complexity <10, nesting <4 levels)
+
+**For Development Velocity**:
+- ✅ Patterns guide refactoring (clear signals when to extract function)
+- ✅ Incremental PR strategy enhanced (vertical slice = feature-complete PRs)
+- ✅ Parallel development enabled (vertical slices = different directories = no conflicts)
+- ✅ Token-efficient (on-demand loading, template stays lean)
+
+---
+
+### User Requirements Addressed
+
+**From Phase 8 user request**:
+1. ✅ "orchestration pattern" - Pattern 1, ~150 lines with Saga example
+2. ✅ "functions that are mainly logic based... functional programming" - Pattern 2 (Pure Functions, 80/20 rule)
+3. ✅ "keeping functions smaller" - Pattern 3 (Function Decomposition with size/complexity limits)
+4. ✅ "proper design patterns" - 4 patterns with when to use, when NOT to use, examples
+5. ✅ "take in waves" - 3-wave plan (Wave 1 complete, Wave 2 & 3 deferred)
+6. ✅ "don't overload/overkill or be pedantic" - "When NOT to Use" sections, value analysis, optional triggers
+7. ✅ "actual value and efficiency and token management" - Token efficiency analysis, hybrid approach
+8. ✅ "modern patterns (2024-2025)" - Web search conducted, modern examples (Saga, pure functions, vertical slice)
+9. ✅ "classics should still be there" - Decomposition and pure functions are timeless, modern applications shown
+
+---
+
+### Migration Notes
+
+**For Existing Projects**:
+- No breaking changes - coding-patterns skill is optional
+- Coder-agent template v2.5.0 backward-compatible with v2.4.0
+- Projects can ignore coding-patterns if not needed (simple CRUD, scripts)
+
+**For New Projects**:
+- coding-patterns skill auto-discovered via template triggers
+- Use pattern index for quick lookup (by problem, complexity, architecture)
+- Follow verification checklist before marking implementation complete
+
+---
+
 ## [2.6.0] - 2025-11-14
 
 ### Added - Workflow Template Consistency (Phase 7 Completion)

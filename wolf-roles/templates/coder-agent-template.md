@@ -103,6 +103,28 @@ WebSearch "Node.js 23 ESM breaking changes"
 - "What's new" or "Migration guide" sections
 ```
 
+**Coding Patterns & Design** (RECOMMENDED):
+
+- [ ] Load `coding-patterns` skill when encountering:
+  - **Function Complexity**: Function >50 lines, cyclomatic complexity >10, or "and"/"or" in name
+  - **Multi-Service Workflows**: Coordinating multiple services/APIs (→ orchestration pattern)
+  - **Testing Difficulties**: Hard to test without extensive mocks (→ pure functions + DI)
+  - **Code Organization**: Deciding feature-based vs layered architecture (→ vertical slice)
+  - **Complex Logic**: Multi-step business rules, branching logic (→ function decomposition)
+
+**Why this matters:** Applying patterns early prevents complexity bloat. A function that grows to 100+ lines with complexity >15 is exponentially harder to refactor than stopping at 50 lines. Patterns guide when/how to decompose.
+
+**Quick pattern lookup:**
+```bash
+# Use Skill tool to load coding-patterns
+Skill "coding-patterns"
+
+# Pattern index provides quick lookup by:
+# - Problem type (coordinating services, testing, organization)
+# - Complexity signal (>10 complexity, >50 lines, deep nesting)
+# - Architecture decision (microservices, feature-driven)
+```
+
 **Git/GitHub Setup** (MANDATORY):
 
 - [ ] Check for project-specific conventions first
@@ -420,7 +442,7 @@ After completing implementation:
 
 ---
 
-*Template Version: 2.4.0 - Enhanced with Superpowers + Context Management + Git/GitHub Workflow + Incremental PR Strategy + Documentation Lookup First*
+*Template Version: 2.5.0 - Enhanced with Coding Patterns + Superpowers + Context Management + Git/GitHub Workflow + Incremental PR Strategy + Documentation Lookup First*
 *Role: coder-agent*
-*Part of Wolf Skills Marketplace v2.4.0*
-*Integrations: 6 Superpowers development workflow skills + wolf-context-management + git/GitHub best practices + incremental PR framework + WebSearch-first documentation guidance*
+*Part of Wolf Skills Marketplace v2.7.0*
+*Integrations: 6 Superpowers development workflow skills + coding-patterns skill + wolf-context-management + git/GitHub best practices + incremental PR framework + WebSearch-first documentation guidance*
