@@ -296,6 +296,24 @@ This skill was developed within the olympics-fotb agent framework, which uses:
 
 For context on the framework, see the bundled `references/` files.
 
+---
+
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+1. **Share the report** - Distribute to stakeholders via Slack, email, or wiki
+2. **Archive data** - Save PR JSON response for historical analysis
+3. **Update tracking** - Mark standup/status report as complete in project tracker
+
+**OPTIONAL NEXT STEPS:**
+
+- **Trend Analysis** - Compare with previous reports to identify velocity changes
+- **Action Items Follow-up** - Create GitHub issues for blockers identified in report
+- **Team Metrics** - Track PR merge times, review latency trends over time
+
+---
+
 ## Skill Maturity
 
 **Current Confidence Level:** 8/10

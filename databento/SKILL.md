@@ -359,6 +359,24 @@ Filter data by trading session (Asian/London/NY).
 7. **Use appropriate schema** - Match schema granularity to analysis needs
 8. **Filter by session when relevant** - Session-based patterns are important for ES/NQ
 
+---
+
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+1. **Validate data quality** - Use verification checklist (Step 4) to confirm data integrity
+2. **Cache results** - Save fetched data locally to avoid redundant API calls and costs
+3. **Document assumptions** - Record roll strategy, schema choice, date range in analysis notes
+
+**OPTIONAL NEXT STEPS:**
+
+- **Cost tracking** - Log actual cost vs estimate for future budget planning
+- **Performance notes** - Document fetch time and data volume for optimization
+- **Quality metrics** - Track data completeness, gaps, or anomalies for future reference
+
+---
+
 ## Changelog
 
 **v1.0.1** (2025-11-14)

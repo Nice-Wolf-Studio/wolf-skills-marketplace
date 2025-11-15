@@ -528,6 +528,24 @@ See `examples.md` in this skill directory for complete working examples.
 - **Discord.js Docs:** https://discord.js.org/
 - **Discord API:** https://discord.com/developers/docs
 
+---
+
+## After Using This Skill
+
+**REQUIRED NEXT STEPS:**
+
+1. **Verify message sent successfully** - Check verification checklist (6 items) to confirm integration worked
+2. **Document method used** - Record which method succeeded (MCP/Gateway/REST) for future reference
+3. **Test error handling** - Verify fallback logic works if primary method fails
+
+**OPTIONAL NEXT STEPS:**
+
+- **Set up logging** - Track Discord API calls, errors, and response times for debugging
+- **Create reusable wrapper** - Build abstraction around working method for consistent usage
+- **Monitor bot health** - Set up alerts for token expiration or permission changes
+
+---
+
 ## Changelog
 
 ### Version 1.0.1 (2025-11-14)

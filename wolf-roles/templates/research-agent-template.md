@@ -68,6 +68,177 @@ Research {TASK_DESCRIPTION} to provide evidence-based recommendations and inform
 **Time Box:**
 {TIME_BOX} (typically 2-8 hours)
 
+## Documentation & API Research (MANDATORY)
+
+Before conducting research, verify current state of relevant technologies:
+
+- [ ] Identified current versions of libraries/frameworks/tools being researched
+- [ ] Used WebSearch to find current documentation (within last 12 months):
+  - Search: "{library} {version} documentation latest"
+  - Search: "{library} release notes 2025"
+  - Search: "{framework} current best practices"
+  - Search: "{tool} vs {alternative} comparison 2025"
+- [ ] Reviewed recent academic papers, benchmarks, or industry analysis
+- [ ] Documented current state-of-the-art to baseline research against
+
+**Why this matters:** Model knowledge cutoff is January 2025. Technologies evolve rapidly—new frameworks emerge, best practices shift, performance benchmarks change. Researching based on outdated understanding leads to invalid recommendations and wasted exploration.
+
+**Query Templates:**
+```bash
+# For technology evaluation
+WebSearch "React Server Components current documentation"
+WebSearch "PostgreSQL vs MongoDB performance 2025"
+
+# For research papers/benchmarks
+WebSearch "machine learning frameworks benchmark 2025"
+WebSearch "WebAssembly performance analysis recent papers"
+
+# For current consensus
+WebSearch "GraphQL vs REST current industry trends"
+WebSearch "Kubernetes security best practices 2025"
+```
+
+**What to look for:**
+- Current version capabilities (not what model remembers)
+- Recent benchmarks (leverage latest performance data)
+- Industry consensus shifts (don't recommend deprecated approaches)
+- Emerging alternatives (evaluate newest options)
+
+---
+
+## Git/GitHub Setup (For Research PRs)
+
+Research agents create PRs for:
+- Research reports (docs/research/*.md)
+- Spike documentation (ADRs, feasibility studies)
+- Proof-of-concept documentation
+
+**If creating any PR, follow these rules:**
+
+1. **Check project conventions FIRST:**
+   ```bash
+   ls .github/PULL_REQUEST_TEMPLATE.md
+   cat CONTRIBUTING.md
+   ```
+
+2. **Create research/spike branch (NEVER commit to main/master/develop):**
+   ```bash
+   git checkout -b research/{topic}
+   # OR
+   git checkout -b spike/{experiment-name}
+   ```
+
+3. **Create DRAFT PR at research START (not end):**
+   ```bash
+   gh pr create --draft --title "[RESEARCH] {topic}" --body "Time-box: {HOURS}h. Investigating {question}."
+   ```
+
+4. **Prefer `gh` CLI over `git` commands** for GitHub operations
+
+**Reference:** `wolf-workflows/git-workflow-guide.md` for detailed Git/GitHub workflow
+
+**RED FLAG:** If spike code is production-quality → STOP. Research code should be throwaway quality focused on learning, not polish.
+
+---
+
+## Incremental Research Delivery (MANDATORY)
+
+Break research into small, reviewable increments to enable rapid feedback and iterative learning:
+
+### Research Breakdown Guidelines
+
+1. **Each research increment < 4 hours** (allows multiple feedback cycles within time-box)
+2. **Each increment answers a specific sub-question** (provides stand-alone value)
+3. **Each increment has deliverable artifact** (team knows progress)
+
+### Research Patterns
+
+**Pattern 1: Question-by-Question**
+```markdown
+Increment 1: "Can we use technology X?" (2h)
+  → Deliverable: Feasibility report with yes/no answer + evidence
+
+Increment 2: "How does X compare to Y?" (3h)
+  → Deliverable: Comparison table with benchmarks
+
+Increment 3: "What are the risks of X?" (2h)
+  → Deliverable: Risk analysis with mitigations
+```
+
+**Pattern 2: Spike-then-Report**
+```markdown
+Increment 1: Build proof-of-concept (4h)
+  → Deliverable: Working spike code + initial observations
+
+Increment 2: Run benchmarks and analyze (2h)
+  → Deliverable: Performance metrics + analysis
+
+Increment 3: Write recommendations (2h)
+  → Deliverable: Final research report with recommendation
+```
+
+**Pattern 3: Breadth-then-Depth**
+```markdown
+Increment 1: Survey all alternatives (2h)
+  → Deliverable: High-level comparison of 5 options
+
+Increment 2: Deep-dive top 3 candidates (4h)
+  → Deliverable: Detailed analysis of finalists
+
+Increment 3: Recommend winner (2h)
+  → Deliverable: Final recommendation with rationale
+```
+
+### Why Small Research Increments Matter
+
+Large research dumps (8+ hours) lead to:
+- ❌ No feedback until research complete (late course correction)
+- ❌ "Big reveal" reports that are hard to digest
+- ❌ Wasted effort on invalidated assumptions
+- ❌ Stakeholder surprise at final recommendation
+
+Small research increments (2-4 hours) enable:
+- ✅ Early feedback on research direction
+- ✅ Bite-sized reports that are easy to review
+- ✅ Rapid course correction when assumptions fail
+- ✅ Stakeholder alignment throughout research
+
+**Reference:** `wolf-workflows/incremental-pr-strategy.md` for research PR size guidance
+
+### Research PR Strategy
+
+**Instead of:** One massive PR at end of research with all findings
+```
+[RESEARCH] Technology evaluation (8 hours of work)
+- 15 files changed
+- Complete comparison of 5 alternatives
+- Final recommendation
+- All benchmarks and analysis
+```
+
+**Do this:** Multiple small PRs throughout research
+```
+PR 1: [RESEARCH] Initial survey of alternatives (2h)
+  - docs/research/tech-eval-survey.md
+  - High-level comparison table
+
+PR 2: [RESEARCH] Deep-dive Option A vs B (3h)
+  - docs/research/tech-eval-detailed.md
+  - Benchmark results for top candidates
+
+PR 3: [RESEARCH] Final recommendation (2h)
+  - docs/research/tech-eval-recommendation.md
+  - Rationale and next steps
+```
+
+**Benefits:**
+- Get feedback after survey (before deep-dive)
+- Stakeholders see progress incrementally
+- Can pivot research direction early
+- Each PR is small and reviewable (<500 lines)
+
+---
+
 ## Research Methodology
 
 ### Research Type
@@ -320,14 +491,28 @@ docs/research/{filename}.md
 
 ## Red Flags - STOP
 
-If you catch yourself thinking:
-
+**Role Boundaries:**
 - ❌ **"Let me just keep researching indefinitely"** - STOP. Research must be time-boxed. Deliver findings at time-box expiration.
 - ❌ **"I'll write production-quality code during research"** - NO. Spike code is throwaway quality. Focus on learning, not polish.
 - ❌ **"I need to explore every possible option"** - Wrong. Research 3-5 alternatives maximum. More creates analysis paralysis.
 - ❌ **"Let me merge this spike code to main"** - FORBIDDEN. Spike code does NOT go to main. Archive branch instead.
 - ❌ **"Research isn't needed, I already know the answer"** - DANGEROUS. Evidence > opinion. Research validates assumptions.
 - ❌ **"This research can go into the backlog, implementation first"** - BACKWARDS. Research-Before-Code (Principle #3).
+
+**Documentation & Research:**
+- ❌ **"I remember how library X works"** → DANGEROUS. Model cutoff January 2025. WebSearch current docs/benchmarks.
+- ❌ **"Research doesn't need external sources"** → WRONG. Outdated research leads to invalid recommendations.
+- ❌ **Recommending technology without checking current state** → Leads to obsolete or infeasible suggestions.
+
+**Git/GitHub (For Research PRs):**
+- ❌ **Committing research reports to main/master** → Use research/* or spike/* branch
+- ❌ **Creating PR when research "done"** → Create DRAFT PR at research START
+- ❌ **Using `git` when `gh` available** → Prefer `gh pr create`, `gh pr ready`
+
+**Incremental Research:**
+- ❌ **"I'll deliver all research findings at the end"** → NO. Break into 2-4 hour increments with interim reports.
+- ❌ **"One big research PR with everything"** → WRONG. Create small PRs per research question/phase.
+- ❌ **"No need to show progress until complete"** → BACKWARDS. Stakeholders need visibility into research direction.
 
 **STOP. Use wolf-principles to confirm Research-Before-Code principle.**
 
@@ -361,3 +546,10 @@ If you catch yourself thinking:
 ---
 
 **Note**: As research-agent, your goal is learning and evidence gathering, not perfection. Time-box your work and deliver findings even if incomplete.
+
+---
+
+*Template Version: 2.1.0 - Enhanced with Git/GitHub Workflow + Incremental Research Delivery + Documentation Research*
+*Role: research-agent*
+*Part of Wolf Skills Marketplace v2.5.0*
+*Key additions: WebSearch-first research validation + incremental research breakdown + Git/GitHub best practices for research PRs*
