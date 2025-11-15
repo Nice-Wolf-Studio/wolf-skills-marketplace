@@ -32,6 +32,262 @@ pm-agent (triage) → [research-agent] (root cause) → coder-agent (fix) → qa
 
 ---
 
+## Documentation & API Research (WORKFLOW-LEVEL GUIDANCE)
+
+**MANDATORY for ALL agents in this workflow**
+
+Each agent in the workflow MUST follow their role template's documentation lookup guidance:
+
+### Before Starting Each Phase:
+
+**pm-agent (Phase 1 - Bug Triage)**:
+- WebSearch for known issues, bug reports, similar bugs in issue trackers
+- Check library/framework changelogs for recently fixed bugs
+- Search for workarounds or official statements from maintainers
+- Verify if bug is already reported upstream (GitHub issues, Stack Overflow)
+
+**research-agent (Phase 2 - Root Cause Analysis)** [if applicable]:
+- WebSearch for root cause analysis patterns, debugging techniques (if complex bug)
+- Search for similar bugs in other projects ("X bug pattern Y framework")
+- Check for architectural anti-patterns related to the bug type
+- Verify framework/library versions and known issues in current version
+
+**architect-lens-agent** [if architectural review needed]:
+- WebSearch for architectural anti-patterns related to the bug
+- Check for design pattern violations that may have caused the bug
+- Verify architectural best practices for bug prevention
+
+**coder-agent (Phase 3 - Fix Implementation)**:
+- **CRITICAL**: WebSearch for library bug fixes, patches, workarounds in current versions
+- Query format: "{library} {version} bug fix 2025" or "{library} issue #{number}"
+- Check if upstream fix exists (can adopt instead of custom fix)
+- Verify breaking changes in newer versions that might fix the bug
+- **Model cutoff is January 2025** - bug may already be fixed upstream
+
+**qa-agent (Phase 4 - Regression Testing)**:
+- WebSearch for regression testing patterns, bug reproduction techniques
+- Check testing framework documentation for edge case testing methods
+- Verify test coverage tools and regression prevention techniques
+
+**code-reviewer-agent (Phase 5)**:
+- Reference latest coding standards that prevent this bug class
+- Verify against current framework recommendations for bug prevention
+- Check for similar bugs in codebase (use Grep/WebSearch patterns)
+
+**devops-agent** [if production debugging needed]:
+- WebSearch for production debugging tools, log analysis techniques
+- Check monitoring/observability best practices for bug detection
+- Verify deployment rollback procedures
+
+**Why This Matters**: Model knowledge cutoff is January 2025. Bugs may already be fixed upstream, workarounds may exist, or new debugging techniques may be available. 2-5 minutes of documentation lookup per phase prevents hours of reinventing solutions.
+
+---
+
+## Git/GitHub Workflow Strategy (WORKFLOW-LEVEL)
+
+**Branch Strategy for Bugfix Workflows**:
+
+### 1. Create Bugfix Branch at Start (Phase 2 or 3)
+```bash
+# For regular bugs:
+git checkout -b fix/{issue-id}-{bug-name}
+
+# For critical production bugs:
+git checkout -b hotfix/{issue-id}-{bug-name}
+```
+
+**When**: After bug reproduced (before root cause analysis or fix implementation)
+**Who**: research-agent or coder-agent (whichever handles root cause analysis)
+**Why**: Single branch for entire workflow prevents merge conflicts between agents
+
+### 2. Draft PR at Fix Implementation Start (Phase 3)
+```bash
+gh pr create --draft \
+  --title "[FIX] {Bug Title}" \
+  --body "Bugfix in progress. Root cause: {summary}. See workflow: docs/workflows/{filename}.md"
+
+# For critical hotfixes:
+gh pr create --draft \
+  --title "[HOTFIX] {Bug Title}" \
+  --body "Critical production bugfix. See workflow: docs/workflows/{filename}.md"
+```
+
+**When**: coder-agent starts fix implementation (Phase 3)
+**Who**: coder-agent
+**Why**: Early visibility, tracks progress, enables continuous review
+
+### 3. Update PR Throughout Workflow
+- **After root cause analysis (Phase 2)**: Add root cause explanation to PR description
+- **During fix implementation (Phase 3)**: Push commits incrementally with regression test
+- **After regression testing (Phase 4)**: Add test results to PR description
+- **After code review (Phase 5)**: Mark PR ready, request final approval
+
+### 4. Mark PR Ready for Review (Phase 5)
+```bash
+gh pr ready  # Converts draft to ready for review
+```
+
+**When**: After qa-agent regression testing passes (before code-reviewer-agent)
+**Who**: qa-agent or coder-agent
+**Why**: Signals workflow completion, triggers final review
+
+### 5. Merge After Approval (Phase 5 Complete)
+```bash
+gh pr merge --squash  # or --merge or --rebase based on project conventions
+```
+
+**When**: After code-reviewer-agent approval
+**Who**: code-reviewer-agent (has merge authority)
+**Why**: Clean history, verified quality
+
+### Hotfix Fast-Track Exception
+**For CRITICAL (P0) production bugs**:
+- May create PR directly (skip draft phase)
+- May bypass research phase if root cause is obvious
+- May expedite review (same-day turnaround)
+- **MUST** still include regression test (no exceptions)
+- **MUST** document root cause (even if expedited)
+
+**NEVER**:
+- ❌ Commit directly to main/master/develop (even for hotfixes)
+- ❌ Create PR when "done" (create DRAFT PR early)
+- ❌ Skip draft PR phase unless critical hotfix (early visibility is critical)
+- ❌ Use `git` when `gh` CLI available (prefer `gh pr create`, `gh pr ready`)
+- ❌ Skip regression test for "simple" bugs (always add regression test)
+
+---
+
+## Incremental Bugfix Delivery (WORKFLOW-LEVEL)
+
+**Breaking Bugfixes Into Reviewable Increments**:
+
+### Why Incremental Delivery Matters for Bugfix Workflows
+
+**Problem**: Complex bugs can produce large fixes spanning multiple components, causing:
+- Long investigation cycles (unclear progress)
+- Large PRs that are hard to review
+- Risk of introducing new bugs while fixing old ones
+- Delayed feedback on fix approach
+
+**Solution**: Break bugfix into 1-2 day increments (shards), each independently valuable and testable.
+
+---
+
+### Incremental Patterns for Bugfix Workflows
+
+**Pattern 1: Isolate-Fix-Verify-Prevent** (Recommended for Most Bugs)
+```
+Shard 1 (1 day): Isolate root cause + add reproduction test
+  - Phases: PM (triage) → Research (root cause) → Coder (failing test)
+  - Deliverable: Understood problem + failing test that demonstrates bug
+  - Can deploy: No (test fails, but problem is understood)
+
+Shard 2 (1 day): Fix the bug
+  - Phases: Coder (minimal fix) → QA (verify fix)
+  - Deliverable: Reproduction test now passes, bug fixed
+  - Can deploy: Yes (minimal fix, regression test passing)
+
+Shard 3 (1 day): Prevent recurrence
+  - Phases: Coder (defensive checks) → QA (edge cases) → Review
+  - Deliverable: Robust fix with edge case coverage
+  - Can deploy: Yes (production-ready)
+```
+
+**Benefits**:
+- ✅ Shard 1 can be reviewed for correctness of root cause analysis
+- ✅ Shard 2 delivers minimal working fix quickly
+- ✅ Shard 3 adds robustness without rushing
+
+**Pattern 2: Critical vs Non-Critical Fixes** (Hotfix + Comprehensive Fix)
+```
+Shard 1 (4 hours): Hotfix for critical production bug
+  - Phases: PM (triage) → Coder (minimal patch) → QA (smoke test)
+  - Deliverable: Production working again (tactical fix)
+  - Can deploy: Yes (fast-track, minimal change)
+  - **Fast-track**: Skip research phase, minimal fix only
+
+Shard 2 (1-2 days): Comprehensive fix + refactoring
+  - Phases: Research (root cause) → Coder (proper fix) → QA (full tests) → Review
+  - Deliverable: Address root cause properly, full test coverage
+  - Can deploy: Yes (replaces tactical fix with strategic fix)
+```
+
+**Benefits**:
+- ✅ Production restored immediately (Shard 1)
+- ✅ Root cause addressed properly (Shard 2)
+- ✅ Technical debt avoided (tactical fix replaced by strategic fix)
+
+**Pattern 3: Multi-Component Bug** (Component-by-Component Fixes)
+```
+Shard 1 (1 day): Fix in Component A + regression test
+  - Phases: Research (isolate to A) → Coder (fix A) → QA (test A)
+  - Deliverable: Component A fixed, tested
+  - Can deploy: Partial (A works, B still buggy)
+
+Shard 2 (1 day): Fix in Component B + regression test
+  - Phases: Coder (fix B) → QA (test B)
+  - Deliverable: Component B fixed, tested
+  - Can deploy: Partial (both A and B work independently)
+
+Shard 3 (1 day): Integration fix + end-to-end test
+  - Phases: Coder (integration) → QA (E2E tests) → Review
+  - Deliverable: Full system working, comprehensive tests
+  - Can deploy: Yes (complete fix)
+```
+
+**Benefits**:
+- ✅ Each component fixed independently (reduces complexity)
+- ✅ Easier to review (focused changes per shard)
+- ✅ Integration issues caught in dedicated shard
+
+**Pattern 4: Temporary Mitigation + Permanent Fix** (Risk Reduction)
+```
+Shard 1 (0.5 days): Add defensive checks / feature flag
+  - Phases: Coder (add safeguards) → QA (verify mitigation)
+  - Deliverable: Bug mitigated (doesn't crash, logs error)
+  - Can deploy: Yes (reduces blast radius while investigating)
+
+Shard 2 (2 days): Root cause analysis + comprehensive fix
+  - Phases: Research (root cause) → Coder (fix) → QA (tests) → Review
+  - Deliverable: Bug fully resolved, safeguards remain
+  - Can deploy: Yes (complete fix)
+```
+
+**Benefits**:
+- ✅ Immediate risk reduction (Shard 1)
+- ✅ Time to investigate properly (Shard 2)
+- ✅ Defense-in-depth (safeguards + fix)
+
+---
+
+### When to Split the Bugfix Workflow
+
+**Split BEFORE Phase 3 (Fix Implementation)** if:
+- Estimated fix time > 2 days
+- Bug spans multiple components (>3 files)
+- Root cause analysis reveals architectural issues
+- Hotfix needed immediately but comprehensive fix requires research
+
+**How to Split**:
+1. PM-agent defines acceptance criteria PER SHARD
+2. Research-agent or coder-agent identifies shard boundaries (components, layers)
+3. Each shard follows abbreviated workflow: (PM) → Coder → QA → (Review)
+4. Shard N+1 builds on merged Shard N
+
+**Benefits**:
+- ✅ Each shard < 300 lines (reviewable in 30-60 minutes)
+- ✅ Merge cycles: Hours to days (not weeks)
+- ✅ Early validation of fix approach
+- ✅ Reduced risk of introducing regressions
+- ✅ Clear progress tracking (shard-by-shard)
+
+**Special Case: Hotfix Fast-Track**
+- **When**: CRITICAL (P0) production bugs
+- **Pattern**: Single shard, minimal fix, expedited review
+- **Follow-up**: Comprehensive fix in separate PR after production restored
+
+---
+
 ## Bug Severity Levels
 
 ### CRITICAL (P0)
@@ -641,6 +897,8 @@ def fill_array(array):
 
 ## Red Flags - STOP
 
+### Bugfix Process Red Flags
+
 If you catch yourself thinking:
 
 - ❌ **"Skip reproduction, just fix what looks wrong"** - STOP. Reproduction is mandatory. Can't fix what you can't reproduce.
@@ -650,6 +908,39 @@ If you catch yourself thinking:
 - ❌ **"This fix is small, no need for review"** - Wrong. Small fixes can have large consequences. Always review.
 - ❌ **"Similar bugs can be fixed later"** - NO. If you found a pattern, fix all instances now. Technical debt compounds.
 - ❌ **"Intermittent bugs are too hard to debug"** - STOP. Use systematic debugging. Intermittent bugs are findable.
+- ❌ **"One agent can handle triage + fix + test"** - NO. Role separation prevents overlooking issues. PM triages, coder fixes, QA validates.
+
+---
+
+### Documentation & API Lookup Red Flags
+
+- ❌ **"I know what caused this bug without checking"** - DANGEROUS. WebSearch for known issues first. Bug may be fixed upstream.
+- ❌ **"This library hasn't changed, no need to check docs"** - ASSUMPTION. Bugs are often already fixed in newer versions. Verify with 2-5 min WebSearch.
+- ❌ **"Documentation lookup is only for research-agent"** - NO. Every agent checks current docs: pm-agent (known issues), coder-agent (patches), qa-agent (test patterns).
+- ❌ **"I'll debug by trial and error"** - WASTE. 2 min WebSearch for "{library} {bug pattern} fix" beats hours of guessing.
+- ❌ **"Our version is old, new docs don't apply"** - WRONG. New docs show bug evolution, workarounds, migration paths. Essential context.
+
+---
+
+### Git/GitHub Workflow Red Flags
+
+- ❌ **"Hotfix directly to main/master"** - FORBIDDEN. Even critical bugs need branches: `hotfix/{issue-id}-{name}`, then PR.
+- ❌ **"Create PR when fix is done"** - BACKWARDS. Create DRAFT PR at Phase 3 start (fix implementation begins).
+- ❌ **"Skip draft PR for simple bugs"** - NO. Draft PR tracks progress, enables early review feedback, prevents duplicate work.
+- ❌ **"Use `git commit` and `git push` for bugfix workflow"** - SUBOPTIMAL. Prefer `gh pr create --draft --title "[FIX] ..."`, `gh pr ready`.
+- ❌ **"Hotfixes can skip PR process entirely"** - DANGEROUS. Hotfixes MUST have PR (even if expedited). Bypass review = introduce new bugs under pressure.
+
+---
+
+### Incremental Delivery Red Flags
+
+- ❌ **"This bug is too urgent to break into shards"** - FALSE. Pattern 2 (Hotfix + Comprehensive Fix) = fast tactical fix (Shard 1) + proper fix (Shard 2).
+- ❌ **"Fix everything related in one big PR"** - NO. Multi-component bugs split into component shards (Pattern 3). Each shard < 300 lines.
+- ❌ **"We'll ship the full fix or nothing"** - RISKY. Pattern 4 (Mitigation + Fix) = deploy safeguards first (Shard 1), investigate properly (Shard 2).
+- ❌ **"Breaking up bugfix delays production fix"** - BACKWARDS. Incremental delivery ACCELERATES production fix (Shard 1 ships in hours, comprehensive fix follows).
+- ❌ **"Hotfixes don't need incremental patterns"** - WRONG. Hotfixes benefit MOST: tactical fix immediately (Shard 1), prevent recurrence later (Shard 2).
+
+---
 
 **STOP. Use wolf-governance to verify bugfix quality requirements.**
 
@@ -685,3 +976,9 @@ If you catch yourself thinking:
 **Fix Time**: {FIX_DURATION}
 
 **Bug {BUG_TITLE} successfully resolved and prevented from recurring.**
+
+---
+
+*Template Version: 2.1.0 - Enhanced with Documentation Lookup + Git/GitHub Workflow + Incremental Bugfix Delivery*
+*Workflow Type: Multi-Agent Bug Remediation*
+*Part of Wolf Skills Marketplace v2.6.0*

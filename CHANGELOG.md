@@ -5,6 +5,144 @@ All notable changes to the Wolf Skills Marketplace will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2025-11-14
+
+### Added - Workflow Template Consistency (Phase 7 Completion)
+
+This release brings all 3 workflow templates to v2.1.0, completing the template consistency work started in v2.5.0.
+
+#### Problem Solved
+
+**Before**:
+- 3 workflow templates (feature, security, bugfix) lacked v2.4.0 patterns
+- No documentation lookup guidance for multi-agent workflows
+- No Git/GitHub workflow strategy for coordinating multiple agents
+- No incremental delivery patterns for complex workflows
+
+**After**:
+- ✅ All 3 workflow templates at v2.1.0
+- ✅ Workflow-level documentation lookup guidance (all agents in workflow)
+- ✅ Git/GitHub strategy for multi-agent coordination (single branch, draft PRs)
+- ✅ Workflow-specific incremental patterns (feature, security, bugfix)
+- ✅ Enhanced Red Flags with 4 categories per workflow
+- ✅ ~800 lines of workflow guidance added
+
+---
+
+#### Updated Workflow Templates (v1.0.0 → v2.1.0)
+
+All 3 templates received four major enhancements:
+
+**1. Documentation & API Research (WORKFLOW-LEVEL)** section (~45-50 lines each):
+- Phase-by-phase documentation lookup guidance
+- Agent-specific WebSearch requirements
+- Model cutoff awareness (January 2025)
+- Workflow-adapted documentation patterns
+
+**2. Git/GitHub Workflow Strategy (WORKFLOW-LEVEL)** section (~50-75 lines each):
+- Multi-agent branch coordination
+- Draft PR timing and updates
+- PR naming conventions (workflow-specific)
+- Merge authority and timing
+
+**3. Incremental Delivery Patterns (WORKFLOW-LEVEL)** section (~120-150 lines each):
+- Workflow-specific shard patterns
+- Deliverable definitions per shard
+- When to split workflows
+- Benefits analysis
+
+**4. Enhanced Red Flags** (+4 categories each):
+- Workflow Process Red Flags
+- Documentation & API Lookup Red Flags
+- Git/GitHub Workflow Red Flags
+- Incremental Delivery Red Flags
+
+---
+
+### Templates Updated
+
+**1. feature-workflow-template.md** (v1.0.0 → v2.1.0): +193 lines
+- **Incremental Patterns**: Layer-by-Layer (Backend → Frontend), Vertical Slice (MVP → Full), Feature Flag Rollout
+- **Git/GitHub**: Single feature branch for entire workflow, draft PR at Phase 4 (implementation start)
+- **Doc Lookup**: All 7 agents (PM → Research → Architect → Coder → QA → Reviewer → DevOps)
+- **Red Flags**: 4 categories, 23 total items
+- **Shard target**: < 500 lines per increment
+
+**2. security-workflow-template.md** (v1.0.0 → v2.1.0): +314 lines
+- **Incremental Patterns**: Defense-in-Depth Layers, Threat-by-Threat (CVSS prioritization), Compliance Requirements, Security Feature Rollout
+- **Git/GitHub**: `security/{threat-or-cve-name}` branch naming, `[SECURITY]` PR prefix, GitHub Security Advisory workflow for CVEs
+- **Doc Lookup**: CVE databases (NVD, MITRE), OWASP updates, compliance standards (GDPR, SOC2), security testing tools
+- **Red Flags**: 4 categories, 25 total items (security-focused)
+- **Shard target**: < 500 lines, prioritized by severity (Critical → High → Medium)
+- **Critical addition**: Private vulnerability disclosure workflow (`gh security-advisory`)
+
+**3. bugfix-workflow-template.md** (v1.0.0 → v2.1.0): +296 lines
+- **Incremental Patterns**: Isolate-Fix-Verify-Prevent, Critical vs Non-Critical (Hotfix Strategy), Multi-Component Bug, Temporary Mitigation + Permanent Fix
+- **Git/GitHub**: `fix/{issue-id}-{bug-name}` or `hotfix/{issue-id}` branch naming, `[FIX]`/`[HOTFIX]` PR prefix, fast-track exception for P0 bugs
+- **Doc Lookup**: Upstream fixes first (check if already fixed), library changelogs, bug reproduction techniques
+- **Red Flags**: 4 categories, 23 total items (bugfix-focused)
+- **Shard target**: < 300 lines per increment (smaller than features due to regression risk)
+- **Critical addition**: Hotfix fast-track path (can bypass research, BUT must include regression test)
+
+**Total additions**: ~803 lines of workflow guidance across 3 templates
+
+**Template footer updated** (all templates):
+```markdown
+*Template Version: 2.1.0 - Enhanced with Documentation Lookup + Git/GitHub Workflow + Incremental [Type] Delivery*
+*Workflow Type: Multi-Agent [Feature Development | Security Review | Bug Remediation]*
+*Part of Wolf Skills Marketplace v2.6.0*
+```
+
+---
+
+### Changed
+
+**All workflow templates now consistent**:
+- Unified structure across feature, security, bugfix workflows
+- Workflow-level guidance for multi-agent coordination
+- Workflow-specific incremental delivery patterns
+- Consistent Red Flags framework (4 categories)
+
+**Skills marketplace v2.6.0**:
+- Template consistency: 6 of 6 role templates + 3 of 3 workflow templates at v2.1.0
+- Complete coverage: All templates have Git/GitHub + Incremental + Doc Lookup patterns
+
+---
+
+### Impact
+
+**For Multi-Agent Workflows**:
+- ✅ Clear coordination strategy (single branch, draft PRs, update throughout)
+- ✅ Workflow-specific incremental patterns (feature: layer-by-layer, security: threat-by-threat, bugfix: isolate-fix-verify)
+- ✅ Phase-by-phase documentation lookup (prevents outdated API usage across workflow)
+- ✅ Workflow-adapted Red Flags (23-25 items catching common workflow anti-patterns)
+
+**For Users**:
+- ✅ Predictable multi-agent behavior
+- ✅ Smaller, reviewable PRs (feature < 500 lines, security prioritized, bugfix < 300 lines)
+- ✅ Faster workflow cycles (shards merge independently)
+- ✅ Better coordination (single branch prevents merge conflicts)
+
+**For Specific Workflows**:
+- **Feature workflows**: Clear path from requirements → deployment with incremental delivery
+- **Security workflows**: CVE handling, private disclosure, threat prioritization
+- **Bugfix workflows**: Hotfix fast-track, upstream fixes first, mandatory regression tests
+
+---
+
+### Execution Details
+
+**Implementation**:
+- feature-workflow-template.md updated manually to establish pattern
+- security-workflow and bugfix-workflow updated via parallel agents
+- All 3 agents completed successfully with workflow-specific adaptations
+
+**Timeline**: 2025-11-14 (same-day execution)
+
+**Commits**: (pending in upcoming commit)
+
+---
+
 ## [2.5.0] - 2025-11-14
 
 ### Added - Template Consistency & Skill Chaining Integration (Phase 7)

@@ -32,6 +32,279 @@ pm-agent → [research-agent] → architect-lens-agent → coder-agent → qa-ag
 
 ---
 
+## Documentation & API Research (WORKFLOW-LEVEL GUIDANCE)
+
+**MANDATORY for ALL agents in this security workflow**
+
+Each agent in the workflow MUST follow their role template's documentation lookup guidance:
+
+### Before Starting Each Phase:
+
+**pm-agent (Phase 1)**:
+- WebSearch for CVE databases (NVD, MITRE, CVE Details) for recent vulnerabilities
+- Check OWASP updates (Top 10, ASVS, Testing Guide) for current threat landscape
+- Verify compliance requirements (GDPR, SOC2, HIPAA, PCI-DSS) for latest standards
+- Search for recent security advisories related to your technology stack
+- Query format: "CVE {technology} 2025" or "OWASP {threat-type} best practices 2025"
+
+**research-agent (Phase 2)** [if applicable]:
+- WebSearch for security research papers (arXiv, IEEE, ACM) from 2024-2025
+- Check vulnerability databases for similar attack vectors
+- Verify security tool versions and capabilities (OWASP ZAP, Burp Suite, etc.)
+- Search for exploit databases (ExploitDB, Metasploit) to understand attack patterns
+- Query format: "{vulnerability-type} research 2025" or "{attack-vector} mitigation patterns"
+
+**architect-lens-agent (Phase 3)**:
+- WebSearch for security patterns (OWASP Application Security Architecture)
+- Verify current threat modeling frameworks (STRIDE, DREAD, PASTA)
+- Check for security architecture best practices for chosen stack
+- Search for defense-in-depth implementation patterns
+- Query format: "{technology} security architecture 2025" or "threat modeling {framework} guide"
+
+**coder-agent (Phase 4)**:
+- **CRITICAL**: WebSearch for secure coding patterns before implementing security controls
+- Query format: "{library} secure implementation 2025" or "{framework} security API reference"
+- Check for security library vulnerabilities (npm audit, Snyk, CVE databases)
+- Verify cryptographic library usage (OWASP recommendations, NIST standards)
+- Search for common security pitfalls: "{technology} security anti-patterns"
+- **Model cutoff is January 2025** - Security APIs and vulnerabilities change rapidly
+
+**qa-agent (Phase 5)**:
+- WebSearch for security testing tools documentation (OWASP ZAP, Burp Suite, Metasploit)
+- Verify current OWASP Testing Guide methodologies
+- Check for penetration testing frameworks and checklists
+- Search for automated security testing patterns (SAST, DAST, SCA)
+- Query format: "{tool} documentation 2025" or "OWASP testing {vulnerability-type}"
+
+**code-reviewer-agent (Phase 6)**:
+- Reference latest secure coding standards (OWASP Secure Coding Practices)
+- Verify against current security review checklists
+- Check for recently disclosed vulnerability patterns
+
+**devops-agent (Phase 7)** [if applicable]:
+- **CRITICAL**: WebSearch for infrastructure security best practices
+- Check cloud provider security documentation (AWS Security, Azure Security Center)
+- Verify container security (Docker security, Kubernetes hardening)
+- Search for CI/CD pipeline security patterns
+- Query format: "{cloud-provider} security best practices 2025" or "{infrastructure-tool} hardening guide"
+
+**Why This Matters**: Security landscape evolves daily. New CVEs, attack vectors, and mitigations emerge constantly. Model knowledge cutoff is January 2025. 2-5 minutes of documentation lookup per phase prevents implementing outdated security controls or missing critical vulnerabilities.
+
+---
+
+## Git/GitHub Workflow Strategy (WORKFLOW-LEVEL)
+
+**Branch Strategy for Security Workflows**:
+
+### 1. Create Security Branch at Start (Phase 2 or 3)
+```bash
+git checkout -b security/{threat-or-cve-name}
+# Examples:
+# git checkout -b security/sql-injection-remediation
+# git checkout -b security/CVE-2025-1234
+# git checkout -b security/authentication-implementation
+```
+
+**When**: After threat model approved (before design or research)
+**Who**: research-agent or architect-lens-agent (whichever comes first)
+**Why**: Isolates security work, enables private development for sensitive fixes
+
+### 2. Draft PR at Implementation Start (Phase 4)
+```bash
+gh pr create --draft \
+  --title "[SECURITY] {Threat or Feature Name}" \
+  --body "Security implementation in progress. See threat model: docs/threat-models/{filename}.md"
+```
+
+**When**: coder-agent starts implementation (Phase 4)
+**Who**: coder-agent
+**Why**: Early visibility for security-critical changes, enables security team review
+
+**IMPORTANT**: For critical vulnerabilities (CVEs, zero-days), consider using GitHub Security Advisories:
+```bash
+# For private vulnerability disclosure:
+gh security-advisory create \
+  --severity {critical|high|medium|low} \
+  --cve-id {CVE-ID} \
+  --description "{description}"
+```
+
+### 3. Update PR Throughout Workflow
+- **After threat modeling (Phase 1)**: Add threat model link to PR description
+- **After design (Phase 3)**: Add security ADR link to PR description
+- **During implementation (Phase 4)**: Push commits incrementally, update security impact analysis
+- **After security testing (Phase 5)**: Add OWASP Top 10 test results, scan reports to PR description
+- **After security review (Phase 6)**: Mark PR ready, request final security approval
+
+### 4. Mark PR Ready for Review (Phase 6)
+```bash
+gh pr ready  # Converts draft to ready for review
+```
+
+**When**: After qa-agent security validation passes (before code-reviewer-agent)
+**Who**: qa-agent or coder-agent
+**Why**: Signals security controls validated, ready for final security review
+
+### 5. Merge After Security Approval (Phase 6 Complete)
+```bash
+gh pr merge --squash  # or --merge or --rebase based on project conventions
+```
+
+**When**: After code-reviewer-agent security approval
+**Who**: code-reviewer-agent (has merge authority for security changes)
+**Why**: Clean history, verified security posture
+
+**NEVER**:
+- ❌ Commit directly to main/master/develop for security fixes
+- ❌ Create PR when "done" (create DRAFT PR early for security visibility)
+- ❌ Skip security advisory workflow for critical vulnerabilities
+- ❌ Merge security PRs without security review approval
+- ❌ Use generic PR titles (always prefix with `[SECURITY]` for visibility)
+
+---
+
+## Incremental Security Delivery (WORKFLOW-LEVEL)
+
+**Breaking Security Work Into Reviewable Increments**:
+
+### Why Incremental Delivery Matters for Security Workflows
+
+**Problem**: Large security initiatives spanning 7 agents can produce PRs >2000 lines, causing:
+- Week-long security review cycles
+- Increased attack surface during development
+- High risk of introducing new vulnerabilities
+- Delayed vulnerability remediation
+- Difficult security validation (too much to test at once)
+
+**Solution**: Break security work into 2-3 day increments (shards), each improving security posture independently.
+
+---
+
+### Incremental Patterns for Security Workflows
+
+**Pattern 1: Defense-in-Depth Layers** (Layer-by-Layer Security Hardening)
+```
+Shard 1 (2 days): Input Validation Layer
+  - Phases: PM (define validation rules) → Architect → Coder → QA (injection tests) → Review
+  - Deliverable: All untrusted inputs validated and sanitized
+  - Security Impact: Prevents injection attacks (SQL, XSS, command injection)
+  - Tests: 50+ injection attack tests (SQLMap, XSS payloads, command injection)
+  - Can deploy: Yes (first defense layer operational)
+
+Shard 2 (2 days): Authentication/Authorization Layer
+  - Phases: PM (define access controls) → Coder → QA (auth bypass tests) → Review
+  - Deliverable: Strong authentication, role-based access control enforced
+  - Security Impact: Prevents unauthorized access and privilege escalation
+  - Tests: Brute force protection, session management, IDOR tests
+  - Can deploy: Yes (second defense layer operational)
+
+Shard 3 (1 day): Logging/Monitoring Layer
+  - Phases: PM (define security events) → Coder → QA (log validation) → Review
+  - Deliverable: Security event logging, alerting on suspicious activity
+  - Security Impact: Enables detection and incident response
+  - Tests: Log injection tests, alert verification
+  - Can deploy: Yes (complete defense-in-depth)
+```
+
+**Pattern 2: Threat-by-Threat Remediation** (Prioritized Vulnerability Fixes)
+```
+Shard 1 (1 day): Fix SQL Injection (Critical - CVSS 9.8)
+  - Phases: PM (verify CVE) → Coder (parameterized queries) → QA (SQLMap) → Review
+  - Deliverable: All SQL injection vulnerabilities patched
+  - Security Impact: Eliminates critical data breach risk
+  - Tests: Automated SQLMap tests, manual injection attempts
+  - Can deploy: Yes (critical vulnerability eliminated)
+
+Shard 2 (1 day): Fix XSS (High - CVSS 7.2)
+  - Phases: PM (identify XSS vectors) → Coder (output encoding) → QA (XSS payloads) → Review
+  - Deliverable: All XSS vulnerabilities patched
+  - Security Impact: Prevents session hijacking, data theft
+  - Tests: 100+ XSS payloads (reflected, stored, DOM-based)
+  - Can deploy: Yes (high-severity vulnerability eliminated)
+
+Shard 3 (1 day): Fix CSRF (Medium - CVSS 5.4)
+  - Phases: PM (define CSRF protection) → Coder (CSRF tokens) → QA (CSRF tests) → Review
+  - Deliverable: CSRF protection on all state-changing operations
+  - Security Impact: Prevents unauthorized actions
+  - Tests: CSRF token validation, double-submit cookie tests
+  - Can deploy: Yes (medium-severity vulnerability eliminated)
+```
+
+**Pattern 3: Compliance Requirements** (Standard-by-Standard Implementation)
+```
+Shard 1 (2 days): OWASP Top 10 Remediation
+  - Phases: PM (OWASP checklist) → Architect → Coder → QA (OWASP tests) → Review
+  - Deliverable: All OWASP Top 10 vulnerabilities addressed
+  - Security Impact: Industry-standard baseline security
+  - Tests: Comprehensive OWASP Top 10 test suite
+  - Can deploy: Yes (OWASP compliant)
+
+Shard 2 (2 days): GDPR Compliance (Data Protection)
+  - Phases: PM (GDPR requirements) → Architect → Coder → QA (privacy tests) → Review
+  - Deliverable: Data encrypted at rest and in transit, consent management
+  - Security Impact: Legal compliance, data privacy protection
+  - Tests: Encryption validation, consent flow tests
+  - Can deploy: Yes (GDPR compliant)
+
+Shard 3 (1 day): SOC2 Audit Trail
+  - Phases: PM (SOC2 controls) → Coder → QA (audit log tests) → Review
+  - Deliverable: Comprehensive audit logging, access controls documented
+  - Security Impact: Audit readiness, compliance verification
+  - Tests: Audit log completeness, access control verification
+  - Can deploy: Yes (SOC2 audit ready)
+```
+
+**Pattern 4: Security Feature Rollout** (Gated Security Enhancements)
+```
+Shard 1 (2 days): Multi-Factor Authentication (Backend)
+  - Phases: PM → Architect → Coder → QA → Review
+  - Deliverable: MFA backend API, TOTP/SMS support
+  - Security Impact: Stronger authentication foundation
+  - Tests: TOTP validation, SMS delivery, backup codes
+  - Can deploy: Yes (feature flag OFF, internal testing)
+
+Shard 2 (2 days): Multi-Factor Authentication (Frontend)
+  - Phases: PM (UX flow) → Coder → QA (UI tests) → Review
+  - Deliverable: MFA enrollment UI, authentication flow
+  - Security Impact: Complete MFA user experience
+  - Tests: UI flows, accessibility, error handling
+  - Can deploy: Yes (feature flag OFF, beta users)
+
+Shard 3 (1 day): MFA Public Rollout
+  - Phases: PM (monitor adoption) → DevOps (gradual rollout)
+  - Deliverable: MFA enabled for all users
+  - Security Impact: Account takeover protection for all users
+  - Tests: Production monitoring, rollback testing
+  - Can deploy: Yes (feature flag ON for all users)
+```
+
+---
+
+### When to Split Security Work
+
+**Split BEFORE Phase 4 (Implementation)** if:
+- Multiple vulnerabilities to remediate (split by severity)
+- Security initiative touches >5 files or >500 lines
+- Multiple defense layers needed (input validation, auth, logging, etc.)
+- Compliance work spans multiple standards (OWASP, GDPR, SOC2)
+- Estimated implementation > 3 days
+
+**How to Split**:
+1. PM-agent prioritizes by severity (Critical → High → Medium → Low)
+2. Architect-agent designs shard boundaries (independent security controls)
+3. Each shard follows full workflow: PM → Architect → Coder → QA (security tests) → Review
+4. Shard N+1 builds on merged Shard N (defense-in-depth layers)
+
+**Benefits**:
+- ✅ Each shard < 500 lines (reviewable security changes)
+- ✅ Fast vulnerability remediation (critical fixes deployed in days, not weeks)
+- ✅ Incremental security posture improvement (each shard hardens system)
+- ✅ Lower risk (smaller security changes = easier validation)
+- ✅ Parallel security work possible (different vulnerabilities, different team members)
+- ✅ Early security wins (ship critical fixes immediately)
+
+---
+
 ## Security Workflow Types
 
 ### Type 1: Security Audit
@@ -642,6 +915,8 @@ api_key = "sk_live_abc123"  # NEVER COMMIT SECRETS
 
 ## Red Flags - STOP
 
+### Security Process Red Flags
+
 If you catch yourself thinking:
 
 - ❌ **"Security testing can wait, functionality first"** - FORBIDDEN. Security is not optional. Test security from the start.
@@ -652,6 +927,40 @@ If you catch yourself thinking:
 - ❌ **"We'll fix security issues in the next sprint"** - NO. Security debt compounds. Fix immediately.
 - ❌ **"Security scan has false positives, ignore warnings"** - STOP. Investigate all findings. Don't assume false positives.
 - ❌ **"One security layer is enough"** - NO. Defense-in-Depth (Principle #8). Multiple layers required.
+- ❌ **"Design security during implementation"** - BACKWARDS. Threat model BEFORE code prevents security flaws.
+- ❌ **"Skip threat modeling for this fix"** - NO. Every security change needs threat analysis.
+
+---
+
+### Documentation & API Lookup Red Flags
+
+- ❌ **"I remember OWASP Top 10 from training"** - DANGEROUS. OWASP updates regularly. WebSearch for 2025 version.
+- ❌ **"This cryptographic library hasn't changed"** - ASSUMPTION. Security APIs evolve rapidly. Verify current recommendations.
+- ❌ **"CVE databases are for research-agent only"** - NO. Every agent must check for recent CVEs affecting their phase.
+- ❌ **"Security tools work the same way"** - FALSE. OWASP ZAP, Burp Suite update frequently. Check current documentation.
+- ❌ **"Model knows all security patterns"** - NO. Model cutoff January 2025. New attack vectors emerge weekly. WebSearch for current threats.
+
+---
+
+### Git/GitHub Workflow Red Flags
+
+- ❌ **"Commit security fix directly to main"** - FORBIDDEN. Use security branches: `security/{threat-or-cve-name}`.
+- ❌ **"Create PR when security fix is done"** - BACKWARDS. Create DRAFT PR with `[SECURITY]` prefix at Phase 4 start.
+- ❌ **"Skip GitHub Security Advisory for CVEs"** - DANGEROUS. Critical vulnerabilities need private disclosure workflow.
+- ❌ **"Generic PR title is fine"** - NO. Always prefix with `[SECURITY]` for visibility and urgency.
+- ❌ **"Merge security PR without review"** - FORBIDDEN. Security changes require security review approval always.
+
+---
+
+### Incremental Delivery Red Flags
+
+- ❌ **"Security work is too urgent to break up"** - FALSE. Incremental delivery enables FASTER vulnerability remediation. Fix critical first (Shard 1), high second (Shard 2).
+- ❌ **"All vulnerabilities must be fixed together"** - NO. Use Threat-by-Threat pattern: Critical (1 day) → High (1 day) → Medium (1 day). Ship critical fixes immediately.
+- ❌ **"Security PRs >1000 lines are necessary"** - NO. Use Defense-in-Depth pattern: Input validation (Shard 1), Auth (Shard 2), Logging (Shard 3). Each <500 lines.
+- ❌ **"We'll break it up during implementation"** - TOO LATE. PM-agent must prioritize by severity BEFORE Phase 4. Architect defines shard boundaries (independent security controls).
+- ❌ **"Backend security must wait for frontend"** - NO. Backend security hardens first (Shard 1). Frontend security follows (Shard 2). Defense-in-depth layers ship independently.
+
+---
 
 **STOP. Use wolf-governance to verify security requirements are non-negotiable.**
 
@@ -689,3 +998,9 @@ If you catch yourself thinking:
 **Security Posture**: IMPROVED ✅
 
 **Security task {SECURITY_TASK_NAME} successfully completed.**
+
+---
+
+*Template Version: 2.1.0 - Enhanced with Documentation Lookup + Git/GitHub Workflow + Incremental Security Delivery*
+*Workflow Type: Multi-Agent Security Review*
+*Part of Wolf Skills Marketplace v2.6.0*

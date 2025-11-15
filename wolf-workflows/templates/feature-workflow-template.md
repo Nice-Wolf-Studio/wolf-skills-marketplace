@@ -34,6 +34,199 @@ pm-agent → [research-agent] → architect-lens-agent → coder-agent → qa-ag
 
 ---
 
+## Documentation & API Research (WORKFLOW-LEVEL GUIDANCE)
+
+**MANDATORY for ALL agents in this workflow**
+
+Each agent in the workflow MUST follow their role template's documentation lookup guidance:
+
+### Before Starting Each Phase:
+
+**pm-agent (Phase 1)**:
+- WebSearch for current product documentation if defining features for existing products
+- Check latest API/library versions if requirements involve integrations
+- Verify documentation recency (within 12 months for rapidly evolving products)
+
+**research-agent (Phase 2)** [if applicable]:
+- WebSearch for recent papers, benchmarks, industry analysis (prefer 2024-2025 sources)
+- Verify framework/library versions before POC development
+- Check for deprecation notices or breaking changes in technologies being evaluated
+
+**architect-lens-agent (Phase 3)**:
+- WebSearch for architectural patterns, design systems documentation
+- Verify current best practices for chosen architecture (e.g., "React 19 server components patterns")
+- Check for recent changes in architectural recommendations
+
+**coder-agent (Phase 4)**:
+- **CRITICAL**: WebSearch for every unfamiliar library/framework before coding
+- Query format: "{library} {version} documentation 2025" or "{library} API reference"
+- Check breaking changes, new features, migration guides
+- **Model cutoff is January 2025** - APIs may have changed
+
+**qa-agent (Phase 5)**:
+- WebSearch for testing framework documentation (Jest, Playwright, Cypress, etc.)
+- Verify current testing patterns and best practices
+- Check for new assertion methods or testing utilities
+
+**code-reviewer-agent (Phase 6)**:
+- Reference latest coding standards and security best practices
+- Verify against current framework recommendations
+
+**devops-agent (Phase 7)** [if applicable]:
+- **CRITICAL**: WebSearch for infrastructure tool versions (Kubernetes, Docker, Terraform)
+- Check cloud provider documentation for current deployment patterns
+- Verify security best practices for infrastructure
+
+**Why This Matters**: Model knowledge cutoff is January 2025. Libraries, APIs, and best practices evolve rapidly. 2-5 minutes of documentation lookup per phase prevents hours of debugging outdated patterns.
+
+---
+
+## Git/GitHub Workflow Strategy (WORKFLOW-LEVEL)
+
+**Branch Strategy for Multi-Agent Workflows**:
+
+### 1. Create Feature Branch at Start (Phase 2 or 3)
+```bash
+git checkout -b feature/{feature-name}
+```
+
+**When**: After requirements approved (before design or research)
+**Who**: research-agent or architect-lens-agent (whichever comes first)
+**Why**: Single branch for entire workflow prevents merge conflicts between agents
+
+### 2. Draft PR at Implementation Start (Phase 4)
+```bash
+gh pr create --draft \
+  --title "[WIP] {Feature Name}" \
+  --body "Implementation in progress. See workflow: docs/workflows/{filename}.md"
+```
+
+**When**: coder-agent starts implementation (Phase 4)
+**Who**: coder-agent
+**Why**: Early visibility, tracks progress, enables continuous review
+
+### 3. Update PR Throughout Workflow
+- **After design (Phase 3)**: Add ADR link to PR description
+- **During implementation (Phase 4)**: Push commits incrementally
+- **After QA (Phase 5)**: Add test results to PR description
+- **After code review (Phase 6)**: Mark PR ready, request final approval
+
+### 4. Mark PR Ready for Review (Phase 6)
+```bash
+gh pr ready  # Converts draft to ready for review
+```
+
+**When**: After qa-agent validation passes (before code-reviewer-agent)
+**Who**: qa-agent or coder-agent
+**Why**: Signals workflow completion, triggers final review
+
+### 5. Merge After Approval (Phase 6 Complete)
+```bash
+gh pr merge --squash  # or --merge or --rebase based on project conventions
+```
+
+**When**: After code-reviewer-agent approval
+**Who**: code-reviewer-agent (has merge authority)
+**Why**: Clean history, verified quality
+
+**NEVER**:
+- ❌ Commit directly to main/master/develop
+- ❌ Create PR when "done" (create DRAFT PR early)
+- ❌ Skip draft PR phase (early visibility is critical for multi-agent workflows)
+- ❌ Use `git` when `gh` CLI available (prefer `gh pr create`, `gh pr ready`)
+
+---
+
+## Incremental Feature Delivery (WORKFLOW-LEVEL)
+
+**Breaking Features Into Reviewable Increments**:
+
+### Why Incremental Delivery Matters for Multi-Agent Workflows
+
+**Problem**: Large features spanning 7 agents can produce PRs >2000 lines, causing:
+- Week-long review cycles
+- Merge conflicts with parallel work
+- High bug risk (too much to validate at once)
+- Delayed feedback loops
+
+**Solution**: Break feature into 2-3 day increments (shards), each independently valuable.
+
+---
+
+### Incremental Patterns for Feature Workflows
+
+**Pattern 1: Layer-by-Layer** (Backend → Frontend)
+```
+Shard 1 (2 days): Data layer + API endpoints
+  - Phases: PM → Architect → Coder → QA → Review
+  - Deliverable: Working API, documented, tested
+  - Can deploy: Yes (frontend uses later)
+
+Shard 2 (2 days): Frontend integration
+  - Phases: PM (refine UX) → Coder → QA → Review
+  - Deliverable: UI connected to API
+  - Can deploy: Yes (complete feature)
+```
+
+**Pattern 2: Vertical Slice** (Minimal Viable → Full Feature)
+```
+Shard 1 (2 days): Happy path end-to-end (minimal viable feature)
+  - Phases: PM → Architect → Coder → QA → Review
+  - Deliverable: Basic functionality works
+  - Can deploy: Yes (behind feature flag if incomplete UX)
+
+Shard 2 (2 days): Error handling + edge cases
+  - Phases: PM (define edge cases) → Coder → QA → Review
+  - Deliverable: Production-ready robustness
+  - Can deploy: Yes (remove feature flag)
+
+Shard 3 (1 day): Polish + UX improvements
+  - Phases: PM (UX refinement) → Coder → QA → Review
+  - Deliverable: Enhanced user experience
+```
+
+**Pattern 3: Feature Flag Rollout** (Backend First, Gated Release)
+```
+Shard 1 (2 days): Backend implementation (feature flag OFF)
+  - Phases: PM → Architect → Coder → QA → Review
+  - Deliverable: Backend ready, not exposed
+  - Can deploy: Yes (feature flag prevents access)
+
+Shard 2 (2 days): Frontend implementation (feature flag OFF)
+  - Phases: PM → Coder → QA → Review
+  - Deliverable: Full feature, gated
+  - Can deploy: Yes (internal testing only)
+
+Shard 3 (1 day): Public release (feature flag ON for all users)
+  - Phases: PM (monitor metrics) → DevOps
+  - Deliverable: Public availability
+```
+
+---
+
+### When to Split the Workflow
+
+**Split BEFORE Phase 4 (Implementation)** if:
+- Estimated implementation > 3 days
+- Feature touches >5 files or >500 lines
+- Multiple independent components
+- Research phase reveals complexity
+
+**How to Split**:
+1. PM-agent defines acceptance criteria PER SHARD
+2. Architect-agent designs shard boundaries (interfaces, dependencies)
+3. Each shard follows full workflow: PM → Architect → Coder → QA → Review
+4. Shard N+1 builds on merged Shard N
+
+**Benefits**:
+- ✅ Each shard < 500 lines (reviewable in 1-2 hours)
+- ✅ Merge cycles: Days not weeks
+- ✅ Early feedback on direction
+- ✅ Parallel work possible (different team members on different shards)
+- ✅ Lower bug risk (smaller changes = easier validation)
+
+---
+
 ## Phase 1: Requirements Definition (pm-agent)
 
 **Owner**: pm-agent
@@ -507,6 +700,8 @@ Use {APPROACH_NAME} because {RATIONALE}
 
 ## Red Flags - STOP
 
+### Workflow Process Red Flags
+
 If you catch yourself thinking:
 
 - ❌ **"Skip research, we know the solution"** - STOP. Research-Before-Code (Principle #3). Unknown unknowns are expensive.
@@ -517,6 +712,38 @@ If you catch yourself thinking:
 - ❌ **"Merge now, fix issues later"** - DANGEROUS. Failing tests = blocked PR. No exceptions.
 - ❌ **"Deploy without rollback plan"** - FORBIDDEN. All deployments need rollback plans. Optimism ≠ reliability.
 - ❌ **"One agent can handle multiple phases"** - NO. Role separation prevents scope creep and ensures quality.
+
+---
+
+### Documentation & API Lookup Red Flags
+
+- ❌ **"I remember how this library works"** - DANGEROUS. Model cutoff January 2025. WebSearch for current docs.
+- ❌ **"This framework hasn't changed"** - ASSUMPTION. Verify with 2-5 min WebSearch before coding.
+- ❌ **"Documentation lookup is for research-agent"** - NO. Research-agent = 2-8 hours (unknown unknowns). WebSearch = 2-5 minutes (known unknowns, current API syntax).
+- ❌ **"I'll figure it out by trial and error"** - WASTE. 2 min WebSearch beats 20 min debugging outdated patterns.
+- ❌ **"Model knowledge is good enough"** - NO. Every agent must verify current documentation for their phase's libraries.
+
+---
+
+### Git/GitHub Workflow Red Flags
+
+- ❌ **"Commit directly to main/master"** - FORBIDDEN. Create feature branch at Phase 2/3 (research or architecture).
+- ❌ **"Create PR when implementation is done"** - BACKWARDS. Create DRAFT PR at Phase 4 start (implementation begins).
+- ❌ **"Skip draft PR, go straight to review"** - NO. Multi-agent workflows need early visibility. Draft PR tracks progress.
+- ❌ **"Use `git commit` and `git push` for everything"** - SUBOPTIMAL. Prefer `gh pr create --draft`, `gh pr ready`, `gh pr merge`.
+- ❌ **"Each agent creates their own branch"** - NO. Single feature branch for entire workflow (prevents merge conflicts).
+
+---
+
+### Incremental Delivery Red Flags
+
+- ❌ **"This feature is too complex to break up"** - FALSE. Every feature can be broken into 2-3 day shards. Use Layer-by-Layer, Vertical Slice, or Feature Flag patterns.
+- ❌ **"We'll break it up during implementation"** - TOO LATE. Split BEFORE Phase 4 (PM + Architect define shard boundaries).
+- ❌ **"PRs >1000 lines are fine if tests pass"** - NO. Large PRs = week-long reviews, merge conflicts, high bug risk. Target <500 lines per shard.
+- ❌ **"Let's merge all shards at once"** - DEFEATS PURPOSE. Merge each shard independently for fast feedback cycles.
+- ❌ **"Backend and frontend must ship together"** - NO. Backend can ship first (API-first). Frontend follows in Shard 2.
+
+---
 
 **STOP. Use wolf-governance to verify workflow requirements.**
 
@@ -554,3 +781,9 @@ If you catch yourself thinking:
 **Quality Gates Passed**: {GATES_PASSED}/{GATES_TOTAL}
 
 **Feature {FEATURE_NAME} successfully delivered.**
+
+---
+
+*Template Version: 2.1.0 - Enhanced with Documentation Lookup + Git/GitHub Workflow + Incremental Delivery*
+*Workflow Type: Multi-Agent Feature Development*
+*Part of Wolf Skills Marketplace v2.6.0*
