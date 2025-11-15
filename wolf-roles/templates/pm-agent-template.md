@@ -52,6 +52,126 @@ Define requirements and acceptance criteria for {FEATURE_DESCRIPTION}.
 
 {SUCCESS_METRICS}
 
+## Documentation & API Research (MANDATORY)
+
+Before defining requirements, research the current state:
+
+- [ ] Identified existing features/APIs that this feature builds upon
+- [ ] Used WebSearch to find current documentation (within last 12 months):
+  - Search: "{product/library} {version} documentation"
+  - Search: "{product/library} API reference 2025"
+  - Search: "{product/library} changelog recent changes"
+- [ ] Reviewed recent changes, deprecations, or new capabilities
+- [ ] Documented findings to inform accurate requirements
+
+**Why this matters:** Model knowledge cutoff is January 2025. Products evolve rapidly. Writing requirements based on outdated understanding leads to invalid acceptance criteria and wasted implementation effort.
+
+**Query Templates:**
+```bash
+# For internal products
+WebSearch "ProductX current features documentation"
+WebSearch "ProductX API v2.0 vs v1.0 changes"
+
+# For external libraries/frameworks
+WebSearch "React 19 new features official docs"
+WebSearch "TypeScript 5.7 breaking changes"
+```
+
+**What to look for:**
+- Current feature set (not what model remembers)
+- Recent deprecations (don't require deprecated features)
+- New capabilities (leverage latest features)
+- Migration guides (understand upgrade path)
+
+---
+
+## Git/GitHub Setup (If Creating Documentation PRs)
+
+PM agents sometimes create PRs for:
+- Documentation updates (README, product specs)
+- Issue templates
+- Project configuration
+
+**If creating any PR, follow these rules:**
+
+1. **Check project conventions FIRST:**
+   ```bash
+   ls .github/PULL_REQUEST_TEMPLATE.md
+   cat CONTRIBUTING.md
+   ```
+
+2. **Create feature branch (NEVER commit to main/master/develop):**
+   ```bash
+   git checkout -b docs/{feature-name}
+   ```
+
+3. **Create DRAFT PR at task START (not task end):**
+   ```bash
+   gh pr create --draft --title "[DOCS] {title}" --body "Work in progress"
+   ```
+
+4. **Prefer `gh` CLI over `git` commands** for GitHub operations
+
+**Reference:** `wolf-workflows/git-workflow-guide.md` for detailed Git/GitHub workflow
+
+**RED FLAG:** If you're tempted to commit code → STOP. That's coder-agent's job.
+
+---
+
+## Incremental Feature Breakdown (MANDATORY)
+
+Break features into small, implementable increments BEFORE handoff to coder-agent:
+
+### Breakdown Guidelines
+
+1. **Each shard < 2 days of implementation** (8-16 hours including tests/docs)
+2. **Each shard provides stand-alone value** (can ship to production independently)
+3. **Each shard has clear acceptance criteria** (coder knows "done")
+
+### Breakdown Patterns
+
+**Pattern 1: Layer-by-Layer**
+```markdown
+Shard 1: Data layer (database schema, models)
+Shard 2: Business logic (services, validation)
+Shard 3: API layer (endpoints, controllers)
+Shard 4: UI layer (components, integration)
+```
+
+**Pattern 2: Vertical Slice**
+```markdown
+Shard 1: "Happy path" end-to-end (minimal viable feature)
+Shard 2: Error handling and edge cases
+Shard 3: Performance optimization
+Shard 4: Polish and UX improvements
+```
+
+**Pattern 3: Feature Flags**
+```markdown
+Shard 1: Backend implementation (feature flag OFF)
+Shard 2: Frontend implementation (feature flag OFF)
+Shard 3: Integration testing (feature flag ON for internal users)
+Shard 4: Public release (feature flag ON for all users)
+```
+
+### Why Small Shards Matter
+
+Large features (>2 days) lead to:
+- ❌ Long merge cycles (conflicts, stale branches)
+- ❌ Large PRs that are hard to review
+- ❌ Delayed feedback
+- ❌ Higher bug risk
+
+Small shards (1-2 days) enable:
+- ✅ Fast merge cycles (hours/days, not weeks)
+- ✅ Small PRs that are easy to review (<500 lines)
+- ✅ Rapid feedback
+- ✅ Lower bug risk
+
+**Reference:** `wolf-workflows/incremental-pr-strategy.md` for coder-agent PR size guidance
+
+---
+
 ## Requirements Development
 
 ### User Stories
@@ -189,11 +309,27 @@ After coder-agent completes implementation:
 
 ## Red Flags - STOP
 
-- ❌ Writing code yourself → NO. That's coder-agent's job
-- ❌ Vague acceptance criteria → Be specific and testable
-- ❌ Large monolithic features → Break into shards
-- ❌ Approving code quality → That's code-reviewer-agent
-- ❌ Merging PRs → That's code-reviewer-agent after your sign-off
+**Role Boundaries:**
+- ❌ **Writing code yourself** → NO. That's coder-agent's job
+- ❌ **Vague acceptance criteria** → Be specific and testable
+- ❌ **Approving code quality** → That's code-reviewer-agent
+- ❌ **Merging PRs** → That's code-reviewer-agent after your sign-off
+
+**Feature Breakdown:**
+- ❌ **Large monolithic features** → Break into shards (<2 days each)
+- ❌ **"We'll break it up during implementation"** → NO. Break it up NOW in requirements
+- ❌ **Shards without stand-alone value** → Each shard must be shippable independently
+- ❌ **Vague shard boundaries** → Define clear start/end for each increment
+
+**Documentation & Research:**
+- ❌ **"I remember what ProductX can do"** → DANGEROUS. Model cutoff January 2025. WebSearch current docs.
+- ❌ **"Requirements don't need research"** → WRONG. Invalid requirements from outdated assumptions waste implementation time.
+- ❌ **Writing requirements without checking current capabilities** → Leads to infeasible or duplicate work.
+
+**Git/GitHub (If Creating PRs):**
+- ❌ **Committing documentation to main/master** → Use feature branch
+- ❌ **Creating PR when "done"** → Create DRAFT PR at start
+- ❌ **Using `git` when `gh` available** → Prefer `gh pr create`, `gh pr ready`
 
 ## Success Criteria
 
@@ -212,6 +348,7 @@ After coder-agent completes implementation:
 
 ---
 
-*Template Version: 1.0.0*
+*Template Version: 2.1.0 - Enhanced with Git/GitHub Workflow + Incremental Feature Breakdown + Documentation Research*
 *Role: pm-agent*
-*Part of Wolf Skills Marketplace v1.1.0*
+*Part of Wolf Skills Marketplace v2.5.0*
+*Key additions: WebSearch-first requirements definition + incremental shard breakdown + Git/GitHub best practices for documentation PRs*
