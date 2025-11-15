@@ -1,7 +1,7 @@
 ---
 name: coding-patterns
-description: Modern coding patterns for clean, maintainable code - use before implementing complex logic; includes orchestration, pure functions, function decomposition, and vertical slice architecture; prevents code complexity bloat and testability issues
-version: 1.1.0
+description: Modern coding patterns for clean, maintainable code - use before implementing complex logic; includes orchestration, pure functions, function decomposition, vertical slice, composition, DI, SOLID, anti-patterns; prevents code complexity bloat and testability issues
+version: 1.2.0
 triggers:
   - coding patterns
   - design patterns
@@ -45,9 +45,13 @@ Don't use this skill for:
 | Problem | Pattern | Lines |
 |---------|---------|-------|
 | **Coordinating multiple services/steps** | Orchestration Pattern | 150 |
-| **Hard to test (too many mocks needed)** | Pure Functions + Side Effect Isolation | 120 |
+| **Hard to test (too many mocks needed)** | Pure Functions + Side Effect Isolation, DI | 120, 197 |
 | **Complex function (>50 lines, complexity >10)** | Function Decomposition | 150 |
 | **Organizing feature code** | Vertical Slice Architecture | 100 |
+| **Need flexible behavior combinations** | Composition Over Inheritance | 199 |
+| **Want testable, modular code** | Dependency Injection | 197 |
+| **Building maintainable OOP systems** | SOLID Principles | 249 |
+| **Avoiding technical debt** | Anti-Patterns (what NOT to do) | 246 |
 
 ### By Complexity Signal
 
@@ -55,17 +59,32 @@ Don't use this skill for:
 |--------|--------|---------|
 | **Cyclomatic complexity > 10** | Extract branches/conditions | Function Decomposition |
 | **Function > 50 lines** | Extract code blocks | Function Decomposition |
-| **Function name has "and"/"or"** | Violates SRP, split | Function Decomposition |
-| **Deep nesting (>4 levels)** | Early returns, extract helpers | Function Decomposition |
+| **Function name has "and"/"or"** | Violates SRP, split | Function Decomposition, SOLID (SRP) |
+| **Deep nesting (>4 levels)** | Early returns, extract helpers | Function Decomposition, Anti-Patterns |
 | **Many parameters (>5)** | Group into objects, use DI | Pure Functions, DI |
+| **Deep inheritance hierarchy (>3 levels)** | Use composition instead | Composition Over Inheritance |
+| **Using `any` type frequently** | Add proper types | Anti-Patterns, TypeScript best practices |
+| **God class (50+ methods)** | Split by responsibility | SOLID (SRP), Composition |
 
 ### By Architecture Decision
 
 | Architecture Type | Pattern | When to Use |
 |-------------------|---------|-------------|
-| **Microservices** | Orchestration | Coordinating transactions across services |
+| **Microservices** | Orchestration, DI | Coordinating transactions, modular services |
 | **Feature-driven** | Vertical Slice | Teams work on independent features |
-| **Layered monolith** | Traditional | Small apps, strong technical layer dependencies |
+| **Layered monolith** | Traditional + SOLID | Small apps, strong technical layer dependencies |
+| **OOP-heavy** | SOLID, Composition, DI | Object-oriented TypeScript projects |
+| **Functional-heavy** | Pure Functions, Composition | Functional programming style |
+
+### By Code Quality Goal
+
+| Goal | Patterns to Apply |
+|------|-------------------|
+| **Testability** | Pure Functions, DI, SOLID (DIP) |
+| **Maintainability** | Function Decomposition, SOLID, Vertical Slice |
+| **Flexibility** | Composition, DI, SOLID (OCP) |
+| **Avoiding tech debt** | Anti-Patterns (avoid these), SOLID |
+| **Team collaboration** | SOLID (shared principles), Vertical Slice |
 
 ## Pattern 1: Orchestration Pattern ⭐
 
@@ -1182,6 +1201,901 @@ How many distinct features/concerns?
 
 ---
 
+## Pattern 5: Composition Over Inheritance
+
+**What it is**: Build complex functionality by combining simpler objects (composition) rather than through class inheritance hierarchies. Favor "has-a" relationships over "is-a" relationships.
+
+**When to use**:
+- Need to share behavior across unrelated classes
+- Want to avoid deep inheritance hierarchies (>3 levels)
+- Need flexibility to swap implementations at runtime
+- Building with multiple independent behaviors
+- Want loose coupling between components
+
+**When NOT to use**:
+- Clear "is-a" relationship exists (e.g., Dog IS-A Animal)
+- Simple single-level inheritance (minimal hierarchy depth)
+- Inheritance provides significant code reuse without complexity
+- Framework requires inheritance (e.g., React class components before hooks)
+
+### Example: Payment Processing
+
+**Before (Inheritance - Rigid Hierarchy)**:
+```typescript
+// Base class
+class PaymentProcessor {
+  processPayment(amount: number): void {
+    console.log(`Processing payment: $${amount}`);
+  }
+}
+
+// Inheritance creates rigid hierarchy
+class CreditCardProcessor extends PaymentProcessor {
+  processPayment(amount: number): void {
+    console.log(`Charging credit card: $${amount}`);
+    // Credit card specific logic
+  }
+}
+
+class PayPalProcessor extends PaymentProcessor {
+  processPayment(amount: number): void {
+    console.log(`Charging PayPal: $${amount}`);
+    // PayPal specific logic
+  }
+}
+
+// Problem: Want logging + fraud detection for credit card
+// but PayPal only needs logging
+// Can't mix behaviors without multiple inheritance (not supported in TypeScript)
+
+class CreditCardWithLoggingAndFraudDetection extends CreditCardProcessor {
+  processPayment(amount: number): void {
+    this.logPayment(amount); // Add logging
+    this.checkFraud(amount);  // Add fraud detection
+    super.processPayment(amount);
+  }
+
+  logPayment(amount: number) { /* ... */ }
+  checkFraud(amount: number) { /* ... */ }
+}
+
+// Problem: Code duplication if PayPal also needs logging
+```
+
+**After (Composition - Flexible Combination)**:
+```typescript
+// ===== INTERFACES (Contracts) =====
+
+interface PaymentMethod {
+  charge(amount: number): Promise<void>;
+}
+
+interface Logger {
+  log(message: string): void;
+}
+
+interface FraudDetector {
+  checkFraud(amount: number): Promise<boolean>;
+}
+
+// ===== IMPLEMENTATIONS (Composable pieces) =====
+
+class CreditCardPayment implements PaymentMethod {
+  async charge(amount: number): Promise<void> {
+    console.log(`Charging credit card: $${amount}`);
+  }
+}
+
+class PayPalPayment implements PaymentMethod {
+  async charge(amount: number): Promise<void> {
+    console.log(`Charging PayPal: $${amount}`);
+  }
+}
+
+class ConsoleLogger implements Logger {
+  log(message: string): void {
+    console.log(`[LOG] ${message}`);
+  }
+}
+
+class SimpleFraudDetector implements FraudDetector {
+  async checkFraud(amount: number): Promise<boolean> {
+    return amount < 10000; // Simple threshold
+  }
+}
+
+// ===== COMPOSITION (Combine behaviors) =====
+
+class PaymentProcessor {
+  constructor(
+    private paymentMethod: PaymentMethod,
+    private logger?: Logger,
+    private fraudDetector?: FraudDetector
+  ) {}
+
+  async processPayment(amount: number): Promise<void> {
+    this.logger?.log(`Processing payment: $${amount}`);
+
+    if (this.fraudDetector) {
+      const isSafe = await this.fraudDetector.checkFraud(amount);
+      if (!isSafe) {
+        throw new Error('Payment flagged as fraudulent');
+      }
+    }
+
+    await this.paymentMethod.charge(amount);
+    this.logger?.log(`Payment successful: $${amount}`);
+  }
+}
+
+// ===== USAGE (Mix and match behaviors) =====
+
+// Credit card with logging + fraud detection
+const creditCardProcessor = new PaymentProcessor(
+  new CreditCardPayment(),
+  new ConsoleLogger(),
+  new SimpleFraudDetector()
+);
+
+// PayPal with logging only
+const paypalProcessor = new PaymentProcessor(
+  new PayPalPayment(),
+  new ConsoleLogger()
+);
+
+// Credit card with no extras (for testing)
+const simpleProcessor = new PaymentProcessor(
+  new CreditCardPayment()
+);
+```
+
+### Benefits
+
+✅ **Flexibility** - Mix and match behaviors at runtime
+✅ **Loose coupling** - Components independent, easy to swap
+✅ **Testability** - Each component testable in isolation
+✅ **Reusability** - Logger, FraudDetector usable with any PaymentMethod
+✅ **Avoids fragile base class** - Changes to one component don't cascade
+✅ **Dependency Injection** - Enables mocking for tests
+
+### Modern TypeScript Pattern (2024-2025)
+
+Use **interfaces + constructor injection** for composition:
+
+```typescript
+// Define contracts
+interface Feature {
+  execute(): void;
+}
+
+// Implement features independently
+class FeatureA implements Feature {
+  execute() { console.log('Feature A'); }
+}
+
+class FeatureB implements Feature {
+  execute() { console.log('Feature B'); }
+}
+
+// Compose features
+class ComposedService {
+  constructor(private features: Feature[]) {}
+
+  executeAll() {
+    this.features.forEach(f => f.execute());
+  }
+}
+
+// Flexible composition
+const service = new ComposedService([
+  new FeatureA(),
+  new FeatureB()
+]);
+```
+
+### Token Efficiency
+
+Neutral - similar total lines but:
+- Reduces duplication (behaviors defined once, reused)
+- Eliminates deep inheritance hierarchies (easier to understand)
+- Improves long-term maintainability (easier to change compositions)
+
+---
+
+## Pattern 6: Dependency Injection (DI)
+
+**What it is**: Pass dependencies to a class/function from outside rather than creating them internally. Supports Inversion of Control (IoC) - dependencies flow from external configuration, not hardcoded.
+
+**When to use**:
+- Need to swap implementations (e.g., mock database for tests)
+- Want testable code without extensive mocking setup
+- Building modular applications with interchangeable components
+- Following SOLID principles (Dependency Inversion)
+- Need to configure dependencies at runtime
+
+**When NOT to use**:
+- Simple scripts with no dependencies
+- Dependencies have zero chance of changing (e.g., `Math.random()`)
+- Over-abstraction creates unnecessary indirection
+- Team unfamiliar with DI patterns (learning curve)
+
+### DI Patterns: Constructor vs Method Injection
+
+**Constructor Injection** (Most common, recommended):
+```typescript
+class OrderService {
+  // Dependencies injected via constructor
+  constructor(
+    private database: Database,
+    private emailService: EmailService,
+    private logger: Logger
+  ) {}
+
+  async createOrder(order: Order): Promise<void> {
+    await this.database.save(order);
+    await this.emailService.sendConfirmation(order);
+    this.logger.info('Order created', { orderId: order.id });
+  }
+}
+
+// Usage: inject dependencies from outside
+const orderService = new OrderService(
+  new PostgresDatabase(),
+  new SendGridEmailService(),
+  new ConsoleLogger()
+);
+```
+
+**Method Injection** (For optional/one-off dependencies):
+```typescript
+class ReportGenerator {
+  // No dependencies in constructor
+
+  // Dependency injected per method call
+  generateReport(data: Data, formatter: Formatter): string {
+    return formatter.format(data);
+  }
+}
+
+// Usage: inject dependency when needed
+const generator = new ReportGenerator();
+const pdfReport = generator.generateReport(data, new PdfFormatter());
+const csvReport = generator.generateReport(data, new CsvFormatter());
+```
+
+### Example: Testing with DI
+
+**Before (No DI - Hard to Test)**:
+```typescript
+class UserService {
+  // Dependencies created internally - HARD TO TEST
+  private database = new PostgresDatabase(); // Can't mock
+  private emailService = new SendGridEmailService(); // Can't mock
+
+  async registerUser(email: string, password: string): Promise<void> {
+    // Problem: Tests will hit real database and send real emails
+    const user = { email, password: await hashPassword(password) };
+    await this.database.save(user);
+    await this.emailService.sendWelcome(email);
+  }
+}
+
+// Testing requires complex setup (database, email mocking, etc.)
+```
+
+**After (DI - Easy to Test)**:
+```typescript
+// ===== INTERFACES (Contracts) =====
+
+interface Database {
+  save(data: any): Promise<void>;
+}
+
+interface EmailService {
+  sendWelcome(email: string): Promise<void>;
+}
+
+// ===== IMPLEMENTATION =====
+
+class UserService {
+  constructor(
+    private database: Database,
+    private emailService: EmailService
+  ) {}
+
+  async registerUser(email: string, password: string): Promise<void> {
+    const user = { email, password: await hashPassword(password) };
+    await this.database.save(user);
+    await this.emailService.sendWelcome(email);
+  }
+}
+
+// ===== TESTING (Simple mocks via DI) =====
+
+class MockDatabase implements Database {
+  async save(data: any): Promise<void> {
+    console.log('Mock save:', data);
+  }
+}
+
+class MockEmailService implements EmailService {
+  async sendWelcome(email: string): Promise<void> {
+    console.log('Mock email to:', email);
+  }
+}
+
+// Test with injected mocks
+test('registerUser - saves user and sends email', async () => {
+  const mockDb = new MockDatabase();
+  const mockEmail = new MockEmailService();
+
+  const userService = new UserService(mockDb, mockEmail);
+
+  await userService.registerUser('test@example.com', 'password123');
+  // Easy to verify behavior without real database/email
+});
+```
+
+### Modern DI Container (TypeScript 2024)
+
+Use **TSyringe** for automatic dependency resolution:
+
+```typescript
+import { container, injectable, inject } from 'tsyringe';
+
+// Mark classes as injectable
+@injectable()
+class Database {
+  async save(data: any): Promise<void> { /* ... */ }
+}
+
+@injectable()
+class EmailService {
+  async sendWelcome(email: string): Promise<void> { /* ... */ }
+}
+
+@injectable()
+class UserService {
+  constructor(
+    @inject('Database') private database: Database,
+    @inject('EmailService') private emailService: EmailService
+  ) {}
+
+  async registerUser(email: string, password: string): Promise<void> {
+    await this.database.save({ email, password });
+    await this.emailService.sendWelcome(email);
+  }
+}
+
+// Register dependencies
+container.register('Database', { useClass: Database });
+container.register('EmailService', { useClass: EmailService });
+
+// Resolve with automatic injection
+const userService = container.resolve(UserService);
+```
+
+### Benefits
+
+✅ **Testability** - Easy to inject mocks/stubs for testing
+✅ **Modularity** - Components independent, swappable
+✅ **Flexibility** - Runtime configuration (dev vs production dependencies)
+✅ **Loose coupling** - Classes depend on interfaces, not implementations
+✅ **SOLID compliance** - Follows Dependency Inversion Principle
+
+### Best Practices (2024)
+
+1. **Inject interfaces, not concrete classes** - Enables swapping implementations
+2. **Constructor injection for required dependencies** - Clear what's needed
+3. **Method injection for optional dependencies** - Flexibility per call
+4. **Don't hide dependencies** - Avoid service locator pattern (DI in disguise)
+5. **Avoid static methods** - Can't inject dependencies into static context
+
+### Token Efficiency
+
+Slightly increases code (interface definitions, constructor parameters) but:
+- Reduces test setup complexity (no complex mocking infrastructure)
+- Improves reusability (components usable in different contexts)
+- Enables configuration changes without code changes (inject different implementations)
+
+---
+
+## Pattern 7: SOLID Principles
+
+**What it is**: Five object-oriented design principles that make software more maintainable, flexible, and scalable. Industry-standard guidelines for class design.
+
+**When to use**:
+- Designing new classes/modules
+- Refactoring existing code for maintainability
+- Building systems that will grow/change over time
+- Team development (shared design language)
+- Object-oriented TypeScript/JavaScript projects
+
+**When NOT to use**:
+- Functional programming (pure functions, no classes)
+- Simple scripts/utilities (over-engineering)
+- Prototypes/experiments (premature optimization)
+
+### S - Single Responsibility Principle
+
+**What**: A class should have one reason to change (one responsibility).
+
+**Bad Example**:
+```typescript
+class UserManager {
+  // Too many responsibilities: persistence + validation + email
+  saveUser(user: User) { /* database logic */ }
+  validateUser(user: User) { /* validation logic */ }
+  sendWelcomeEmail(user: User) { /* email logic */ }
+}
+```
+
+**Good Example**:
+```typescript
+class UserRepository {
+  saveUser(user: User) { /* database logic only */ }
+}
+
+class UserValidator {
+  validate(user: User) { /* validation logic only */ }
+}
+
+class EmailService {
+  sendWelcome(user: User) { /* email logic only */ }
+}
+```
+
+---
+
+### O - Open/Closed Principle
+
+**What**: Classes should be open for extension, closed for modification.
+
+**Bad Example** (Modify class for each new payment type):
+```typescript
+class PaymentProcessor {
+  process(type: string, amount: number) {
+    if (type === 'credit-card') { /* credit card logic */ }
+    else if (type === 'paypal') { /* paypal logic */ }
+    // PROBLEM: Must modify class to add new payment type
+  }
+}
+```
+
+**Good Example** (Extend without modifying):
+```typescript
+interface PaymentMethod {
+  process(amount: number): void;
+}
+
+class CreditCardPayment implements PaymentMethod {
+  process(amount: number) { /* credit card logic */ }
+}
+
+class PayPalPayment implements PaymentMethod {
+  process(amount: number) { /* paypal logic */ }
+}
+
+class PaymentProcessor {
+  process(method: PaymentMethod, amount: number) {
+    method.process(amount); // No modification needed for new types
+  }
+}
+```
+
+---
+
+### L - Liskov Substitution Principle
+
+**What**: Subtypes must be substitutable for their base types without breaking behavior.
+
+**Bad Example** (Square violates Rectangle contract):
+```typescript
+class Rectangle {
+  constructor(protected width: number, protected height: number) {}
+  setWidth(w: number) { this.width = w; }
+  setHeight(h: number) { this.height = h; }
+  area() { return this.width * this.height; }
+}
+
+class Square extends Rectangle {
+  // PROBLEM: Square violates LSP - changing width should change height
+  setWidth(w: number) { this.width = w; this.height = w; }
+  setHeight(h: number) { this.width = h; this.height = h; }
+}
+
+function testRectangle(rect: Rectangle) {
+  rect.setWidth(5);
+  rect.setHeight(4);
+  console.log(rect.area()); // Expects 20, but Square returns 16!
+}
+```
+
+**Good Example** (Composition instead of inheritance):
+```typescript
+interface Shape {
+  area(): number;
+}
+
+class Rectangle implements Shape {
+  constructor(private width: number, private height: number) {}
+  area() { return this.width * this.height; }
+}
+
+class Square implements Shape {
+  constructor(private side: number) {}
+  area() { return this.side * this.side; }
+}
+// No substitution violation - both implement Shape correctly
+```
+
+---
+
+### I - Interface Segregation Principle
+
+**What**: Clients shouldn't depend on interfaces they don't use. Many small interfaces > one large interface.
+
+**Bad Example** (Fat interface forces unnecessary implementations):
+```typescript
+interface Worker {
+  work(): void;
+  eat(): void;
+  sleep(): void;
+}
+
+class HumanWorker implements Worker {
+  work() { /* ... */ }
+  eat() { /* ... */ }
+  sleep() { /* ... */ }
+}
+
+class RobotWorker implements Worker {
+  work() { /* ... */ }
+  eat() { /* PROBLEM: Robots don't eat */ }
+  sleep() { /* PROBLEM: Robots don't sleep */ }
+}
+```
+
+**Good Example** (Segregated interfaces):
+```typescript
+interface Workable {
+  work(): void;
+}
+
+interface Eatable {
+  eat(): void;
+}
+
+interface Sleepable {
+  sleep(): void;
+}
+
+class HumanWorker implements Workable, Eatable, Sleepable {
+  work() { /* ... */ }
+  eat() { /* ... */ }
+  sleep() { /* ... */ }
+}
+
+class RobotWorker implements Workable {
+  work() { /* ... */ } // Only implements what it needs
+}
+```
+
+---
+
+### D - Dependency Inversion Principle
+
+**What**: Depend on abstractions (interfaces), not concretions (classes).
+
+**Bad Example** (High-level depends on low-level):
+```typescript
+class PostgresDatabase {
+  save(data: any) { /* Postgres-specific logic */ }
+}
+
+class UserService {
+  private db = new PostgresDatabase(); // PROBLEM: Tightly coupled
+  saveUser(user: User) {
+    this.db.save(user); // Can't swap database
+  }
+}
+```
+
+**Good Example** (Both depend on abstraction):
+```typescript
+interface Database {
+  save(data: any): void;
+}
+
+class PostgresDatabase implements Database {
+  save(data: any) { /* Postgres logic */ }
+}
+
+class MongoDatabase implements Database {
+  save(data: any) { /* Mongo logic */ }
+}
+
+class UserService {
+  constructor(private db: Database) {} // Depends on interface
+  saveUser(user: User) {
+    this.db.save(user); // Works with any Database implementation
+  }
+}
+```
+
+---
+
+### Benefits
+
+✅ **Maintainability** - Changes isolated to specific classes
+✅ **Testability** - Easy to mock dependencies (DIP + ISP)
+✅ **Flexibility** - Easy to add new features (OCP)
+✅ **Clarity** - Each class has clear purpose (SRP)
+✅ **Reliability** - Substitution doesn't break contracts (LSP)
+
+### Modern Application (TypeScript 2024)
+
+SOLID principles naturally emerge when using:
+- **Interfaces** for contracts (DIP, ISP)
+- **Composition over Inheritance** (LSP, SRP)
+- **Dependency Injection** (DIP)
+- **Small, focused classes** (SRP, ISP)
+
+### Token Efficiency
+
+Increases code (more interfaces, classes) but:
+- Reduces long-term maintenance cost (easier to change)
+- Improves reusability (focused classes, clear interfaces)
+- Enables team collaboration (shared design principles)
+
+---
+
+## Pattern 8: Anti-Patterns (What to Avoid)
+
+**What they are**: Common bad practices that seem helpful short-term but create technical debt. Recognizing anti-patterns is as important as knowing good patterns.
+
+### TypeScript Anti-Patterns (2024)
+
+#### 1. The `any` Type Abuse
+
+**What**: Using `any` type to bypass TypeScript's type checking.
+
+**Why bad**: Completely removes type safety, defeats purpose of TypeScript.
+
+```typescript
+// BAD
+function processData(data: any) {
+  return data.value.toUpperCase(); // No type checking, runtime errors likely
+}
+
+// GOOD
+interface Data {
+  value: string;
+}
+
+function processData(data: Data): string {
+  return data.value.toUpperCase(); // Type-safe
+}
+```
+
+---
+
+#### 2. God Object / Class
+
+**What**: One class/object doing too much (violates SRP).
+
+**Why bad**: Hard to test, maintain, understand. Changes ripple everywhere.
+
+```typescript
+// BAD - God Object
+class Application {
+  database: Database;
+  emailService: EmailService;
+  paymentProcessor: PaymentProcessor;
+  logger: Logger;
+
+  processOrder() { /* ... */ }
+  sendEmail() { /* ... */ }
+  logEvent() { /* ... */ }
+  validateUser() { /* ... */ }
+  // 50+ more methods...
+}
+
+// GOOD - Focused classes
+class OrderService {
+  processOrder() { /* ... */ }
+}
+
+class EmailService {
+  send() { /* ... */ }
+}
+
+class Logger {
+  log() { /* ... */ }
+}
+```
+
+---
+
+#### 3. Callback Hell
+
+**What**: Deeply nested callbacks (pyramid of doom).
+
+**Why bad**: Hard to read, error handling complex, debugging difficult.
+
+```typescript
+// BAD - Callback hell
+getData(param1, (err1, result1) => {
+  if (err1) handleError(err1);
+  processData(result1, (err2, result2) => {
+    if (err2) handleError(err2);
+    saveData(result2, (err3, result3) => {
+      if (err3) handleError(err3);
+      // More nesting...
+    });
+  });
+});
+
+// GOOD - Async/await
+async function processFlow(param1: string): Promise<void> {
+  try {
+    const result1 = await getData(param1);
+    const result2 = await processData(result1);
+    const result3 = await saveData(result2);
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+---
+
+#### 4. Magic Numbers/Strings
+
+**What**: Unexplained constants scattered throughout code.
+
+**Why bad**: Hard to understand intent, hard to change, error-prone.
+
+```typescript
+// BAD - Magic numbers
+if (user.age > 18 && user.accountBalance > 10000) {
+  // What does 10000 mean?
+}
+
+// GOOD - Named constants
+const MINIMUM_AGE = 18;
+const PREMIUM_ACCOUNT_THRESHOLD = 10000;
+
+if (user.age > MINIMUM_AGE && user.accountBalance > PREMIUM_ACCOUNT_THRESHOLD) {
+  // Clear intent
+}
+```
+
+---
+
+#### 5. Spaghetti Code
+
+**What**: Code with complex, tangled control flow (no clear structure).
+
+**Why bad**: Hard to follow logic, hard to debug, high bug risk.
+
+```typescript
+// BAD - Spaghetti code
+function processOrder(order: Order) {
+  if (order.items.length > 0) {
+    for (let item of order.items) {
+      if (item.price > 0) {
+        if (item.inStock) {
+          if (order.customer.isPremium) {
+            // Deep nesting, unclear flow
+          } else {
+            // More branches
+          }
+        }
+      }
+    }
+  }
+}
+
+// GOOD - Structured with early returns
+function processOrder(order: Order): void {
+  if (order.items.length === 0) return;
+
+  const validItems = order.items.filter(item => item.price > 0 && item.inStock);
+
+  for (const item of validItems) {
+    processItem(item, order.customer);
+  }
+}
+
+function processItem(item: Item, customer: Customer): void {
+  const discount = customer.isPremium ? calculatePremiumDiscount(item) : 0;
+  // Clear, linear flow
+}
+```
+
+---
+
+### Node.js Anti-Patterns (2024)
+
+#### 6. Blocking I/O
+
+**What**: Synchronous operations blocking the event loop.
+
+**Why bad**: Undermines Node.js's non-blocking architecture, poor performance.
+
+```typescript
+// BAD - Blocking
+const fs = require('fs');
+const data = fs.readFileSync('/path/to/file'); // Blocks entire server
+
+// GOOD - Non-blocking
+const fs = require('fs').promises;
+const data = await fs.readFile('/path/to/file'); // Async
+```
+
+---
+
+#### 7. Code Outside Functions (Side Effects)
+
+**What**: Network/database calls at module top level.
+
+**Why bad**: Executes on import, hard to test, unintended side effects.
+
+```typescript
+// BAD - Side effect on import
+import { database } from './db';
+const users = database.query('SELECT * FROM users'); // Runs on import!
+
+// GOOD - Encapsulated
+export async function getUsers(): Promise<User[]> {
+  const users = await database.query('SELECT * FROM users');
+  return users;
+}
+```
+
+---
+
+#### 8. Ignoring Error Handling
+
+**What**: Not handling promise rejections or errors.
+
+**Why bad**: Silent failures, production crashes.
+
+```typescript
+// BAD - No error handling
+async function fetchData() {
+  const data = await apiCall(); // Unhandled rejection crashes app
+  return data;
+}
+
+// GOOD - Proper error handling
+async function fetchData(): Promise<Data> {
+  try {
+    const data = await apiCall();
+    return data;
+  } catch (error) {
+    logger.error('Failed to fetch data', error);
+    throw new ApplicationError('Data fetch failed', { cause: error });
+  }
+}
+```
+
+---
+
+### How to Avoid Anti-Patterns
+
+✅ **Code reviews** - Catch anti-patterns before merge
+✅ **Linting** - ESLint/TSLint rules enforce good practices
+✅ **Type checking** - Avoid `any`, use strict TypeScript config
+✅ **Early returns** - Reduce nesting, improve clarity
+✅ **Extract functions** - Break complex code into focused functions
+✅ **Named constants** - Replace magic numbers/strings
+✅ **Async/await** - Avoid callback hell
+✅ **Error handling** - Always handle promise rejections
+
+---
+
 ## Red Flags - STOP
 
 If you catch yourself:
@@ -1194,6 +2108,10 @@ If you catch yourself:
 ❌ **Cyclomatic complexity > 10** - Extract branches/conditions
 ❌ **Comments explaining what code does** - Extract commented block into named function
 ❌ **Copy-pasting code** - DRY violation, extract shared function
+❌ **Using `any` type** - Bypassing TypeScript safety, defeats purpose
+❌ **God classes** - One class doing everything, violates SRP
+❌ **Callback hell** - Use async/await, not nested callbacks
+❌ **Magic numbers** - Use named constants for clarity
 
 **STOP. Review patterns above. Apply appropriate pattern.**
 
@@ -1247,6 +2165,45 @@ Can't check all boxes? A pattern was missed. Review patterns above.
 ---
 
 ## Changelog
+
+### Version 1.2.0 (2025-11-15)
+
+**Wave 2 Patterns** - 4 MEDIUM priority patterns added:
+
+1. **Pattern 5: Composition Over Inheritance** (~199 lines)
+   - Build complex functionality by combining simpler objects
+   - Favor "has-a" over "is-a" relationships
+   - Payment processing example with flexible behavior combinations
+   - Modern TypeScript pattern: interfaces + constructor injection
+
+2. **Pattern 6: Dependency Injection** (~197 lines)
+   - Pass dependencies from outside, not hardcoded internally
+   - Constructor injection (recommended) vs method injection
+   - Testing with DI example (easy mocking)
+   - Modern DI container: TSyringe for automatic resolution
+   - Best practices 2024: inject interfaces, not classes
+
+3. **Pattern 7: SOLID Principles** (~249 lines)
+   - All 5 OOP design principles with bad/good examples
+   - Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
+   - Industry-standard guidelines for class design
+   - Modern application with TypeScript interfaces, composition, DI
+
+4. **Pattern 8: Anti-Patterns** (~246 lines)
+   - What to avoid: `any` type, God classes, callback hell, magic numbers, spaghetti code
+   - TypeScript anti-patterns (2024): `any`, `Function` type, overusing classes
+   - Node.js anti-patterns (2024): blocking I/O, code outside functions, ignoring errors
+   - How to avoid: code reviews, linting, type checking, async/await
+
+**Pattern Index Enhanced**:
+- Added Wave 2 patterns to all lookup categories
+- New "By Code Quality Goal" section (testability, maintainability, flexibility)
+- Expanded complexity signals (deep inheritance, `any` type, God classes)
+- Architecture decision matrix updated (OOP-heavy, functional-heavy)
+
+**Total Wave 2 Additions**: ~891 lines of modern pattern guidance (2024-2025 research)
+
+---
 
 ### Version 1.1.0 (2025-11-15)
 

@@ -5,6 +5,146 @@ All notable changes to the Wolf Skills Marketplace will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.2] - 2025-11-15
+
+### Added - Coding Patterns Skill Wave 2 (MEDIUM Priority Patterns)
+
+This release adds 4 MEDIUM priority patterns to the `coding-patterns` skill (v1.1.0 → v1.2.0), completing Phase 8 Wave 2.
+
+#### New Patterns (4)
+
+**Pattern 5: Composition Over Inheritance** (~199 lines):
+- Build complex functionality by combining simpler objects vs inheritance hierarchies
+- Favor "has-a" over "is-a" relationships
+- Payment processing example: flexible behavior mixing (logging + fraud detection)
+- Modern TypeScript: interfaces + constructor injection for composition
+- **Benefits**: Flexibility, loose coupling, testability, avoids fragile base classes
+- **When to use**: Need flexible behavior combinations, avoid deep inheritance (>3 levels)
+- **When NOT**: Clear "is-a" relationship, simple single-level inheritance
+
+**Pattern 6: Dependency Injection (DI)** (~197 lines):
+- Pass dependencies from outside rather than creating internally
+- **Constructor injection** (recommended): Dependencies via constructor parameters
+- **Method injection**: Per-method dependencies for optional/one-off usage
+- Testing example: Easy mocking with injected dependencies (no complex setup)
+- Modern DI container: **TSyringe** for automatic dependency resolution (2024)
+- **Best practices**: Inject interfaces not classes, constructor for required, method for optional
+- **Benefits**: Testability, modularity, flexibility, loose coupling, SOLID compliance (DIP)
+- **When to use**: Need swappable implementations, testable code, modular applications
+- **When NOT**: Simple scripts, zero chance dependencies change, over-abstraction
+
+**Pattern 7: SOLID Principles** (~249 lines):
+- All 5 object-oriented design principles with TypeScript examples
+- **S - Single Responsibility**: One class, one reason to change
+- **O - Open/Closed**: Open for extension, closed for modification
+- **L - Liskov Substitution**: Subtypes substitutable without breaking behavior
+- **I - Interface Segregation**: Many small interfaces > one fat interface
+- **D - Dependency Inversion**: Depend on abstractions, not concretions
+- Each principle: Bad example → Good example → Why it matters
+- **Modern application (2024)**: Interfaces, composition, DI, small focused classes
+- **Benefits**: Maintainability, testability, flexibility, clarity, reliability
+- **When to use**: Designing classes, refactoring, systems that grow, team development
+- **When NOT**: Functional programming (pure functions), simple scripts, prototypes
+
+**Pattern 8: Anti-Patterns (What to Avoid)** (~246 lines):
+- Common bad practices that create technical debt
+- **TypeScript anti-patterns (2024)**: `any` type abuse, God classes, callback hell, magic numbers, spaghetti code
+- **Node.js anti-patterns (2024)**: Blocking I/O, code outside functions, ignoring error handling
+- Each anti-pattern: What it is → Why bad → Bad example → Good example
+- **How to avoid**: Code reviews, linting, type checking, early returns, async/await, error handling
+- **Added to Red Flags section**: `any` type, God classes, callback hell, magic numbers
+
+---
+
+#### Enhanced Pattern Index
+
+**New lookup category**: "By Code Quality Goal"
+- Testability → Pure Functions, DI, SOLID (DIP)
+- Maintainability → Function Decomposition, SOLID, Vertical Slice
+- Flexibility → Composition, DI, SOLID (OCP)
+- Avoiding tech debt → Anti-Patterns, SOLID
+- Team collaboration → SOLID, Vertical Slice
+
+**Expanded complexity signals**:
+- Deep inheritance hierarchy (>3 levels) → Composition
+- Using `any` type frequently → Anti-Patterns
+- God class (50+ methods) → SOLID (SRP), Composition
+
+**Architecture decision matrix updated**:
+- OOP-heavy → SOLID, Composition, DI
+- Functional-heavy → Pure Functions, Composition
+
+---
+
+#### Files Modified
+
+**Modified Files** (1):
+- `coding-patterns/SKILL.md` (v1.1.0 → v1.2.0, +~891 lines)
+  - Lines 1185-1383: Pattern 5 (Composition)
+  - Lines 1386-1581: Pattern 6 (Dependency Injection)
+  - Lines 1584-1831: Pattern 7 (SOLID Principles)
+  - Lines 1834-2077: Pattern 8 (Anti-Patterns)
+  - Lines 41-87: Enhanced Pattern Index
+  - Lines 2169-2204: v1.2.0 changelog entry
+
+**Total Additions**: ~891 lines of modern pattern guidance (2024-2025)
+
+---
+
+#### Research Conducted
+
+**Web searches** (2024-2025 sources):
+- Composition over inheritance modern TypeScript (2024-2025)
+- Dependency injection patterns TypeScript best practices (2024)
+- SOLID principles modern JavaScript TypeScript (2024)
+- Common anti-patterns avoid TypeScript Node.js (2024)
+
+**Key findings**:
+- **Composition**: Gained traction for flexible, reusable code; modern implementation with interfaces/mixins
+- **DI**: TSyringe emerged as popular container; constructor vs method injection patterns standardized
+- **SOLID**: TypeScript's type system makes SOLID easier than plain JavaScript
+- **Anti-patterns**: `any` type, God classes, callback hell, blocking I/O identified as top 2024 issues
+
+---
+
+#### Impact
+
+**For Pattern Coverage**:
+- ✅ Wave 1 (HIGH): 4 patterns (Orchestration, Pure Functions, Decomposition, Vertical Slice)
+- ✅ Wave 2 (MEDIUM): 4 patterns (Composition, DI, SOLID, Anti-Patterns)
+- ⏳ Wave 3 (LOW/OPTIONAL): 4 patterns deferred (Strategy, Factory, Observer, Hexagonal Architecture)
+
+**For Code Quality**:
+- ✅ OOP design guidance: SOLID, Composition, DI provide complete OOP best practices
+- ✅ Anti-pattern awareness: Developers know what to avoid (8 common anti-patterns)
+- ✅ Testability patterns: DI + Pure Functions + SOLID (DIP) cover all testing scenarios
+- ✅ Flexibility patterns: Composition + DI + SOLID (OCP) enable extensible systems
+
+**For Development Velocity**:
+- ✅ Pattern Index: Quick lookup by problem, complexity, architecture, quality goal
+- ✅ Modern examples: All TypeScript 2024-2025, immediately applicable
+- ✅ "When NOT to use": Prevents over-engineering (critical for Wave 2 OOP patterns)
+
+---
+
+#### Wave 2 Success Criteria
+
+**Technical Completion**:
+- ✅ 4 MEDIUM priority patterns added
+- ✅ TypeScript examples for each pattern (bad → good examples)
+- ✅ Pattern Index enhanced with Wave 2 patterns
+- ✅ "When to Use" AND "When NOT to Use" for each pattern
+- ✅ Modern 2024-2025 research conducted
+- ✅ CHANGELOG updated with v2.7.2 entry
+
+**Pattern Quality**:
+- ✅ Composition (~199 lines): Complete with payment processing example
+- ✅ DI (~197 lines): Constructor vs method injection, TSyringe container
+- ✅ SOLID (~249 lines): All 5 principles with bad/good examples
+- ✅ Anti-Patterns (~246 lines): 8 anti-patterns (TypeScript + Node.js)
+
+---
+
 ## [2.7.1] - 2025-11-15
 
 ### Enhanced - Coding Patterns Skill (Production Validation Enhancements)
