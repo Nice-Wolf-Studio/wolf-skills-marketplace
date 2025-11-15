@@ -750,6 +750,233 @@ This demonstrates the **Advisory-First Enforcement** principle (Principle #4) in
 
 ---
 
+## Phase 7: Template Consistency & Skill Chaining Integration ✅ COMPLETE
+
+**Version**: v2.5.0
+**Date**: 2025-11-14
+**Commits**: 37db531, 344af19
+**Status**: ✅ COMPLETE
+
+### Problem Identified
+
+After Phases 4-6, only 2 of 11 templates had the proven patterns:
+- **coder-agent-template.md** (v2.4.0): All three patterns integrated
+- **code-reviewer-agent-template.md** (v2.3.0): Git/GitHub + Incremental PR patterns
+
+**Gap**: 9 templates (6 role templates + 3 workflow templates) lacked:
+- Git/GitHub workflow enforcement
+- Incremental work breakdown patterns
+- Documentation lookup guidance
+
+**Additional gap**: Non-Wolf skills (daily-summary, databento, discord-integration) lacked "After Using This Skill" sections for skill-chaining integration.
+
+---
+
+### Solution Implemented
+
+**HIGH PRIORITY** (v2.5.0):
+1. ✅ Update 6 role templates to v2.1.0 (pm, security, qa, architect, research, devops)
+2. ✅ Add "After Using This Skill" to 3 non-Wolf skills
+3. ✅ Review wolf-context-management for alignment
+
+**DEFERRED** (identified but postponed based on usage data):
+- 3 workflow templates (feature, security, bugfix)
+- Template placeholder automation
+- Skill analytics
+- Documentation improvements
+
+---
+
+### Changes Made
+
+#### 1. Role Templates (v1.0.0 → v2.1.0)
+
+**All 6 templates received four major enhancements**:
+
+**A. Documentation & API Research (MANDATORY)** section (~30-38 lines each):
+- Role-specific WebSearch patterns
+- Pre-work research checklists
+- Version-specific documentation lookup
+- Examples tailored to role context
+
+**B. Git/GitHub Setup** section (~28-43 lines each):
+- Feature branch requirements (NEVER commit to main/master)
+- Draft PR at task START (not end)
+- Prefer `gh` CLI over `git` for GitHub operations
+- Role-specific PR naming conventions
+- Rollback plan requirements (devops-specific)
+
+**C. Incremental [Work Type] Breakdown (MANDATORY)** section (~50-97 lines each):
+- Role-specific breakdown patterns
+- Shard size guidelines (<2 days per increment)
+- Pattern examples adapted to role
+- Why small increments matter for each role
+
+**D. Enhanced Red Flags** (+3 new categories each):
+- Documentation & Research red flags
+- Git/GitHub workflow red flags
+- Incremental breakdown red flags
+
+**Templates Updated**:
+
+1. **pm-agent-template.md** (v1.0.0 → v2.1.0): +118 lines (commit 37db531)
+   - Incremental Feature Breakdown: Layer-by-Layer, Vertical Slice, Feature Flags
+   - Documentation research for product features/APIs
+   - Git/GitHub for documentation PRs
+
+2. **security-agent-template.md** (v1.0.0 → v2.1.0): +125 lines
+   - Incremental Security: Defense-in-Depth Layers, Threat-by-Threat, Compliance Requirements
+   - WebSearch for CVE databases, vulnerability patterns, OWASP
+   - Security PR naming: `security/{threat-or-cve-name}`, `[SECURITY]` prefix
+
+3. **qa-agent-template.md** (v1.0.0 → v2.1.0): +159 lines
+   - Incremental Testing: Test-by-Test, Layer-by-Layer (unit → integration → E2E), Coverage Expansion
+   - WebSearch for testing frameworks (Jest, Playwright, Cypress, RTL)
+   - Test PR naming: `test/*`, `qa/*`, `[TEST]`, `[E2E]` prefixes
+   - Red flag: No large test PRs (>500 lines), no mixing test layers
+
+4. **architect-agent-template.md** (v1.0.0 → v2.1.0): +154 lines
+   - Incremental Architecture: ADR-First, Interface-First, Layer-by-Layer, Strangler Fig
+   - WebSearch for architectural patterns, design systems, emerging practices
+   - Architecture PR naming: `arch/{name}` for ADRs and design docs
+   - Red flags: No cargo cult architecture, no big bang rewrites
+
+5. **research-agent-template.md** (v1.0.0 → v2.1.0): +191 lines (largest addition)
+   - Incremental Research: Question-by-Question, Spike-then-Report, Breadth-then-Depth
+   - WebSearch for research papers, benchmarks, industry analysis, academic sources
+   - Research PR naming: `research/{topic}`, `spike/{experiment}`
+   - Red flags: No relying on outdated sources, no monolithic research dumps
+
+6. **devops-agent-template.md** (v1.0.0 → v2.1.0): +171 lines
+   - Incremental Infrastructure: Blue-Green Deployment, Feature Flags for Infrastructure, Layered Changes, Rolling Updates
+   - WebSearch for infrastructure tool versions (Kubernetes, Docker, Terraform, cloud providers)
+   - Infrastructure PR naming: `infra/{name}`, `ci/{name}`, `[INFRA]`, `[CI/CD]` prefixes
+   - Red flags: No big bang migrations, no deploying all at once, no missing rollback plans
+
+**Total additions**: ~918 lines of agent guidance across 6 templates
+
+**Template footer updated** (all templates):
+```markdown
+*Template Version: 2.1.0 - Enhanced with Git/GitHub Workflow + Incremental [Type] Breakdown + Documentation Research*
+*Role: {role}-agent*
+*Part of Wolf Skills Marketplace v2.5.0*
+```
+
+---
+
+#### 2. Non-Wolf Skills (v1.0.1 → v1.1.0)
+
+Added "After Using This Skill" sections for skill-chaining integration:
+
+**1. daily-summary/SKILL.md** (v1.0.1 → v1.1.0): +14 lines
+- **Required next steps**: Share report, archive data, update tracking
+- **Optional next steps**: Trend analysis, action items follow-up, team metrics
+
+**2. databento/SKILL.md** (v1.0.1 → v1.1.0): +16 lines
+- **Required next steps**: Validate data quality, cache results, document assumptions
+- **Optional next steps**: Cost tracking, performance notes, quality metrics
+
+**3. discord-integration/SKILL.md** (v1.0.1 → v1.1.0): +14 lines
+- **Required next steps**: Verify message sent, document method used, test error handling
+- **Optional next steps**: Set up logging, create reusable wrapper, monitor bot health
+
+---
+
+#### 3. Reviewed for Alignment
+
+**wolf-context-management/SKILL.md** (v1.0.0 - no changes):
+- Already has comprehensive "After Using This Skill" section (lines 559-592)
+- Already references PLAN.md Enhancement Ideas #5 for future cleanup automation
+- Cleanup automation appropriately deferred (significant new functionality, not template consistency)
+- No updates needed for v2.5.0
+
+---
+
+### Execution Method
+
+**Parallel Agent Dispatch** using `superpowers:dispatching-parallel-agents`:
+
+1. **pm-agent-template.md**: Updated first to establish pattern (commit 37db531)
+2. **Parallel agents dispatched**: 5 concurrent updates
+   - security-agent (Agent 1)
+   - qa-agent (Agent 2)
+   - architect-agent (Agent 3)
+   - research-agent (Agent 4)
+   - devops-agent (Agent 5)
+3. **Sequential updates**: daily-summary, databento, discord-integration
+4. **Review**: wolf-context-management (confirmed aligned)
+
+**All agents completed successfully** with role-specific adaptations.
+
+---
+
+### Impact Analysis
+
+**For Agents**:
+- ✅ Consistent workflow patterns across all roles
+- ✅ Clear Git/GitHub guidance (no more "commit to main" issues)
+- ✅ Role-specific incremental breakdown examples
+- ✅ Documentation lookup prevents outdated API usage
+- ✅ Better skill-chaining with "After Using This Skill" sections
+
+**For Users**:
+- ✅ Predictable agent behavior across roles
+- ✅ No monolithic PRs (incremental breakdown enforced)
+- ✅ Fewer merge conflicts (small, frequent PRs)
+- ✅ Better Git history (feature branches, descriptive commits)
+- ✅ Faster review cycles (smaller, focused PRs)
+
+**Token Budget**:
+- Role templates: +~150 lines average per template (acceptable for comprehensive guidance)
+- Non-Wolf skills: +~15 lines average (minimal overhead for skill-chaining)
+- Context management: Existing patterns confirmed, no bloat
+
+---
+
+### Files Modified
+
+**Role Templates** (6 files):
+- `wolf-roles/templates/pm-agent-template.md` (+118 lines)
+- `wolf-roles/templates/security-agent-template.md` (+125 lines)
+- `wolf-roles/templates/qa-agent-template.md` (+159 lines)
+- `wolf-roles/templates/architect-agent-template.md` (+154 lines)
+- `wolf-roles/templates/research-agent-template.md` (+191 lines)
+- `wolf-roles/templates/devops-agent-template.md` (+171 lines)
+
+**Non-Wolf Skills** (3 files):
+- `daily-summary/SKILL.md` (+14 lines)
+- `databento/SKILL.md` (+16 lines)
+- `discord-integration/SKILL.md` (+14 lines)
+
+**Documentation** (1 file):
+- `CHANGELOG.md` (+193 lines)
+
+**Total**: 10 files, +1,155 lines
+
+**Commits**:
+- 37db531: pm-agent-template.md v2.1.0
+- 344af19: Phase 7 complete (5 templates + 3 skills + CHANGELOG)
+
+---
+
+### Phase 7 Summary
+
+**Template Consistency Achieved**:
+- 6 of 6 role templates at v2.1.0 ✅
+- 3 of 3 non-Wolf skills with skill-chaining ✅
+- wolf-context-management reviewed and aligned ✅
+
+**Skills Marketplace Status**:
+- **Template consistency**: Complete across all core roles
+- **Skill-chaining**: Integrated into non-Wolf skills
+- **Pattern adoption**: Git/GitHub, Incremental PR, Doc Lookup now universal
+
+**Timeline**: Same day as Phases 4-6 (2025-11-14)
+**Implementation time**: ~3 hours (using parallel agents)
+**Status**: All HIGH PRIORITY items complete ✅
+
+---
+
 ## Implementation Statistics
 
 ### Files Modified (Phase 1 + Phase 2)
