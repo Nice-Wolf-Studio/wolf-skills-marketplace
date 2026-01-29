@@ -16,10 +16,13 @@
       "source": "./",
       "strict": false,
       "skills": [
+        "./wolf",
+        "./wolf-session-init",
         "./wolf-principles",
         "./wolf-archetypes",
         "./wolf-governance",
         "./wolf-roles",
+        "./wolf-workflows",
         "./wolf-instructions",
         "./wolf-verification",
         "./wolf-adr"
@@ -110,7 +113,10 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./daily-summary"
+        "./daily-summary",
+        "./coding-patterns",
+        "./wolf-context-management",
+        "./code-standards"
       ]
     }
   ]
